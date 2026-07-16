@@ -1,0 +1,551 @@
+<Project ToolsVersion="17.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--
+    This section defines project-level properties.
+
+    AssemblyName
+      Name of the output assembly.
+    Configuration
+      Specifies a default value for debug.
+    OutputType
+      Must be "Library" for VSTO.
+    Platform
+      Specifies what CPU the output of this project can run on.
+    NoStandardLibraries
+      Set to "false" for VSTO.
+    RootNamespace
+      In C#, this specifies the namespace given to new files. In VB, all objects are
+      wrapped in this namespace at runtime.
+  -->
+  <PropertyGroup>
+    <ProjectTypeGuids>{BAA0C2D2-18E2-41B9-852F-F413020CAA33};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{728A9CF5-8FFA-4DD4-A979-FFE0D7547378}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <RootNamespace>WordOllama</RootNamespace>
+    <AssemblyName>WordOllama</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <DefineConstants>VSTO40</DefineConstants>
+    <TargetFrameworkProfile />
+    <OpenSourceBuild>true</OpenSourceBuild>
+    <ProductName>WordOllama</ProductName>
+    <SupportUrl>https://www.wordollama.com</SupportUrl>
+    <FriendlyName>WordOllama</FriendlyName>
+    <OfficeApplicationDescription>AI-assisted tools for Word documents</OfficeApplicationDescription>
+    <LoadBehavior>3</LoadBehavior>
+   </PropertyGroup>
+  <PropertyGroup>
+    <!--
+      OfficeApplication
+        Add-in host application
+    -->
+    <OfficeApplication>Word</OfficeApplication>
+  </PropertyGroup>
+  <!--
+    This section defines properties that are set when the "Debug" configuration is selected.
+
+    DebugSymbols
+      If "true", create symbols (.pdb). If "false", do not create symbols.
+    DefineConstants
+      Constants defined for the preprocessor.
+    EnableUnmanagedDebugging
+      If "true", starting the debugger will attach both managed and unmanaged debuggers.
+    Optimize
+      If "true", optimize the build output. If "false", do not optimize.
+    OutputPath
+      Output path of project relative to the project file.
+    WarningLevel
+      Warning level for the compiler.
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!--
+    This section defines properties that are set when the "Release" configuration is selected.
+
+    DebugSymbols
+      If "true", create symbols (.pdb). If "false", do not create symbols.
+    DefineConstants
+      Constants defined for the preprocessor.
+    EnableUnmanagedDebugging
+      If "true", starting the debugger will attach both managed and unmanaged debuggers.
+    Optimize
+      If "true", optimize the build output. If "false", do not optimize.
+    OutputPath
+      Output path of project relative to the project file.
+    WarningLevel
+      Warning level for the compiler.
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!--
+    This section specifies references for the project.
+  -->
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Tools.v4.0.Framework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Tools.Applications.Runtime, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools.Word, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Tools.Common.v4.0.Utilities, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <Private>False</Private>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <Private>False</Private>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DiffPlex">
+      <Version>1.7.2</Version>
+    </PackageReference>
+    <PackageReference Include="MaterialDesignColors">
+      <Version>5.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="MaterialDesignThemes">
+      <Version>5.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
+      <Version>9.0.0-preview.4.24266.19</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.2849.39</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Buffers">
+      <Version>4.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Memory">
+      <Version>4.5.5</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0-preview.3.24172.9" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
+      <Version>6.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Encodings.Web">
+      <Version>9.0.0-preview.3.24172.9</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Channels">
+      <Version>9.0.0-preview.4.24266.19</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks.Extensions">
+      <Version>4.5.4</Version>
+    </PackageReference>
+  </ItemGroup>
+  <!--
+    This section defines the user source files that are part of the project.
+     
+    A "Compile" element specifies a source file to compile.
+    An "EmbeddedResource" element specifies an .resx file for embedded resources.
+    A "None" element specifies a file that is not to be passed to the compiler (for instance, 
+    a text file or XML file).
+    The "AppDesigner" element specifies the directory where the application properties files
+    can be found.
+  -->
+  <ItemGroup>
+    <Compile Include="Forms\SharedSettings.cs" />
+    <Compile Include="Forms\translatorUI.xaml.cs">
+      <DependentUpon>translatorUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lib\CustomPromptManager.cs" />
+    <Compile Include="lib\OllamaFunctions.cs" />
+      <Compile Include="lib\OpenAIFunctions.cs" />
+    <Compile Include="lib\ToolExecutionPolicy.cs" />
+    <Compile Include="lib\AgentToolCatalogService.cs" />
+    <Compile Include="lib\AgentToolText.cs" />
+    <Compile Include="lib\WorkflowStatus.cs" />
+    <Compile Include="lib\DiagnosticsService.cs" />
+      <Compile Include="lib\ProviderCompatibility.cs" />
+      <Compile Include="lib\ProviderRequestPolicy.cs" />
+      <Compile Include="lib\SecretProtector.cs" />
+      <Compile Include="lib\AppConfig.cs" />
+    <Compile Include="lib\SettingsManager.cs" />
+    <Compile Include="lib\ThemeManager.cs" />
+    <Compile Include="lib\Utils.cs" />
+    <Compile Include="lib\UiThread.cs" />
+    <Compile Include="lib\DocumentAgent.cs" />
+    <Compile Include="lib\IAgentTool.cs" />
+    <Compile Include="lib\SkillManager.cs" />
+    <Compile Include="lib\McpBridge.cs" />
+    <Compile Include="lib\McpToolManager.cs" />
+    <Compile Include="lib\ConfirmationManager.cs" />
+    <Compile Include="lib\DebugLogger.cs" />
+    <Compile Include="lib\Loc.cs" />
+    <Compile Include="lib\MarkdownConverter.cs" />
+    <Compile Include="lib\MarkdownToWord.cs" />
+    <Compile Include="lib\PromptTemplateService.cs" />
+    <Compile Include="lib\SilentLinter.cs" />
+    <Compile Include="lib\Tools\DocumentTools.cs" />
+    <Compile Include="lib\Tools\LegalTools.cs" />
+    <Compile Include="lib\Tools\AskHumanTool.cs" />
+    <Compile Include="lib\Tools\ReadSkillTool.cs" />
+    <Compile Include="lib\Tools\ExternalTools.cs" />
+    <Compile Include="lib\Tools\InsertImageTool.cs" />
+    <Compile Include="lib\IOnlineProvider.cs" />
+    <Compile Include="lib\Providers\OpenAIProvider.cs" />
+    <Compile Include="lib\Providers\ClaudeProvider.cs" />
+    <Compile Include="lib\Providers\GeminiProvider.cs" />
+    <Compile Include="lib\Providers\ProviderFactory.cs" />
+    <Compile Include="lib\Providers\OAuth2Helper.cs" />
+    <Compile Include="NewUI\AgentTaskPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NewUI\ReviewTaskPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NewUI\AgentTaskPaneUI.xaml.cs">
+      <DependentUpon>AgentTaskPaneUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\EditSuggestionSession.cs" />
+    <Compile Include="NewUI\UiText.cs" />
+    <Compile Include="NewUI\WritingProfileManager.cs" />
+    <Compile Include="NewUI\ReviewIssue.cs" />
+    <Compile Include="NewUI\LawSearchWindow.xaml.cs">
+      <DependentUpon>LawSearchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\LocExtension.cs" />
+    <Page Include="NewUI\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\AgentTaskPaneUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="NewUI\LawSearchWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="NewUI\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ObservableModel.cs" />
+    <Compile Include="Models\AgentTask.cs" />
+    <Compile Include="Models\ChatMessage.cs" />
+    <Compile Include="lib\Models\McpServerConfig.cs" />
+    <Compile Include="Converters\Converters.cs" />
+    <Compile Include="NewUI\ChatWithIMG.xaml.cs">
+      <DependentUpon>ChatWithIMG.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\CreateHTML.xaml.cs">
+      <DependentUpon>CreateHTML.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\CustomPromptUI.xaml.cs">
+      <DependentUpon>CustomPromptUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\LoadingOverlay.xaml.cs">
+      <DependentUpon>LoadingOverlay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\DocxDiffAnalyze.xaml.cs">
+      <DependentUpon>DocxDiffAnalyze.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\ModWritting.xaml.cs">
+      <DependentUpon>ModWritting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\MootCourt.xaml.cs">
+      <DependentUpon>MootCourt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\NewSetting.xaml.cs">
+      <DependentUpon>NewSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\TextToTableWindow.xaml.cs">
+      <DependentUpon>TextToTableWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\ThinkingPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NewUI\ThinkingPane.Designer.cs">
+      <DependentUpon>ThinkingPane.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\ThinkPaneUI.xaml.cs">
+      <DependentUpon>ThinkPaneUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\WebViewWindow.xaml.cs">
+      <DependentUpon>WebViewWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewUI\WritingUI.xaml.cs">
+      <DependentUpon>WritingUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="NewUI\ThinkingPane.resx">
+      <DependentUpon>ThinkingPane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.en.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Ribbon1.en.resx">
+      <DependentUpon>Ribbon1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ribbon1.resx">
+      <DependentUpon>Ribbon1.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Ribbon1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Ribbon1.Designer.cs">
+      <DependentUpon>Ribbon1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="ThisAddIn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="ThisAddIn.Designer.xml">
+      <DependentUpon>ThisAddIn.cs</DependentUpon>
+    </None>
+    <Compile Include="ThisAddIn.Designer.cs">
+      <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
+    </Compile>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wordollama-about-50.png" />
+    <None Include="Resources\wordollama-settings-50.png" />
+    <None Include="Resources\wordollama-assistant-48.png" />
+    <None Include="Resources\wordollama-new-document-50.png" />
+    <None Include="Resources\wordollama-translate-50.png" />
+    <None Include="Resources\wordollama-chat-64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Ribbon1.zh-CN.resx">
+      <DependentUpon>Ribbon1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wordollama-icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wordollama-legal-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wordollama-search-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wordollama-search-25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wordollama-custom-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Forms\translatorUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\ChatWithIMG.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\CreateHTML.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\CustomPromptUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\LoadingOverlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\DocxDiffAnalyze.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\ModWritting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\MootCourt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\NewSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\TextToTableWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\ThinkPaneUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\WebViewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\WritingUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewUI\ModernStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NewUI\wordollama-icon.png" />
+    <EmbeddedResource Include="Resources\updateLog.txt" />
+    <EmbeddedResource Include="Resources\updateLog.en.txt">
+      <WithCulture>false</WithCulture>
+      <LogicalName>WordOllama.Resources.updateLog.en.txt</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Skills\contract-review\SKILL.md" />
+    <Page Include="NewUI\TranslatorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\TranslatorWindow.xaml.cs">
+      <DependentUpon>TranslatorWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="NewUI\MootCourtWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\MootCourtWindow.xaml.cs">
+      <DependentUpon>MootCourtWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="NewUI\ConfirmationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\ConfirmationDialog.xaml.cs">
+      <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
+    </Compile>
+    <Page Include="NewUI\DiffReviewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\DiffReviewWindow.xaml.cs">
+      <DependentUpon>DiffReviewWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="NewUI\UpdateLogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\UpdateLogWindow.xaml.cs">
+      <DependentUpon>UpdateLogWindow.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>wordollama-icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <!-- Include the build rules for a C# project. -->
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- Include additional build rules for an Office application add-in. -->
+  <Import Project="$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets" Condition="'$(OpenSourceBuild)' != 'true' And '$(VSToolsPath)' != ''" />
+  <!-- This section defines VSTO properties that describe the host-changeable project properties. -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{BAA0C2D2-18E2-41B9-852F-F413020CAA33}">
+        <ProjectProperties HostName="Word" HostPackage="{29A7B9D7-A7F1-4328-8EF0-6B2D1A56B2C1}" OfficeVersion="15.0" VstxVersion="4.0" ApplicationType="Word" Language="cs" TemplatesPath="" DebugInfoExeName="#Software\Microsoft\Office\16.0\Word\InstallRoot\Path#WINWORD.EXE" DebugInfoCommandLine="/x" AddItemTemplatesGuid="{51063C3A-E220-4D12-8922-BDA915ACD783}" />
+        <Host Name="Word" GeneratedCodeNamespace="WordOllama" PublishedHash="69C324AB27932AA2FBF2B7EA72250886FF164DE6" IconIndex="0">
+          <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" PublishedHash="49E49F5BA5FC44EC532A8325D3435C2181B23C66" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
+        </Host>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

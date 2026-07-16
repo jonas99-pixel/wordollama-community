@@ -1,0 +1,770 @@
+<UserControl x:Class="WordOllama.NewUI.AgentTaskPaneUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:properties="clr-namespace:WordOllama.Properties"
+             xmlns:local="clr-namespace:WordOllama.NewUI"
+             xmlns:lib="clr-namespace:WordOllama.lib"
+             xmlns:converters="clr-namespace:WordOllama.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="750" d:DesignWidth="900"
+             MinWidth="420" MaxWidth="900"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal"
+             AutomationProperties.Name="{x:Static local:UiText.AgentTitle}"
+             FontFamily="Segoe UI, Microsoft YaHei UI">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <local:MessageTypeToBrushConverter x:Key="MessageTypeToBrushConverter"/>
+            <lib:MarkdownToFlowDocumentConverter x:Key="MarkdownConverter"/>
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
+            <!-- Apple-style user bubble -->
+            <Style x:Key="UserBubbleStyle" TargetType="Border">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}"/>
+                <Setter Property="CornerRadius" Value="18,18,4,18"/>
+            </Style>
+
+            <!-- Apple-style agent bubble -->
+            <Style x:Key="AgentBubbleStyle" TargetType="Border">
+                <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}"/>
+                <Setter Property="CornerRadius" Value="18,18,18,4"/>
+                <Setter Property="Effect" Value="{DynamicResource MaterialDesignShadowDepth1}"/>
+            </Style>
+
+            <!-- Edgy card for plan/system messages -->
+            <Style x:Key="SystemCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}"/>
+                <Setter Property="CornerRadius" Value="12"/>
+                <Setter Property="Padding" Value="14,12"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== 0. 极简头部 ===== -->
+        <Border Grid.Row="0"
+                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,0.5"
+                Padding="18,12">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Sparkles" Foreground="{DynamicResource PrimaryHueMidBrush}" Width="18" Height="18"/>
+                    <TextBlock x:Name="txtPaneTitle" Text="{x:Static local:UiText.AgentTitle}" Margin="8,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="15"/>
+                </StackPanel>
+                <Button x:Name="btnCancelTask" Content="{x:Static local:UiText.Stop}" Style="{StaticResource MaterialDesignOutlinedButton}"
+                        AutomationProperties.Name="{x:Static local:UiText.Stop}"
+                        FocusVisualStyle="{StaticResource ModernFocusRing}"
+                        Height="26" FontSize="11" Padding="10,0"
+                        HorizontalAlignment="Right"
+                        Visibility="Collapsed" Click="BtnCancelTask_Click"
+                        Foreground="#FF453A" BorderBrush="#FF453A"/>
+            </Grid>
+        </Border>
+
+        <!-- ===== 1. 状态栏 ===== -->
+        <Border Grid.Row="1" x:Name="statusBarCard" Visibility="Collapsed"
+                Background="{DynamicResource MaterialDesignBackground}"
+                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,0.5"
+                Padding="18,7">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon x:Name="statusIcon" Kind="PlayCircle" Width="14" Height="14" VerticalAlignment="Center"
+                                             Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock x:Name="lblStatus" Text="" Margin="6,0,0,0" FontSize="11" Opacity="0.8" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock x:Name="lblIteration" Grid.Row="0" Text="" HorizontalAlignment="Right" FontSize="10" Opacity="0.4" VerticalAlignment="Center"/>
+                <TextBlock x:Name="lblTaskSummary" Grid.Row="1" Margin="20,4,28,0"
+                           TextWrapping="Wrap" MaxHeight="34" TextTrimming="CharacterEllipsis"
+                           FontSize="10" Opacity="0.55"/>
+            </Grid>
+        </Border>
+
+        <!-- ===== 2. 对话 / 问题区域 ===== -->
+        <TabControl Grid.Row="2" x:Name="mainTabs"
+                    AutomationProperties.Name="{x:Static local:UiText.AgentTitle}"
+                    KeyboardNavigation.TabNavigation="Local"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Padding="0">
+            <TabItem x:Name="ChatTabItem" Header="{x:Static local:UiText.ChatTab}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" Padding="20,14,20,8">
+            <StackPanel>
+                <Border x:Name="emptyChatState" Margin="0,90,0,50" Background="Transparent">
+                    <StackPanel HorizontalAlignment="Center" MaxWidth="560">
+                        <materialDesign:PackIcon Kind="SparklesOutline" Width="30" Height="30"
+                                                 HorizontalAlignment="Center"
+                                                 Foreground="{DynamicResource PrimaryHueMidBrush}" Opacity="0.65"/>
+                        <TextBlock Text="{x:Static local:UiText.AgentEmptyTitle}" Margin="0,12,0,4"
+                                   HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Static local:UiText.AgentEmptyState}" HorizontalAlignment="Center"
+                                   FontSize="12" Opacity="0.55"/>
+                    </StackPanel>
+                </Border>
+                <ItemsControl x:Name="chatPanel">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,7">
+
+                                <!-- 用户消息 -->
+                                <StackPanel Visibility="{Binding IsUser, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                            HorizontalAlignment="Right" Margin="60,0,4,0" MaxWidth="640">
+                                    <Border Padding="16,10" Style="{StaticResource UserBubbleStyle}">
+                                        <StackPanel>
+                                            <Image Source="{Binding ImageSource}"
+                                                   Visibility="{Binding ImageSource, Converter={StaticResource NullToVisibilityConverter}}"
+                                                   MaxWidth="200" MaxHeight="200" Margin="0,0,0,8"
+                                                   Stretch="Uniform" />
+                                            <TextBox Text="{Binding Message}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
+                                                     TextWrapping="Wrap" Background="Transparent" BorderThickness="0"
+                                                     IsReadOnly="True" IsTabStop="False" Padding="0"
+                                                     FontSize="13"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Agent 消息 -->
+                                <StackPanel Visibility="{Binding IsAgent, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                            HorizontalAlignment="Left" Margin="10,0,60,0" MaxWidth="760">
+
+                                    <!-- Agent 名称标签 -->
+                                    <StackPanel Orientation="Horizontal" Margin="4,0,0,5"
+                                                Visibility="{Binding ShowAgentLabel, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <materialDesign:PackIcon Kind="SparklesOutline" Width="13" Height="13"
+                                                                 Foreground="{DynamicResource PrimaryHueMidBrush}" Opacity="0.7"/>
+                                        <TextBlock Text="Agent" FontSize="10" Opacity="0.6" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- 系统消息：灰色卡片 -->
+                                    <Border Padding="14,10" Background="{DynamicResource MaterialDesignBackground}"
+                                            Margin="4,0,0,0" CornerRadius="8"
+                                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                                            Visibility="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}, ConverterParameter=SystemVisible}">
+                                        <TextBox Text="{Binding Message}" Foreground="{DynamicResource MaterialDesignBody}"
+                                                 TextWrapping="Wrap" Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" IsTabStop="False" Padding="0"
+                                                 FontSize="11" Opacity="0.7"/>
+                                    </Border>
+
+                                    <!-- 其他消息：带左边彩色条的卡片 -->
+                                    <Border CornerRadius="10" Background="{DynamicResource MaterialDesignCardBackground}"
+                                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                                            Visibility="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}, ConverterParameter=NonSystemVisible}">
+                                        <Border CornerRadius="10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="4"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" Background="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}}"
+                                                        CornerRadius="2,0,0,2" Margin="0,10,0,10"/>
+                                                <Border Grid.Column="1" Padding="16,13">
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8"
+                                                                    Visibility="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}, ConverterParameter=ResultVisible}">
+                                                            <materialDesign:PackIcon Kind="CheckCircleOutline" Width="16" Height="16"
+                                                                                     Foreground="#4CAF50" VerticalAlignment="Center"/>
+                                                            <TextBlock Text="{x:Static local:UiText.AgentResultTitle}" Margin="6,0,0,0"
+                                                                       FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"
+                                                                       VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <Expander IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Margin="0,0,0,8"
+                                                                  Visibility="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}, ConverterParameter=StepVisible}">
+                                                            <Expander.Header>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <materialDesign:PackIcon Kind="TimelineOutline" Width="15" Height="15"
+                                                                                             Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                                                                    <TextBlock Text="{Binding StepTitle}" Margin="6,0,0,0" FontSize="11"
+                                                                               FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <FlowDocumentScrollViewer VerticalScrollBarVisibility="Disabled"
+                                                                                       IsToolBarVisible="False" Padding="0"
+                                                                                       Foreground="{DynamicResource MaterialDesignBody}"
+                                                                                       Document="{Binding Message, Converter={StaticResource MarkdownConverter}}"/>
+                                                        </Expander>
+                                                        <FlowDocumentScrollViewer VerticalScrollBarVisibility="Disabled"
+                                                                                 IsToolBarVisible="False"
+                                                                                 Padding="0"
+                                                                                  Visibility="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}, ConverterParameter=NonStepVisible}"
+                                                                                 Foreground="{DynamicResource MaterialDesignBody}"
+                                                                                 Document="{Binding Message, Converter={StaticResource MarkdownConverter}}"/>
+                                                        <!-- 计划确认按钮 -->
+                                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0"
+                                                                    Visibility="{Binding MessageType, Converter={StaticResource MessageTypeToBrushConverter}, ConverterParameter=PlanVisible}">
+                                                            <Button Content="{x:Static local:UiText.ConfirmPlan}" FontSize="12" Height="30" Padding="14,0"
+                                                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                                                    Tag="confirm" Click="PlanButton_Click"/>
+                                                            <Button Content="{x:Static local:UiText.RevisePlan}" FontSize="12" Height="30" Padding="14,0" Margin="8,0,0,0"
+                                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                                    Tag="reject" Click="PlanButton_Click"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                    </Border>
+                                </StackPanel>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- 输入指示器 -->
+                <StackPanel x:Name="typingIndicator" Visibility="Collapsed"
+                            Orientation="Horizontal" Margin="10,8,0,8" HorizontalAlignment="Left">
+                    <Border Background="{DynamicResource MaterialDesignCardBackground}"
+                            CornerRadius="16" Padding="14,10"
+                            Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="DotsHorizontal" Width="18" Height="18"
+                                                     Foreground="{DynamicResource PrimaryHueMidBrush}">
+                                <materialDesign:PackIcon.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard RepeatBehavior="Forever">
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                 From="0.3" To="1" Duration="0:0:0.8" AutoReverse="True"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </materialDesign:PackIcon.Triggers>
+                            </materialDesign:PackIcon>
+                            <TextBlock Text="{x:Static local:UiText.Thinking}" FontSize="11" Opacity="0.5" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+                    <!-- 输入区域只属于对话页，避免在问题、审查和工具页重复占用空间。 -->
+                    <Border Grid.Row="1"
+                            Background="{DynamicResource MaterialDesignPaper}"
+                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0.5,0,0"
+                            Padding="16,12,16,16">
+                        <StackPanel>
+                            <!-- 粘贴图片预览 -->
+                            <Border x:Name="pastePreview" Visibility="Collapsed"
+                                    Background="{DynamicResource MaterialDesignCardBackground}"
+                                    CornerRadius="8" Padding="8,6" Margin="0,0,0,8"
+                                    Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border CornerRadius="4" ClipToBounds="True"
+                                            Background="{DynamicResource MaterialDesignBackground}">
+                                        <Image x:Name="pastePreviewImage" MaxHeight="80" MaxWidth="200"
+                                               Stretch="Uniform" Margin="4"/>
+                                    </Border>
+                                    <Button Grid.Column="1" x:Name="btnRemovePaste"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Width="24" Height="24" Margin="6,0,0,0"
+                                            VerticalAlignment="Top"
+                                            Click="BtnRemovePaste_Click"
+                                            ToolTip="{x:Static local:UiText.RemoveImage}">
+                                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14"
+                                                                 Foreground="{DynamicResource MaterialDesignBody}"/>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid>
+                                    <TextBox x:Name="txtInput"
+                                             AutomationProperties.Name="{x:Static local:UiText.InputHint}"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                             materialDesign:HintAssist.Hint="{x:Static local:UiText.InputHint}"
+                                             TextWrapping="Wrap" AcceptsReturn="True"
+                                             MaxHeight="100" MinHeight="42"
+                                             VerticalScrollBarVisibility="Auto"
+                                             VerticalContentAlignment="Top"
+                                             Padding="14,10" FontSize="13"
+                                             KeyDown="TxtInput_KeyDown"
+                                             PreviewKeyDown="TxtInput_PreviewKeyDown"
+                                             TextChanged="TxtInput_TextChanged"/>
+
+                                    <!-- 斜杠命令弹出 -->
+                                    <Popup x:Name="commandPopup" PlacementTarget="{Binding ElementName=txtInput}"
+                                           Placement="Top" StaysOpen="False" AllowsTransparency="True"
+                                           PopupAnimation="Slide" VerticalOffset="-4">
+                                        <Border Background="{DynamicResource MaterialDesignPaper}"
+                                                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                                                CornerRadius="10" Padding="4,4" MinWidth="200"
+                                                Effect="{DynamicResource MaterialDesignShadowDepth2}">
+                                            <StackPanel x:Name="commandList"/>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+
+                                <Button Grid.Column="1" x:Name="btnSend"
+                                        AutomationProperties.Name="{x:Static local:UiText.InputHint}"
+                                        FocusVisualStyle="{StaticResource ModernFocusRing}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                        Width="38" Height="38" Margin="8,0,0,0"
+                                        VerticalAlignment="Bottom"
+                                        Click="BtnSend_Click">
+                                    <materialDesign:PackIcon Kind="ArrowUp" Width="18" Height="18"/>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="IssuesTabItem" Header="{x:Static local:UiText.IssuesTab}">
+                <Grid Margin="12,10,12,8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="AlertCircleOutline" Width="18" Height="18"
+                                                     Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                            <TextBlock x:Name="txtIssueSummary" Text="{x:Static local:UiText.NoIssues}"
+                                       FontWeight="SemiBold" FontSize="13" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Button Content="{x:Static local:UiText.Clear}" HorizontalAlignment="Right"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Height="28" FontSize="11" Padding="10,0"
+                                Click="BtnClearIssues_Click"/>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Content="{x:Static local:UiText.ReviewSelection}"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,0"
+                                Click="BtnReviewSelection_Click"/>
+                        <Button Content="{x:Static local:UiText.ReviewDocument}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Height="30" FontSize="12" Padding="12,0"
+                                Click="BtnReviewDocument_Click"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="2">
+                        <TextBlock x:Name="txtIssueEmpty"
+                                   Text="{x:Static local:UiText.IssuesEmpty}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   FontSize="12" Opacity="0.45"/>
+                        <ListView x:Name="issueList"
+                                  AutomationProperties.Name="{x:Static local:UiText.IssuesTab}"
+                                  BorderThickness="0"
+                                  Background="Transparent"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  SelectionChanged="IssueList_SelectionChanged">
+                            <ListView.Resources>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="0,0,0,8"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </ListView.Resources>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource MaterialDesignCardBackground}"
+                                            CornerRadius="8"
+                                            Padding="12,10"
+                                            Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Background="{DynamicResource PrimaryHueLightBrush}"
+                                                        CornerRadius="4"
+                                                        Padding="6,2"
+                                                        Margin="0,0,8,0">
+                                                    <TextBlock Text="{Binding SeverityLabel}"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource PrimaryHueLightForegroundBrush}"/>
+                                                </Border>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding TitleText}"
+                                                           FontWeight="SemiBold"
+                                                           TextWrapping="Wrap"/>
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding LocationLabel}"
+                                                           FontSize="11"
+                                                           Opacity="0.55"
+                                                           Margin="8,1,0,0"/>
+                                            </Grid>
+
+                                            <TextBlock Grid.Row="1"
+                                                       Text="{Binding DescriptionText}"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="12"
+                                                       Opacity="0.82"
+                                                       Margin="0,7,0,0"/>
+
+                                            <TextBlock Grid.Row="2"
+                                                       Text="{Binding SuggestionText}"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="12"
+                                                       Opacity="0.65"
+                                                       Margin="0,5,0,0"/>
+
+                                            <Grid Grid.Row="3" Margin="0,9,0,0">
+                                                <TextBlock Text="{Binding SourceLabel}"
+                                                           FontSize="10"
+                                                           Opacity="0.45"
+                                                           VerticalAlignment="Center"/>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Button Content="{x:Static local:UiText.Jump}"
+                                                            Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                                            Height="26" FontSize="11" Padding="8,0" Margin="0,0,6,0"
+                                                            Click="BtnJumpIssue_Click"/>
+                                                    <Button Content="{x:Static local:UiText.Comment}"
+                                                            Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                                            Height="26" FontSize="11" Padding="8,0" Margin="0,0,6,0"
+                                                            Click="BtnCommentIssue_Click"/>
+                                                    <Button Content="{x:Static local:UiText.Ignore}"
+                                                            Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                            Height="26" FontSize="11" Padding="8,0"
+                                                            Click="BtnIgnoreIssue_Click"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="ReviewTabItem" Header="{x:Static local:UiText.ReviewTab}">
+                <Grid Margin="12,10,12,8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="{x:Static local:UiText.ReviewWorkspaceTitle}"
+                                   FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="{x:Static local:UiText.ReviewWorkspaceSubtitle}"
+                                   FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" Padding="10,8" Margin="0,0,0,8"
+                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                            CornerRadius="6">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static local:UiText.ReviewScopeLabel}"
+                                       FontWeight="SemiBold" FontSize="12"/>
+                            <TextBlock Text="{x:Static local:UiText.ReviewScopeHint}"
+                                       FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,2,0,7"/>
+                            <WrapPanel>
+                            <Button Content="{x:Static local:UiText.LoadSelection}"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnLoadReviewSelection_Click"/>
+                            <Button Content="{x:Static local:UiText.LoadParagraphs}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnLoadReviewParagraphs_Click"/>
+                            <Button Content="{x:Static local:UiText.LoadDocument}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnLoadReviewDocument_Click"/>
+                            </WrapPanel>
+                            <TextBlock x:Name="txtReviewScopeStatus"
+                                       Text="{x:Static local:UiText.ReviewScopeNone}"
+                                       FontSize="11" Opacity="0.68" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="2" Padding="10,8" Margin="0,0,0,8"
+                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                            CornerRadius="6">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static local:UiText.ReviewGenerationLabel}"
+                                       FontWeight="SemiBold" FontSize="12"/>
+                            <WrapPanel Margin="0,6,0,0">
+                            <Button Content="{x:Static local:UiText.GenerateAll}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnGenerateAllSuggestions_Click"/>
+                            <Button Content="{x:Static local:UiText.CancelReviewGeneration}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnCancelReviewGeneration_Click"/>
+                            </WrapPanel>
+                            <Expander Header="{x:Static local:UiText.ReviewBatchActions}" IsExpanded="False" Margin="0,2,0,0">
+                                <WrapPanel Margin="0,7,0,0">
+                            <Button Content="{x:Static local:UiText.AcceptAll}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnAcceptAllSuggestions_Click"/>
+                            <Button Content="{x:Static local:UiText.InsertAll}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnInsertAllSuggestions_Click"/>
+                            <Button Content="{x:Static local:UiText.CommentAll}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnCommentAllSuggestions_Click"/>
+                            <Button Content="{x:Static local:UiText.SkipAll}"
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnSkipAllSuggestions_Click"/>
+                            <Button Content="{x:Static local:UiText.Clear}"
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
+                                    Click="BtnClearSuggestions_Click"/>
+                                </WrapPanel>
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBox Grid.Row="3" x:Name="txtReviewInstruction"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:HintAssist.Hint="{x:Static local:UiText.CustomInstruction}"
+                             materialDesign:HintAssist.HelperText="{x:Static local:UiText.CustomInstructionHint}"
+                             TextWrapping="Wrap" AcceptsReturn="True"
+                             MinHeight="42" MaxHeight="90"
+                             VerticalScrollBarVisibility="Auto"
+                             Margin="0,0,0,8"/>
+
+                    <Expander Grid.Row="4" Header="{x:Static local:UiText.ProfileLabel}" IsExpanded="False" Margin="0,0,0,8">
+                        <StackPanel Margin="0,8,0,0">
+                            <TextBlock Text="{x:Static local:UiText.ProfileHint}" FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                            <TextBox x:Name="txtWritingProfile"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     TextWrapping="Wrap" AcceptsReturn="True"
+                                     MinHeight="90" MaxHeight="160"
+                                     VerticalScrollBarVisibility="Auto"/>
+                            <Button Content="{x:Static local:UiText.SaveProfile}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="28" FontSize="11" Padding="10,0"
+                                    HorizontalAlignment="Right" Margin="0,6,0,0"
+                                    Click="BtnSaveWritingProfile_Click"/>
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- The suggestion list occupies the remaining pane height. -->
+                    <Grid Grid.Row="6">
+                        <TextBlock x:Name="txtSuggestionEmpty"
+                                   Text="{x:Static local:UiText.EmptySuggestions}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   FontSize="12" Opacity="0.45"
+                                   TextWrapping="Wrap" TextAlignment="Center"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="suggestionList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource MaterialDesignCardBackground}"
+                                                CornerRadius="8"
+                                                Padding="12,10"
+                                                Margin="0,0,0,10"
+                                                Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                                            <StackPanel>
+                                                <Grid Margin="0,0,0,8">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Background="{DynamicResource PrimaryHueLightBrush}"
+                                                                CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                                            <TextBlock Text="{Binding LocationLabel}"
+                                                                       FontSize="10"
+                                                                       Foreground="{DynamicResource PrimaryHueLightForegroundBrush}"/>
+                                                        </Border>
+                                                        <TextBlock Text="{Binding Status}" FontSize="11" Opacity="0.62" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                        <Button Content="{x:Static local:UiText.Generate}" Tag="{Binding}"
+                                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                                Height="26" FontSize="11" Padding="8,0" Margin="0,0,4,0"
+                                                                Click="BtnGenerateSuggestion_Click"/>
+                                                        <Button Content="{x:Static local:UiText.Focus}" Tag="{Binding}"
+                                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                                Height="26" FontSize="11" Padding="8,0"
+                                                                Click="BtnFocusSuggestion_Click"/>
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <TextBlock Text="{x:Static local:UiText.Original}" FontSize="11" Opacity="0.58" Margin="0,0,0,3"/>
+                                                <TextBox Text="{Binding OriginalText}"
+                                                         IsReadOnly="True"
+                                                         TextWrapping="Wrap"
+                                                         Background="Transparent"
+                                                         BorderThickness="0"
+                                                         MaxHeight="130"
+                                                         VerticalScrollBarVisibility="Auto"
+                                                         FontSize="12"/>
+
+                                                <TextBlock Text="{x:Static local:UiText.Suggestion}" FontSize="11" Opacity="0.58" Margin="0,8,0,3"/>
+                                                <TextBox Text="{Binding SuggestedText, UpdateSourceTrigger=PropertyChanged}"
+                                                         TextWrapping="Wrap"
+                                                         AcceptsReturn="True"
+                                                         MinHeight="72"
+                                                         MaxHeight="180"
+                                                         VerticalScrollBarVisibility="Auto"
+                                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                                         FontSize="12"/>
+
+                                                <WrapPanel Margin="0,8,0,0">
+                                                    <Button Content="{x:Static local:UiText.AcceptReplace}" Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                                            Height="28" FontSize="11" Padding="10,0" Margin="0,0,6,6"
+                                                            Click="BtnAcceptSuggestion_Click"/>
+                                                    <Button Content="{x:Static local:UiText.InsertBelow}" Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                            Height="28" FontSize="11" Padding="10,0" Margin="0,0,6,6"
+                                                            Click="BtnInsertSuggestionBelow_Click"/>
+                                                    <Button Content="{x:Static local:UiText.Comment}" Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                            Height="28" FontSize="11" Padding="10,0" Margin="0,0,6,6"
+                                                            Click="BtnCommentSuggestion_Click"/>
+                                                    <Button Content="{x:Static local:UiText.Copy}" Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                                            Height="28" FontSize="11" Padding="10,0" Margin="0,0,6,6"
+                                                            Click="BtnCopySuggestion_Click"/>
+                                                    <Button Content="{x:Static local:UiText.Skip}" Tag="{Binding}"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                                            Height="28" FontSize="11" Padding="10,0" Margin="0,0,6,6"
+                                                            Click="BtnSkipSuggestion_Click"/>
+                                                </WrapPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- API 文档和技能管理属于设置工作台，保留在控件中供后续设置入口复用。 -->
+            <TabItem x:Name="ApiTabItem" Header="{x:Static local:UiText.ApiTab}" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,10,14,8">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static local:UiText.ApiTitle}"
+                                   FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="{x:Static local:UiText.ApiDescription}"
+                                   FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,3,0,8"/>
+                        <WrapPanel Margin="0,0,0,8">
+                            <Button Content="{x:Static local:UiText.RefreshApi}"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,0"
+                                    Click="BtnRefreshApi_Click"/>
+                            <Button Content="{x:Static local:UiText.CopyApi}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0"
+                                    Click="BtnCopyApi_Click"/>
+                        </WrapPanel>
+                        <TextBlock Text="{x:Static local:UiText.ApiSafetyNote}"
+                                   FontSize="11" Opacity="0.68" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                        <TextBox x:Name="txtApiDocumentation"
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 AcceptsReturn="True"
+                                 MinHeight="180"
+                                 MaxHeight="360"
+                                 FontFamily="Consolas, Cascadia Mono, Microsoft YaHei UI"
+                                 FontSize="11"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                        <Separator Margin="0,12,0,10"/>
+                        <TextBlock Text="{x:Static local:UiText.GenerateSkill}"
+                                   FontWeight="SemiBold" FontSize="14"/>
+                        <TextBox x:Name="txtSkillName"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 materialDesign:HintAssist.Hint="{x:Static local:UiText.SkillName}"
+                                 Margin="0,8,0,6"/>
+                        <TextBox x:Name="txtSkillDescription"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 materialDesign:HintAssist.Hint="{x:Static local:UiText.SkillDescription}"
+                                 Margin="0,0,0,6"/>
+                        <TextBox x:Name="txtSkillGoal"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 materialDesign:HintAssist.Hint="{x:Static local:UiText.SkillGoal}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 MinHeight="70"
+                                 MaxHeight="140"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,8"/>
+                        <WrapPanel Margin="0,0,0,8">
+                            <Button x:Name="btnGenerateSkill"
+                                    Content="{x:Static local:UiText.GenerateSkill}"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,0"
+                                    Click="BtnGenerateSkill_Click"/>
+                            <Button x:Name="btnSaveSkill"
+                                    Content="{x:Static local:UiText.SaveSkill}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Height="30" FontSize="12" Padding="12,0"
+                                    Click="BtnSaveSkill_Click"/>
+                        </WrapPanel>
+                        <TextBlock Text="{x:Static local:UiText.SkillDraft}"
+                                   FontSize="11" Opacity="0.62" Margin="0,0,0,4"/>
+                        <TextBox x:Name="txtSkillDraft"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 MinHeight="180"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas, Cascadia Mono, Microsoft YaHei UI"
+                                 FontSize="11"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+    </Grid>
+</UserControl>

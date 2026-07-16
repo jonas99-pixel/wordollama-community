@@ -1,0 +1,980 @@
+<Window x:Class="WordOllama.NewUI.NewSetting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:WordOllama.NewUI"
+        xmlns:properties="clr-namespace:WordOllama.Properties"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+         d:DesignHeight="720" d:DesignWidth="960"
+         Width="960" Height="720" MinWidth="860" MinHeight="560"
+         ResizeMode="CanResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextOptions.TextFormattingMode="Ideal"
+         TextElement.FontSize="13"
+         AutomationProperties.Name="{local:Loc I18n_SettingsTitle}"
+        Background="{DynamicResource MaterialDesignPaper}"
+         FontFamily="Segoe UI, Microsoft YaHei UI"
+         WindowStartupLocation="CenterScreen"
+         ShowInTaskbar="False"
+         Closing="NewSetting_Closing"
+         Title="{local:Loc I18n_SettingsTitle}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" ColorAdjustment="{materialDesign:ColorAdjustment}"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml" />
+                <ResourceDictionary Source="ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TabControl Grid.Row="0" x:Name="SettingsNavigation"
+                    AutomationProperties.Name="{local:Loc I18n_SettingsTitle}"
+                    KeyboardNavigation.TabNavigation="Local"
+                    TabStripPlacement="Left"
+                    Padding="0" Margin="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+                    <Setter Property="MinWidth" Value="130"/>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="{x:Static properties:Resources.Setting_BaseSetting}" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.Setting_BaseSetting}"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Setting_AIMode}" Margin="0,0,0,12"/>
+                        <WrapPanel Margin="0,0,0,24">
+                            <RadioButton x:Name="OllamaMode" Content="Ollama" GroupName="AIMode" Margin="0,0,8,0" Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}"/>
+                            <RadioButton x:Name="ChatGPTMode" Content="{x:Static properties:Resources.Setting_OnlineModelMode}" GroupName="AIMode" Margin="0,0,8,0" Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}"/>
+                        </WrapPanel>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.强制规范输出语言实验性}" Margin="0,0,0,12"/>
+                        <ComboBox x:Name="LangMode" Style="{StaticResource MaterialDesignComboBox}" FontSize="14" Margin="0,0,0,24">
+                            <ComboBoxItem Content="{x:Static properties:Resources.不强制由AI自行判断}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.强制中文输出}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.强制英文输出}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.同原文语言实验性}"/>
+                        </ComboBox>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_DefaultOutputMode}" Margin="0,0,0,12"/>
+                        <ComboBox x:Name="DefaultOutputModeSelector"
+                                  Style="{StaticResource MaterialDesignComboBox}"
+                                  FontSize="14"
+                                  Margin="0,0,0,24"
+                                  SelectionChanged="DefaultOutputModeSelector_SelectionChanged">
+                            <ComboBoxItem Content="{local:Loc I18n_OutputModeAuto}" Tag="Auto"/>
+                            <ComboBoxItem Content="{local:Loc I18n_OutputModeInsertBelow}" Tag="InsertBelow"/>
+                            <ComboBoxItem Content="{local:Loc I18n_OutputModeInsertWithDiff}" Tag="InsertBelowWithDiff"/>
+                            <ComboBoxItem Content="{local:Loc I18n_OutputModeComment}" Tag="Comment"/>
+                            <ComboBoxItem Content="{local:Loc I18n_OutputModeReviewPane}" Tag="ReviewPane"/>
+                        </ComboBox>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                            <TextBlock Text="{x:Static properties:Resources.切换主题}" VerticalAlignment="Center" FontSize="14" Margin="0,0,14,0"/>
+                            <ToggleButton x:Name="ThemeToggleBtn"
+                                          materialDesign:ToggleButtonAssist.OnContent="{materialDesign:PackIcon Kind=WhiteBalanceSunny}"
+                                          Content="{materialDesign:PackIcon Kind=WeatherNight}"
+                                          Style="{StaticResource MaterialDesignActionToggleButton}"
+                                          Click="ToggleTheme_Click"/>
+                        </StackPanel>
+
+	                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+	                            <StackPanel VerticalAlignment="Center">
+	                                <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_DisableTaskNotifications}" Margin="0,0,0,4"/>
+	                                <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_DisableTaskNotificationsDesc}"/>
+	                            </StackPanel>
+	                            <ToggleButton x:Name="SuppressAgentNotifToggle"
+	                                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+	                                          Click="SuppressAgentNotifToggle_Click"
+	                                          VerticalAlignment="Center" Margin="24,0,0,0"/>
+	                        </StackPanel>
+
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+						    <StackPanel VerticalAlignment="Center">
+						        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_SkipPlanConfirm}" Margin="0,0,0,4"/>
+						        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_SkipPlanConfirmDesc}"/>
+						    </StackPanel>
+						    <ToggleButton x:Name="SuppressPlanConfirmationToggle"
+						                  Style="{StaticResource MaterialDesignSwitchToggleButton}"
+						                  Click="SuppressPlanConfirmationToggle_Click"
+						                  VerticalAlignment="Center" Margin="24,0,0,0"/>
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+						    <StackPanel VerticalAlignment="Center">
+						        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_SkipDiffReview}" Margin="0,0,0,4"/>
+						        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_SkipDiffReviewDesc}"/>
+						    </StackPanel>
+						    <ToggleButton x:Name="SuppressDiffReviewToggle"
+						                  Style="{StaticResource MaterialDesignSwitchToggleButton}"
+						                  Click="SuppressDiffReviewToggle_Click"
+						                  VerticalAlignment="Center" Margin="24,0,0,0"/>
+						</StackPanel>
+
+	                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+	                            <Button x:Name="OpenConfigFolderButton"
+	                                    Style="{StaticResource MaterialDesignRaisedButton}"
+	                                    Content="{x:Static properties:Resources.打开设置文件目录}"
+	                                    Click="OpenConfigFolderButton_Click"/>
+	                        </StackPanel>
+	                    </StackPanel>
+	                </ScrollViewer>
+	            </TabItem>
+
+	            <TabItem Header="{x:Static properties:Resources.Ollama设置}" HorizontalAlignment="Left">
+	                <ScrollViewer VerticalScrollBarVisibility="Auto">
+	                    <StackPanel Margin="28,20,60,20">
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="EndPoint"/>
+                        <TextBox x:Name="OllamaEndPoint" AutomationProperties.Name="{x:Static properties:Resources.Ollama设置}" Style="{StaticResource MaterialDesignTextBox}"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.默认HttpLocalhost11434}"
+                                 FontSize="14" Margin="0,0,0,20"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Setting_O_MS}"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="OllamaModelSeletor" AutomationProperties.Name="{x:Static properties:Resources.Ollama设置}" ItemsSource="{Binding OllamaModels}" DisplayMemberPath="Name"
+                                      SelectedValuePath="Name" Style="{StaticResource MaterialDesignComboBox}"
+                                      materialDesign:HintAssist.Hint="{x:Static properties:Resources.下拉选择模型}" Grid.Column="0" FontSize="14"/>
+                            <Button Style="{StaticResource MaterialDesignOutlinedDarkButton}" Content="{x:Static properties:Resources.Common_Refresh}"
+                                    Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Right" Click="RefreshBtn_Click"/>
+                        </Grid>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Tokens上限}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.影响AI回复内容的长度数值越大回复越长占用内存显存越多}" Margin="0,2,0,8"/>
+                        <TextBox x:Name="OllamaMaxToken" Style="{StaticResource MaterialDesignTextBox}"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.推荐4096}" FontSize="14" Margin="0,0,0,20"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.温度设置}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.温度越低AI输出越严谨反之越具有创造性}" Margin="0,2,0,8"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0" x:Name="OllamaTemperatureSettingSlider" Maximum="2" Minimum="0"
+                                    Style="{StaticResource MaterialDesign3.MaterialDesignDiscreteSlider}"
+                                    TickFrequency="0.1" TickPlacement="BottomRight" Value="0.5" Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="1" Style="{StaticResource MaterialDesignBodySmallTextBlock}"
+                                       Text="{Binding Value, ElementName=OllamaTemperatureSettingSlider, StringFormat={}{0:F1}}"
+                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,20"/>
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Ollama模型管理}" Margin="0,0,0,16"/>
+
+                        <TextBlock Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Text="{x:Static properties:Resources.下载新模型}" Margin="0,0,0,6"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.下载完成前请勿关闭本设置窗口可最小化}" Margin="0,0,0,10"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="ModelNameInput"
+                                         Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.输入模型名称}"
+                                         VerticalAlignment="Center"/>
+                                <Button x:Name="ModelDownloadBtn" Grid.Column="1"
+                                        Style="{StaticResource MaterialDesignOutlinedDarkButton}"
+                                        Content="{x:Static properties:Resources.下载}"
+                                        Click="ModelDownloadBtn_Click"
+                                        Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Grid>
+
+                        <TextBlock x:Name="txtStatus" Visibility="Collapsed" Margin="0,0,0,8"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar x:Name="progressBar" Visibility="Collapsed" Minimum="0" Maximum="100" Value="0" Grid.Column="0"/>
+                            <TextBlock x:Name="lblProgress" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}" Grid.Column="1"/>
+                        </Grid>
+
+                        <DataGrid x:Name="OllamaModelDetails"
+                                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                  IsReadOnly="True" HeadersVisibility="All" SelectionMode="Extended" SelectionUnit="FullRow"
+                                  Margin="0,0,0,20">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static properties:Resources.模型名称}" Binding="{Binding Name}" Width="auto"/>
+                                <DataGridTextColumn Header="{x:Static properties:Resources.大小GB}" Binding="{Binding SizeGB}" Width="auto"/>
+                                <DataGridTextColumn Header="{x:Static properties:Resources.参数量}" Binding="{Binding ParameterSize}" Width="auto"/>
+                                <DataGridTextColumn Header="{x:Static properties:Resources.拉取日期}" Binding="{Binding ModifiedAt}" Width="auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Button Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                                Content="{x:Static properties:Resources.删除所选模型}"
+                                Foreground="#FFFD0000" BorderBrush="#FFFD0000"
+                                Width="120" HorizontalAlignment="Left"
+                                Click="DeleteButton_Click" Margin="0,0,0,32"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{x:Static properties:Resources.在线模型设置}" HorizontalAlignment="Left">
+                <Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.在线模型设置}"/>
+
+                        <!-- Model Name -->
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.模型}"/>
+                        <TextBox x:Name="ChatGPTModel" Style="{StaticResource MaterialDesignTextBox}"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.模型名称}" FontSize="14" Margin="0,0,0,20"/>
+
+                        <!-- Max Tokens -->
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_OnlineMaxTokens}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_OnlineMaxTokensDesc}" Margin="0,2,0,8"/>
+                        <TextBox x:Name="ChatGPTMaxToken" Style="{DynamicResource MaterialDesignTextBox}"
+                                 materialDesign:HintAssist.Hint="{local:Loc I18n_OnlineMaxTokensHint}" FontSize="14" Margin="0,0,0,20"/>
+
+                        <!-- Context Window -->
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_ContextWindow}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_ContextWindowDesc}" Margin="0,2,0,8"/>
+                        <TextBox x:Name="OnlineContextWindow" Style="{DynamicResource MaterialDesignTextBox}"
+                                 materialDesign:HintAssist.Hint="{local:Loc I18n_DefaultContextWindowHint}" FontSize="14" Margin="0,0,0,20"/>
+
+                        <!-- Temperature -->
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.温度设置}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.温度越低AI输出越严谨反之越具有创造性}" Margin="0,2,0,8"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0" x:Name="ChatGPTTemperatureSettingSlider" Maximum="2" Minimum="0"
+                                    Style="{StaticResource MaterialDesign3.MaterialDesignDiscreteSlider}"
+                                    TickFrequency="0.1" TickPlacement="BottomRight" Value="0.5" Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="1" Style="{StaticResource MaterialDesignBodySmallTextBlock}"
+                                       Text="{Binding Value, ElementName=ChatGPTTemperatureSettingSlider, StringFormat={}{0:F1}}"
+                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </Grid>
+
+                        <!-- Thinking -->
+                        <Separator Margin="0,0,0,20"/>
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_Thinking}" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <TextBlock Text="{local:Loc I18n_EnableThinking}" VerticalAlignment="Center" FontSize="14" Margin="0,0,12,0"/>
+                            <ToggleButton x:Name="ThinkingEnabledToggle"
+                                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                          VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <TextBlock Text="Reasoning Effort" VerticalAlignment="Center" FontSize="14" Margin="0,0,12,0"/>
+                            <ComboBox x:Name="ReasoningEffortSelector"
+                                      Style="{StaticResource MaterialDesignComboBox}"
+                                      Width="150" FontSize="14" VerticalAlignment="Center" SelectedIndex="2">
+                                <ComboBoxItem Content="low"/>
+                                <ComboBoxItem Content="medium"/>
+                                <ComboBoxItem Content="high"/>
+                                <ComboBoxItem Content="xhigh"/>
+                                <ComboBoxItem Content="max"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_ThinkingDesc}" Margin="0,0,0,20" TextWrapping="Wrap"/>
+
+                        <!-- Model Management -->
+                        <Separator Margin="0,0,0,20"/>
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.TAB_MODEL_MANAGEMENT}" Margin="0,0,0,12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Button x:Name="AddModelButton" Content="{x:Static properties:Resources.新增模型}"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Click="AddModelButton_Click" Margin="0,0,12,0"/>
+                            <Button x:Name="EditModelButton" Content="{local:Loc I18n_Edit}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Click="EditModelButton_Click" Margin="0,0,12,0"/>
+                            <Button x:Name="LoadThisModel" Content="{x:Static properties:Resources.载入模型}"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Click="LoadThisModel_Click" Margin="0,0,12,0"/>
+                            <Button x:Name="RemoveModelButton" Content="{x:Static properties:Resources.删除模型}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Foreground="#FFFD0000" BorderBrush="#FFFD0000"
+                                    Click="DeleteChatGPTModel_Click" Margin="0,0,12,0"/>
+                            <ToggleButton x:Name="ToggleKeyVisibility"
+                                          materialDesign:ToggleButtonAssist.OnContent="{materialDesign:PackIcon Kind=Eye}"
+                                          Content="{materialDesign:PackIcon Kind=EyeOff}"
+                                          Style="{StaticResource MaterialDesignActionToggleButton}"
+                                          Height="20" Width="20" Click="ToggleButton_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="ChatGPTModelDetails" AutoGenerateColumns="False" CanUserAddRows="False"
+                                  Style="{StaticResource MaterialDesignDataGrid}" CanUserDeleteRows="False"
+                                  CanUserReorderColumns="False" IsReadOnly="True" CanUserSortColumns="False"
+                                  Margin="0,0,0,20"
+                                  PreviewMouseWheel="ChatGPTModelDetails_PreviewMouseWheel">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Provider" Binding="{Binding ProviderType}" Width="Auto"/>
+                                <DataGridTextColumn Header="{x:Static properties:Resources.模型名称}" Binding="{Binding ModelName}" Width="*"/>
+                                <DataGridTextColumn Header="EndPoint" Binding="{Binding EndPoint}" Width="*"/>
+                                <DataGridTextColumn Header="API Key" Binding="{Binding ApiKey}" Width="*" CellStyle="{StaticResource MaterialDesignDataGridCell}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Hidden fields for code-behind compatibility -->
+                        <TextBox x:Name="ChatGPTEndPoint" Visibility="Collapsed"/>
+                        <PasswordBox x:Name="ChatGPTAPIKey" Visibility="Collapsed"
+                                     Style="{DynamicResource MaterialDesignRevealPasswordBox}"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                    <Popup x:Name="AddModelPopup" PlacementTarget="{Binding ElementName=AddModelButton}"
+                           Placement="Center" AllowsTransparency="True" PopupAnimation="Fade">
+                        <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                BorderThickness="1" Padding="24" CornerRadius="12"
+                                Effect="{DynamicResource MaterialDesignShadowDepth3}"
+                                MouseLeftButtonDown="ModelPopupBorder_MouseLeftButtonDown"
+                                MouseMove="ModelPopupBorder_MouseMove"
+                                MouseLeftButtonUp="ModelPopupBorder_MouseLeftButtonUp">
+                            <ScrollViewer MaxHeight="600">
+                            <StackPanel Width="460">
+                                <TextBlock x:Name="ModelPopupTitle" Text="{x:Static properties:Resources.新增模型}"
+                                           Style="{StaticResource ModernSectionHeader}" Margin="0,0,0,16"/>
+
+                                <!-- Service Provider + Type (side by side) -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{x:Static properties:Resources.选择服务商}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                        <ComboBox x:Name="ServiceProviderComboBox"
+                                                  materialDesign:HintAssist.Hint="{local:Loc I18n_AutoEndpointHint}"
+                                                  SelectionChanged="ServiceProviderComboBox_SelectionChanged"
+                                                  Style="{StaticResource MaterialDesignComboBox}">
+                                            <ComboBoxItem Content=""/>
+                                            <ComboBoxItem Content="DeepSeek"/>
+                                            <ComboBoxItem Content="{local:Loc I18n_ServiceProviderQwen}"/>
+                                            <ComboBoxItem Content="{local:Loc I18n_ServiceProviderDoubao}"/>
+                                            <ComboBoxItem Content="{local:Loc I18n_ServiceProviderZhipuGlm}"/>
+                                            <ComboBoxItem Content="Kimi"/>
+                                            <ComboBoxItem Content="Siliconflow"/>
+                                            <ComboBoxItem Content="Azure OpenAI"/>
+                                            <ComboBoxItem Content="OpenAI"/>
+                                            <ComboBoxItem Content="MiniMax"/>
+                                            <ComboBoxItem Content="vllm"/>
+                                            <ComboBoxItem Content="llama.cpp"/>
+                                            <ComboBoxItem Content="LM Studio"/>
+                                            <ComboBoxItem Content="Claude"/>
+                                            <ComboBoxItem Content="Gemini"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="→" VerticalAlignment="Bottom" FontSize="20" Margin="6,0" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="{x:Static properties:Resources.API类型}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                        <ComboBox x:Name="PopupProviderTypeCombo"
+                                                  Style="{StaticResource MaterialDesignComboBox}">
+                                            <ComboBoxItem Content="OpenAI" IsSelected="True"/>
+                                            <ComboBoxItem Content="Claude"/>
+                                            <ComboBoxItem Content="Gemini"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Separator Margin="0,0,12,0"/>
+
+                                <!-- Endpoint -->
+                                <TextBlock Text="{x:Static properties:Resources.端点Endpoint}" FontSize="13" FontWeight="SemiBold" Margin="0,8,0,4"/>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="EndPointTextBox"
+                                             materialDesign:HintAssist.Hint="https://api.xxxx.com/v1/chat/completions"
+                                             FontSize="14" Margin="0,0,8,0"/>
+                                    <Button x:Name="ResetEndPointButton" Grid.Column="1" Content="{local:Loc I18n_Default}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}" Width="60"
+                                            Click="ResetEndPointButton_Click"/>
+                                </Grid>
+
+                                <!-- API Key -->
+                                <TextBlock Text="API Key" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <PasswordBox x:Name="ApiKeyPasswordBox"
+                                                 materialDesign:HintAssist.Hint="API Key"
+                                                 Margin="0,0,8,0"
+                                                 Style="{DynamicResource MaterialDesignRevealPasswordBox}"/>
+                                    <Button x:Name="OAuth2LoginButton" Grid.Column="1" Content="OAuth2"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}" Width="70"
+                                            Click="OAuth2LoginButton_Click" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <!-- Fetch Models + Select -->
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="FetchModelsButton"
+                                            Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                            Click="FetchModelsButton_Click" Margin="0,0,12,0" Padding="8,4">
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="Refresh" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                            <TextBlock Text="{x:Static properties:Resources.获取模型列表}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="TestModelConnectionButton"
+                                            Content="{local:Loc I18n_TestConnection}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Click="TestModelConnectionButton_Click" Margin="0,0,12,0" Padding="8,4"/>
+                                    <ComboBox x:Name="ModelSelector" Grid.Column="1"
+                                              materialDesign:HintAssist.Hint="{local:Loc I18n_SelectModelHint}"
+                                              Style="{StaticResource MaterialDesignComboBox}" FontSize="14"
+                                              SelectionChanged="ModelSelector_SelectionChanged"
+                                              IsEditable="True"/>
+                                </Grid>
+
+                                <!-- Model Name -->
+                                <TextBlock Text="{x:Static properties:Resources.模型名称}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <TextBox x:Name="ModelNameTextBox"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.模型名称}"
+                                         Margin="0,0,0,20"/>
+                                <TextBlock x:Name="ModelConnectionStatus" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,-12,0,16"/>
+
+                                <TextBlock Text="{local:Loc I18n_ToolCallingMode}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                 <ComboBox x:Name="PopupToolCallingMode" Style="{StaticResource MaterialDesignComboBox}" Margin="0,0,0,20">
+                                     <ComboBoxItem Tag="Auto" Content="{local:Loc I18n_ToolCallingAuto}"/>
+                                     <ComboBoxItem Tag="ReAct" Content="{local:Loc I18n_ToolCallingReAct}"/>
+                                     <ComboBoxItem Tag="Native" Content="{local:Loc I18n_ToolCallingNative}"/>
+                                 </ComboBox>
+
+                                 <TextBlock Text="{local:Loc I18n_ModelCapabilities}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                 <TextBlock Text="{local:Loc I18n_ModelCapabilitiesDesc}" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                 <WrapPanel Margin="0,0,0,8">
+                                     <CheckBox x:Name="PopupSupportsStreaming" Content="{local:Loc I18n_CapabilityStreaming}" Margin="0,0,18,8"/>
+                                     <CheckBox x:Name="PopupSupportsVision" Content="{local:Loc I18n_CapabilityVision}" Margin="0,0,18,8"/>
+                                     <CheckBox x:Name="PopupSupportsJsonOutput" Content="{local:Loc I18n_CapabilityJson}" Margin="0,0,0,8"/>
+                                 </WrapPanel>
+                                 <TextBlock Text="{local:Loc I18n_CapabilityContextWindow}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                 <TextBox x:Name="PopupContextWindow" Style="{StaticResource MaterialDesignTextBox}"
+                                          materialDesign:HintAssist.Hint="{local:Loc I18n_CapabilityContextWindowHint}" Margin="0,0,0,20"/>
+
+                                <!-- Buttons -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button x:Name="CancelAddModel" Content="{x:Static properties:Resources.Common_Cancel}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,8,0"
+                                            Click="CancelAddModel_Click"/>
+                                    <Button x:Name="ConfirmAddModel" Content="{x:Static properties:Resources.Common_Confirm}"
+                                            Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                            Click="ConfirmAddModel_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{x:Static properties:Resources.进阶设置}" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.进阶设置}"/>
+                        <TextBlock Text="{x:Static properties:Resources.请充分了解各项内容后再进行修改修改完成后需要重启Ollama程序才能成功应用}"
+                                   FontWeight="SemiBold" Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                   Margin="0,0,0,24" TextWrapping="Wrap"/>
+
+                        <!-- Ollama 模型保存位置 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Ollama模型保存位置OLLAMA_MODELS}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBox x:Name="OllamaModelPath"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.默认CUsersUsernameOllamaModels}"
+                                         Width="300" FontSize="14" Margin="0,0,12,0"/>
+                                <Button x:Name="ChangeOllamaModelPath" Content="{x:Static properties:Resources.修改}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}" Margin="0,0,8,0"
+                                        Click="SetEnvironmentVariableButton_Click"/>
+                                <Button x:Name="ResetOllamaModelPath" Content="{x:Static properties:Resources.恢复默认}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                        Click="ResetOllamaModelPath_Click"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.移动模型耗时较久请勿随意关闭程序}" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <!-- Ollama 网络模式 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Ollama网络模式OLLAMA_HOST}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="{x:Static properties:Resources.本地模式}" FontSize="14" VerticalAlignment="Center"/>
+                                <ToggleButton x:Name="OllamaNetMode"
+                                              Click="OllamaNetMode_Click"
+                                              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                              VerticalAlignment="Center" Margin="12,0,12,0">
+                                    <materialDesign:ToggleButtonAssist.SwitchTrackOnBackground>
+                                        <SolidColorBrush Color="Green"/>
+                                    </materialDesign:ToggleButtonAssist.SwitchTrackOnBackground>
+                                    <materialDesign:ToggleButtonAssist.SwitchTrackOffBackground>
+                                        <SolidColorBrush Color="Red"/>
+                                    </materialDesign:ToggleButtonAssist.SwitchTrackOffBackground>
+                                </ToggleButton>
+                                <TextBlock Text="{x:Static properties:Resources.共享模式}" FontSize="14" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.设置共享模式后请更换OllamaEndPoint为本机IP地址}" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <!-- Ollama 端口 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Ollama端口OLLAMA_PORT}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBox x:Name="OllamaPortText"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.默认11434}"
+                                         Width="300" FontSize="14" Margin="0,0,12,0"/>
+                                <Button x:Name="SetOllamaPort" Content="{x:Static properties:Resources.修改}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}" Margin="0,0,8,0"
+                                        Click="SetOllamaPort_Click"/>
+                                <Button x:Name="ResetOllamaPort" Content="{x:Static properties:Resources.恢复默认}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                        Click="ResetOllamaPort_Click"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.修改后请更改OllamaEndPoint的端口为上述端口}" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <!-- Ollama 存活时间 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Ollama模型存活时间OLLAMA_KEEP_ALIVE}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBox x:Name="OllamaAliveText"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.默认5m}"
+                                         Width="300" FontSize="14" Margin="0,0,12,0"/>
+                                <Button x:Name="SetOllamaAlive" Content="{x:Static properties:Resources.修改}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}" Margin="0,0,8,0"
+                                        Click="SetOllamaAlive_Click"/>
+                                <Button x:Name="ResetOllamaAlive" Content="{x:Static properties:Resources.恢复默认}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                        Click="ResetOllamaAlive_Click"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.示例5m5分钟24h24小时1永远0生成完就立即释放模型}" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <!-- Ollama 最大载入模型数 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.Ollama最大同时载入模型数OLLAMA_MAX_LOADED_MODELS}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBox x:Name="OllamaMaxLoadModelText"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.默认3GPU数量3CPU推理}"
+                                         Width="300" FontSize="14" Margin="0,0,12,0"/>
+                                <Button x:Name="SetOllamaMaxLoadModel" Content="{x:Static properties:Resources.修改}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}" Margin="0,0,8,0"
+                                        Click="SetOllamaMaxLoadModel_Click"/>
+                                <Button x:Name="ResetOllamaMaxLoadModel" Content="{x:Static properties:Resources.恢复默认}"
+                                        Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                        Click="ResetOllamaMaxLoadModel_Click"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ModernCaption}" Text="{x:Static properties:Resources.大内存显存设备专享减少重新载入模型时间请设置不超过3GPU数量}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Skill &amp; MCP" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{local:Loc I18n_SkillMcpServers}" Margin="0,0,0,20"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_InstalledSkills}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_SkillsDesc}" Margin="0,4,0,12" TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <Button Content="{local:Loc I18n_OpenSkillFolder}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="OpenSkillFolder_Click" Margin="0,0,8,0"/>
+                            <Button Content="{local:Loc I18n_ImportSkillZip}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="ImportSkillZip_Click" Margin="0,0,8,0"/>
+                            <Button Content="{local:Loc I18n_RefreshList}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="RefreshSkills_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="SkillDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                  IsReadOnly="True" SelectionMode="Single" Margin="0,0,0,24"
+                                  Style="{StaticResource MaterialDesignDataGrid}" MaxHeight="250">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{local:Loc I18n_Name}" Binding="{Binding Name}" Width="150"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_Description}" Binding="{Binding Description}" Width="*"/>
+                                <DataGridTemplateColumn Header="{local:Loc I18n_Actions}" Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="🗑" FontSize="14" ToolTip="{local:Loc I18n_Delete}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Click="DeleteSkill_Click" Tag="{Binding FolderPath}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_McpServers}" Margin="0,0,0,8"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_McpServersDesc}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <Button Content="{local:Loc I18n_AddServer}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="AddMcpServer_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="McpServerDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                  IsReadOnly="True" SelectionMode="Single" Margin="0,0,0,24"
+                                  Style="{StaticResource MaterialDesignDataGrid}" MaxHeight="250">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{local:Loc I18n_Name}" Binding="{Binding Name}" Width="120"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_Transport}" Binding="{Binding Transport}" Width="110"/>
+                                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="180"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_Command}" Binding="{Binding Command}" Width="120"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_Args}" Binding="{Binding Args}" Width="*"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_WorkingDirectory}" Binding="{Binding WorkingDirectory}" Width="150"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_McpHealth}" Binding="{Binding ConnectionState}" Width="90"/>
+                                <DataGridTemplateColumn Header="{local:Loc I18n_Enabled}" Width="50">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding Enabled}" Click="ToggleMcpEnabled_Click"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="{local:Loc I18n_Actions}" Width="195">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Content="{local:Loc I18n_Test}" FontSize="11" ToolTip="{local:Loc I18n_TestMcpTooltip}"
+                                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                                        Click="TestMcpServer_Click" Tag="{Binding Name}" Margin="0,0,4,0"/>
+                                                <Button Content="{local:Loc I18n_McpTools}" FontSize="11" ToolTip="{local:Loc I18n_McpToolsTooltip}"
+                                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                                        Click="ConfigureMcpTools_Click" Tag="{Binding Name}" Margin="0,0,4,0"/>
+                                                <Button Content="✏️" FontSize="11" ToolTip="{local:Loc I18n_EditTooltip}"
+                                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                                        Click="EditMcpServer_Click" Tag="{Binding Name}" Margin="0,0,4,0"/>
+                                                <Button Content="🗑" FontSize="11" ToolTip="{local:Loc I18n_DeleteTooltip}" Foreground="#FFFD0000"
+                                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                                        Click="DeleteMcpServer_Click" Tag="{Binding Name}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Popup x:Name="McpServerPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade" IsOpen="False">
+                            <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                    BorderThickness="1" Padding="24" CornerRadius="12"
+                                    Effect="{DynamicResource MaterialDesignShadowDepth3}">
+                                <StackPanel Width="520">
+                                    <TextBlock x:Name="McpPopupTitle" Text="{local:Loc I18n_AddMcpServer}"
+                                               Style="{StaticResource ModernSectionHeader}" Margin="0,0,0,20"/>
+                                    <TextBox x:Name="McpNameBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpNameHint}" Margin="0,0,0,12"/>
+                                    <ComboBox x:Name="McpTransportBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpTransportHint}" Margin="0,0,0,12">
+                                        <ComboBoxItem Content="stdio"/>
+                                        <ComboBoxItem Content="streamable-http"/>
+                                        <ComboBoxItem Content="sse"/>
+                                    </ComboBox>
+                                    <TextBox x:Name="McpUrlBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpUrlHint}" Margin="0,0,0,12"/>
+                                    <TextBox x:Name="McpCommandBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpCommandHint}" Margin="0,0,0,12"/>
+                                    <TextBox x:Name="McpArgsBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpArgsHint}" Margin="0,0,0,12"/>
+                                    <TextBox x:Name="McpWorkingDirectoryBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpWorkingDirectoryHint}" Margin="0,0,0,12"/>
+                                    <TextBox x:Name="McpEnvBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpEnvHint}"
+                                             AcceptsReturn="True" TextWrapping="NoWrap"
+                                             VerticalScrollBarVisibility="Auto" MinHeight="72" Margin="0,0,0,12"/>
+                                    <TextBox x:Name="McpHeadersBox" materialDesign:HintAssist.Hint="{local:Loc I18n_McpHeadersHint}"
+                                             AcceptsReturn="True" TextWrapping="NoWrap"
+                                             VerticalScrollBarVisibility="Auto" MinHeight="72" Margin="0,0,0,20"/>
+                                    <CheckBox x:Name="McpTrustedCheckBox" Content="{local:Loc I18n_McpTrustServer}"
+                                              ToolTip="{local:Loc I18n_McpTrustServerTooltip}" Margin="0,0,0,20"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{local:Loc I18n_Cancel}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="McpCancel_Click" Margin="0,0,8,0"/>
+                                        <Button Content="{local:Loc I18n_OK}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="McpConfirm_Click"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+
+                        <Popup x:Name="McpToolPermissionsPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade" IsOpen="False">
+                            <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                    BorderThickness="1" Padding="24" CornerRadius="12"
+                                    Effect="{DynamicResource MaterialDesignShadowDepth3}">
+                                <StackPanel Width="420">
+                                    <TextBlock Text="{local:Loc I18n_McpTools}" Style="{StaticResource ModernSectionHeader}" Margin="0,0,0,8"/>
+                                    <TextBlock Text="{local:Loc I18n_McpToolsDesc}" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                    <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20">
+                                        <StackPanel x:Name="McpToolPermissionsPanel"/>
+                                    </ScrollViewer>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{local:Loc I18n_Cancel}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="CancelMcpToolPermissions_Click" Margin="0,0,8,0"/>
+                                        <Button Content="{local:Loc I18n_Save}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="SaveMcpToolPermissions_Click"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{local:Loc I18n_AgentSettings}" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{local:Loc I18n_AgentSettings}" Margin="0,0,0,20"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_MaxTaskIterations}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_MaxTaskIterationsDesc}" Margin="0,2,0,12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                            <CheckBox x:Name="AgentUnlimitedCheck" Content="{local:Loc I18n_Unlimited}" VerticalAlignment="Center" Margin="0,0,16,0" Click="AgentUnlimitedCheck_Click"/>
+                            <TextBlock Text="{local:Loc I18n_MaxRounds}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox x:Name="AgentMaxIterationsBox" Width="80" Text="20"
+                                     materialDesign:HintAssist.Hint="{local:Loc I18n_PositiveIntegerHint}"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        </StackPanel>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_AgentExecutionMode}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_AgentExecutionModeDesc}" Margin="0,2,0,12" TextWrapping="Wrap"/>
+                        <ComboBox x:Name="AgentExecutionModeSelector" Width="280" Margin="0,0,0,24"
+                                  Style="{StaticResource MaterialDesignComboBox}"
+                                  SelectionChanged="AgentExecutionModeSelector_SelectionChanged">
+                            <ComboBoxItem Tag="ViewOnly" Content="{local:Loc I18n_AgentModeViewOnly}"/>
+                            <ComboBoxItem Tag="ProposeChanges" Content="{local:Loc I18n_AgentModeProposeChanges}"/>
+                            <ComboBoxItem Tag="TrackedChanges" Content="{local:Loc I18n_AgentModeTrackedChanges}"/>
+                        </ComboBox>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_AgentExternalToolsTitle}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_AgentExternalToolsDesc}"
+                                   Margin="0,2,0,12" TextWrapping="Wrap"/>
+                        <ToggleButton x:Name="AgentExternalToolsToggle"
+                                      Content="{local:Loc I18n_AgentExternalToolsToggle}"
+                                      Style="{StaticResource MaterialDesignOutlinedButton}"
+                                      Click="AgentExternalToolsToggle_Click"
+                                      Margin="0,0,0,24"/>
+
+                        <Separator Margin="0,0,0,24"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_SilentReview}" Margin="0,0,0,4"/>
+                                <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_SilentReviewDesc}"/>
+                            </StackPanel>
+                            <ToggleButton x:Name="LinterEnabledToggle"
+                                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                          Click="LinterEnabledToggle_Click"
+                                          VerticalAlignment="Center" Margin="24,0,0,0"/>
+                        </StackPanel>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_SilentReviewModel}" Margin="0,0,0,8"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_SilentReviewModelDesc}" Margin="0,0,0,16"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <TextBlock Text="{local:Loc I18n_OllamaModel}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+                            <ComboBox x:Name="LinterOllamaModelSelector" Width="220"
+                                      ItemsSource="{Binding OllamaModels}" DisplayMemberPath="Name"
+                                      SelectedValuePath="ModelName"
+                                      Style="{StaticResource MaterialDesignComboBox}"
+                                      materialDesign:HintAssist.Hint="{local:Loc I18n_SelectOptionalModelHint}"
+                                      SelectionChanged="LinterOllamaModelSelector_SelectionChanged"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <TextBlock Text="{local:Loc I18n_OnlineModel}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+                            <ComboBox x:Name="LinterOnlineModelSelector" Width="220"
+                                      ItemsSource="{Binding ChatGPTModels}" DisplayMemberPath="ModelName"
+                                      SelectedValuePath="Name"
+                                      Style="{StaticResource MaterialDesignComboBox}"
+                                      materialDesign:HintAssist.Hint="{local:Loc I18n_SelectOptionalModelHint}"
+                                      SelectionChanged="LinterOnlineModelSelector_SelectionChanged"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <TextBlock Text="{local:Loc I18n_ModelName}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+                            <TextBox x:Name="LinterModelBox" Width="220"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     materialDesign:HintAssist.Hint="{local:Loc I18n_ManualOrDropdownHint}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <TextBlock Text="EndPoint：" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+                            <TextBox x:Name="LinterEndPointBox" Width="300"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     materialDesign:HintAssist.Hint="{local:Loc I18n_UseMainEndpointHint}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                            <TextBlock Text="{local:Loc I18n_ReviewIntervalSeconds}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+                            <TextBox x:Name="LinterDebounceBox" Width="80" Text="30"
+                                     materialDesign:HintAssist.Hint="{local:Loc I18n_PositiveIntegerHint}"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        </StackPanel>
+
+                        <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                HorizontalAlignment="Left"
+                                Click="SaveLinterSettings_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center"/>
+                                <TextBlock Text="{local:Loc I18n_SaveReviewSettings}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Separator Margin="0,24,0,20"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_Diagnostics}"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_EnableDiagnosticLoggingDesc}" Margin="0,2,0,12" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton x:Name="DiagnosticLoggingToggle"
+                                          Content="{local:Loc I18n_EnableDiagnosticLogging}"
+                                          Style="{StaticResource MaterialDesignOutlinedButton}"
+                                          Click="DiagnosticLoggingToggle_Click" Margin="0,0,12,0"/>
+                            <Button Content="{local:Loc I18n_ClearDiagnosticLog}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Click="ClearDiagnosticLog_Click"/>
+                            <Button Content="{local:Loc I18n_CopyDiagnostics}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Click="CopyDiagnostics_Click" Margin="12,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Markdown 转换设置 -->
+            <TabItem Header="{x:Static properties:Resources.Markdown转换}" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.Markdown转换样式设置}" Margin="0,0,0,8"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_MarkdownStyleDescription}" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{local:Loc I18n_MarkdownElement}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{local:Loc I18n_WordStyleName}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Loc I18n_Heading1Markdown}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="1" Grid.Column="2" x:Name="MdStyleH1" IsEditable="True" Text="Heading 1" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{local:Loc I18n_Heading2Markdown}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="2" Grid.Column="2" x:Name="MdStyleH2" IsEditable="True" Text="Heading 2" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="{local:Loc I18n_Heading3Markdown}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="3" Grid.Column="2" x:Name="MdStyleH3" IsEditable="True" Text="Heading 3" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{local:Loc I18n_BodyText}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="4" Grid.Column="2" x:Name="MdStyleP" IsEditable="True" Text="Normal" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="{local:Loc I18n_CodeBlock}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="5" Grid.Column="2" x:Name="MdStyleCode" IsEditable="True" Text="Normal" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{local:Loc I18n_BlockQuoteMarkdown}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="6" Grid.Column="2" x:Name="MdStyleBlockquote" IsEditable="True" Text="Normal" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="{local:Loc I18n_UnorderedList}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="7" Grid.Column="2" x:Name="MdStyleUl" IsEditable="True" Text="List Bullet" Margin="0,0,0,8"/>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,16"/>
+
+                        <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.新建Word样式}" Margin="0,0,0,8"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_CreateStyleDescription}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="NewStyleNameBox"
+                                     materialDesign:HintAssist.Hint="{local:Loc I18n_NewStyleNameHint}"
+                                     Style="{DynamicResource MaterialDesignTextBox}" Margin="0,0,12,0"/>
+                            <Button Grid.Column="1" Content="{x:Static properties:Resources.创建样式}"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Click="CreateNewWordStyle_Click"/>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="{x:Static properties:Resources.刷新样式列表}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Click="RefreshMdStyles_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{x:Static properties:Resources.更新说明}" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.更新说明}" Margin="0,0,0,16"/>
+                        <TextBlock x:Name="UpdateLogTextBlock" FontSize="14"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{x:Static properties:Resources.Setting_About}" HorizontalAlignment="Left">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="28,20,60,20">
+                        <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.Setting_About}" Margin="0,0,0,16"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22">
+                            <Run Text="{x:Static properties:Resources.本插件名称WordOllamaX0aX0a制作者李伯阳北京市隆安广州律师事务所X0aX0a声明X0a1本插件不会收集您的任何数据和个人信息X0a2AI人工智能所生成的内容仅供参考可能存在错误对于任何AI生成的文本本制作者不承担任何责任X0a3本插件完全免费如您在其他地方付费后获取本插件请进行举报X0aX0a如您对本插件有任何建议或疑惑请联系微信LegalLby}"/>
+                            <Run Text="{x:Static properties:Resources.X0aX0a查看使用说明文档}"/>
+                            <Hyperlink NavigateUri="https://wordollama.lslby.com">https://wordollama.lslby.com</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Save feedback and commit action stay outside the navigation surface. -->
+        <Grid Grid.Row="1" Margin="8,8">
+            <TextBlock x:Name="ValidationMessage"
+                       Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       MaxWidth="680"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{local:Loc I18n_Cancel}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    AutomationProperties.Name="{local:Loc I18n_Cancel}"
+                    FocusVisualStyle="{StaticResource ModernFocusRing}"
+                    Margin="0,0,8,0"
+                    Click="CancelSettings_Click"/>
+            <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                    AutomationProperties.Name="{x:Static properties:Resources.Common_Save}"
+                    FocusVisualStyle="{StaticResource ModernFocusRing}"
+                    IsDefault="True"
+                    Click="Save_btn_Click">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center"/>
+                    <TextBlock Text="{x:Static properties:Resources.Common_Save}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

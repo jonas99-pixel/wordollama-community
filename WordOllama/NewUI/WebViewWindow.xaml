@@ -1,0 +1,16 @@
+<Window x:Class="WordOllama.NewUI.WebViewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:properties="clr-namespace:WordOllama.Properties"
+        Title="{x:Static properties:Resources.WebViewWindow_Title}"
+        Height="600" Width="800"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI, Microsoft YaHei UI"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextOptions.TextFormattingMode="Ideal"
+        Background="{DynamicResource MaterialDesignPaper}">
+    <Grid>
+        <wv2:WebView2 x:Name="webView" />
+    </Grid>
+</Window>

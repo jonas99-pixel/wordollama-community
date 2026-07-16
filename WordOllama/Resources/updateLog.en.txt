@@ -1,0 +1,255 @@
+Version V2.1.0 2026/07/17
+
+Changes
+1. Released the clean OpenWordOllama open-source edition under the GNU GPLv3 license.
+2. Replaced the toolbar artwork with original project assets and removed legacy third-party icon assets.
+3. Added privacy, permission, third-party notice, security policy, and contribution documentation.
+4. Added open-source build and release verification, and hardened MCP, external-tool, and Skill safety boundaries.
+__________________________________________________
+
+Version V2.0.5 2026/06/05
+
+Changes
+1. Improved Agent features and added the review issues panel, allowing users to view the issue list and jump directly to the corresponding document location.
+2. Fully integrated MCP tool support, including stdio, Streamable HTTP, and legacy SSE transports, with configurable remote MCP URLs, request headers, working directory, and environment variables.
+3. Improved MCP stability, including paginated tool discovery, initialized notifications, server ping handling, Windows .cmd/.bat startup, safe tool-name conversion, and process cleanup.
+4. Improved online model tool-calling compatibility, including OpenAI-compatible APIs, Claude, Gemini, and Ollama tool-call adaptation.
+5. Fixed an issue where multiple system tray icons could remain in the lower-right corner.
+__________________________________________________
+
+Version V2.0.4 2026/05/13
+
+Changes
+1. Improved online model entry with quick provider selection, model list fetching, and draggable dialog support.
+2. Added experimental support for Claude and Gemini official API styles.
+3. Added Markdown conversion and insertion into Word, supporting complete inline formatting such as bold, italic, code, and links.
+4. Fixed several known bugs.
+__________________________________________________
+
+Version V2.0.3 2026/05/05
+
+Changes
+1. Fixed several known bugs.
+__________________________________________________
+
+Version V2.0.2 2026/05/04
+
+Changes
+1. Fixed several known bugs.
+2. Added a default Skill, so you can now build your own custom Skill based on the default Skill.
+3. Added the /refreshskills command, allowing the skill list to be refreshed at any time.
+4. Improved the Agent execution flow.
+__________________________________________________
+
+Version V2.0.1 2023/05/02
+
+Changes
+1. Further improved Agent features.
+2. Adjusted max token descriptions.
+3. Updated context window configuration.
+__________________________________________________
+
+Version V2.0.0 2026/04/15
+
+Changes
+1. Refactored the underlying architecture for clearer code layering.
+2. Added Agent functionality, allowing AI to automatically plan and execute multi-step tasks.
+3. Improved Chinese and English translation resources.
+4. Updated the version number to 2.0.0.0.
+__________________________________________________
+
+Version V1.3.1 2025/12/09
+
+Changes
+1. Added compatibility with the new parameter settings of the GPT-5 series.
+2. Added support for displaying reasoning content from more online models.
+3. Improved error messages for some online models.
+__________________________________________________
+
+Version V1.2.2 2025/04/06
+
+Changes
+1. Fixed an issue where the comparison result feature could not be used in WPS.
+_________________________________________________
+
+Version V1.2.1 2025/04/06
+
+Changes
+1. Fixed an issue where the function selection for custom functions C1-C4 did not work.
+2. Added a prompt optimization feature to the Creation module. You can click the button to let AI optimize the input prompt.
+3. The WordOllama documentation page is now online. Visit https://wordollama.lslby.com. The About tab can jump there with one click.
+4. Added a quick shortcut to open the configuration folder, making it easier to back up and share your configuration files.
+_________________________________________________
+
+Version V1.2.0 2025/03/06
+
+Changes
+1. Improved error prompts when Ollama is not being used, so the app no longer floods users with pop-ups.
+2. Fixed an issue where settings could be lost after an application crash.
+3. Improved error messages for online models, making it easier to identify and fix configuration problems.
+4. Improved the drop-down hints in the online model add window to avoid the misunderstanding that only listed providers can be selected.
+_________________________________________________
+
+Version V1.1.9 2025/02/10
+
+Changes
+1. Improved local reasoning display and added support for more reasoning model formats.
+2. Improved the API adding feature. Common APIs are now available as presets and can automatically fill the endpoint address.
+
+_________________________________________________
+
+Version V1.1.8 2025/02/08
+
+Changes
+1. Improved reasoning display. You can now view reasoning in the reasoning panel without occupying document space. API models and local distilled models are supported.
+
+_________________________________________________
+
+Version V1.1.7 2025/02/07
+
+Changes
+1. Added support for DeepSeek-R1 API and its distilled models' reasoning display. Due to Word limitations, streaming display is not available, and final response time may be very long.
+2. Added an error message for R1 API response issues. If an error occurs, please try again several times.
+
+_________________________________________________
+
+Version V1.1.6 2024/12/13
+
+Changes
+1. Fixed an issue where settings could be lost. Settings should no longer be lost when Word exits normally.
+
+_________________________________________________
+
+Version V1.1.5 2024/11/21
+
+Changes
+1. Added the Create HTML feature. You can now use qwen2.5-code and similar code models to create web applications inside Word, and even create AI-capable apps inside the AI add-in itself.
+However, because the feature uses the built-in WebView, these applications cannot interact with Word.
+
+P.S. You can also download HTML created by others and use it.
+
+
+_________________________________________________
+
+
+Version V1.1.4 2024/10/31
+
+Changes
+1. Fixed display issues in the online model add window under dark theme.
+2. Added the Generate Table feature:
+You can input text and generate a table with one click, then insert it into the document. Because AI output can be unstable, table parsing may fail. If an error occurs, please regenerate several times.
+3. Added a model selection module to Image Understanding. You can now choose the global model or select a separate model for this feature.
+4. Added AI work status. The toolbar now also displays the current AI working state.
+
+The QQ channel "WordOllama" has been created. Everyone is welcome to join and share experiences or discuss issues.
+_________________________________________________
+
+Version V1.1.3 2024/10/19
+
+Changes
+1. Updated Image Understanding:
+    Image Understanding only supports some models. For example, Ollama can call MiniCPM-V / llava (English only), and online models can call GPT-4o / o1 series, etc.
+    Models can respond based on the uploaded image, perform OCR, explain images, generate text from image content, and more. Please explore the possibilities yourself.
+
+2. Restored one-click copy for some features.
+3. Fixed an issue where repeatedly calling the same custom function might produce no response.
+
+_________________________________________________
+
+Version V1.1.2 2024/10/15
+
+Changes
+1. Fixed an issue where C1-C4 did not respond.
+2. Restored automatic insertion of selected text into the On-demand Editing feature.
+
+_________________________________________________
+
+Version V1.1.1 2024/10/14
+
+Changes
+1. Fully refreshed the UI and changed the underlying architecture. It should now feel more modern.
+    1.1. Added theme switching for users who prefer dark theme.
+    1.2. All output areas now support right-click Select All and Copy, so copy buttons are no longer needed. Keyboard copy and paste shortcuts are also supported.
+    1.3. Windows can now be minimized, so you can work on other text while waiting for results.
+
+2. Added support for extending the custom function area. You are no longer limited to four custom functions and can freely add different custom prompts.
+3. Added advanced Ollama management. Please modify these settings only after fully understanding what they mean.
+
+--------------------------------------------------
+Version V1.0.1.9 2024/08/19
+
+Changes
+1. Added a custom function area. You can now configure frequently used prompts as functions. There are four function slots in total. Please configure them before use.
+2. Temporarily disabled manual update. Updates may fail in some Office/WPS versions or update to the offline version by mistake.
+
+--------------------------------------------------
+Version V1.0.1.8
+
+Changes
+1. Temperature can now be configured. Please enter a value between 0.0 and 1.0.
+2. Reduced the dependency requirement to .NET Framework 4.8. Windows 10/11 should no longer need to install 4.8.1. Existing 4.8.1 installations are not affected.
+
+--------------------------------------------------
+Version V1.0.1.7
+
+Changes
+1. Changed the Ollama model update strategy. Users who do not plan to install Ollama should now see far fewer annoying prompts.
+2. Added current model mode and selected model status to the ribbon, reducing the chance of accidentally using a paid model.
+3. Added manual update checking. The add-in normally updates automatically, so this is only for testing temporary updates.
+
+--------------------------------------------------
+Version V1.0.1.6
+
+Changes
+1. Refactored window components. Some windows now support adaptive resizing.
+
+
+--------------------------------------------------
+Version V1.0.1.5
+
+Changes
+1. Fixed window component misalignment under different display scaling ratios.
+2. Changed the font to Segoe UI to better match the official Windows font.
+
+
+--------------------------------------------------
+Version V1.0.1.4
+
+Changes
+1. Adjusted the UI of some windows.
+2. Added a completion notification after generation.
+3. Added an experimental contract comparison and evaluation feature.
+
+Contract comparison and evaluation:
+You can now compare two DOCX documents and output an evaluation result.
+This feature depends heavily on the LLM model's capability. Output can be unstable and is for reference only.
+
+--------------------------------------------------
+Version V1.0.1.3
+
+Changes
+Added automatic text language detection.
+Some LLMs have limited multilingual detection capability and cannot reliably decide output language based on the source text. You can now force the output language in settings. An experimental text language detection feature has also been added to better support output based on the source text language.
+
+--------------------------------------------------
+Version V1.0.1.2
+
+Changes
+1. Fixed known bugs.
+2. Improved the Common Websites feature.
+3. Improved prompts for common features.
+
+
+__________________________
+Version V1.0.1.1
+
+Changes
+Added the Ollama Model Management feature. You can add or delete Ollama models from Settings.
+Version V2.1.0 2026/07/17
+
+Changes
+1. Released the clean OpenWordOllama open-source edition under the GNU GPLv3 license.
+2. Replaced the toolbar artwork with original project assets and removed legacy third-party icon assets.
+3. Added privacy, permission, third-party notice, security policy, and contribution documentation.
+4. Added open-source build and release verification, and hardened MCP, external-tool, and Skill safety boundaries.
+__________________________________________________

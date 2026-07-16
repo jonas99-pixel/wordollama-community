@@ -1,0 +1,2851 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="wordollama-search-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-search-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-new-document-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-new-document-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-search-25" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-search-25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-legal-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-legal-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-assistant-48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-assistant-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-settings-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-settings-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-about-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-about-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-chat-64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-chat-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-translate-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-translate-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-custom-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-custom-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Setting_AIMode" xml:space="preserve">
+    <value>AI 模式</value>
+  </data>
+  <data name="Setting_BaseSetting" xml:space="preserve">
+    <value>基本设置</value>
+  </data>
+  <data name="Setting_OnlineModelMode" xml:space="preserve">
+    <value>在线模型</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Common_Confirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Setting_O_MS" xml:space="preserve">
+    <value>模型选择</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Setting_About" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="CreatHTML_Title" xml:space="preserve">
+    <value>创建HTML应用</value>
+  </data>
+  <data name="CreatHTML_TabAI" xml:space="preserve">
+    <value>生成</value>
+  </data>
+  <data name="Common_Begin" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="CreatHTML_TabHTML" xml:space="preserve">
+    <value>管理</value>
+  </data>
+  <data name="Common_Run" xml:space="preserve">
+    <value>运行</value>
+  </data>
+  <data name="SaveDialogTitle" xml:space="preserve">
+    <value>保存HTML</value>
+  </data>
+  <data name="EnterCodeName" xml:space="preserve">
+    <value>请输入应用名称</value>
+  </data>
+  <data name="TaskPane_Title" xml:space="preserve">
+    <value>我的应用</value>
+  </data>
+  <data name="Error_NoAIResponse" xml:space="preserve">
+    <value>错误：未能收到AI的回复</value>
+  </data>
+  <data name="WebViewWindow_Title" xml:space="preserve">
+    <value>新应用</value>
+  </data>
+  <data name="Common_Creating" xml:space="preserve">
+    <value>生成中</value>
+  </data>
+  <data name="请输入原文" xml:space="preserve">
+    <value>请输入原文</value>
+  </data>
+  <data name="选择目标语言" xml:space="preserve">
+    <value>选择目标语言</value>
+  </data>
+  <data name="英语" xml:space="preserve">
+    <value>英语</value>
+  </data>
+  <data name="汉语" xml:space="preserve">
+    <value>汉语</value>
+  </data>
+  <data name="日语" xml:space="preserve">
+    <value>日语</value>
+  </data>
+  <data name="法语" xml:space="preserve">
+    <value>法语</value>
+  </data>
+  <data name="德语" xml:space="preserve">
+    <value>德语</value>
+  </data>
+  <data name="翻译结果" xml:space="preserve">
+    <value>翻译结果</value>
+  </data>
+  <data name="开始翻译" xml:space="preserve">
+    <value>开始翻译</value>
+  </data>
+  <data name="以上下方式对照显示原文与翻译结果" xml:space="preserve">
+    <value>以上下方式对照显示原文与翻译结果</value>
+  </data>
+  <data name="对照模式" xml:space="preserve">
+    <value>对照模式</value>
+  </data>
+  <data name="未能返回结果请检查" xml:space="preserve">
+    <value>未能返回结果，请检查</value>
+  </data>
+  <data name="请确认已经输入文本以及已选择翻译语言" xml:space="preserve">
+    <value>请确认已经输入文本以及已选择翻译语言。</value>
+  </data>
+  <data name="请输入提示词" xml:space="preserve">
+    <value>请输入提示词</value>
+  </data>
+  <data name="提示" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="错误AI没有返回结果请检查" xml:space="preserve">
+    <value>错误：AI没有返回结果，请检查</value>
+  </data>
+  <data name="优化提示词出错" xml:space="preserve">
+    <value>优化提示词出错</value>
+  </data>
+  <data name="错误" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="WINDOW_TITLE_IMAGE_UNDERSTANDING" xml:space="preserve">
+    <value>图像理解</value>
+  </data>
+  <data name="TAB_ANALYSIS" xml:space="preserve">
+    <value>解析</value>
+  </data>
+  <data name="TAB_MODEL_MANAGEMENT" xml:space="preserve">
+    <value>模型管理</value>
+  </data>
+  <data name="HINT_IMAGE_PATH" xml:space="preserve">
+    <value>已选择的图片路径</value>
+  </data>
+  <data name="BUTTON_SELECT_IMAGE" xml:space="preserve">
+    <value>选择图片</value>
+  </data>
+  <data name="HINT_PROMPT" xml:space="preserve">
+    <value>请输入提示词...</value>
+  </data>
+  <data name="HELPER_TEXT_PROMPT" xml:space="preserve">
+    <value>注意：不是全部模型都支持图片理解，请选择合适的模型(本地：MiniCPM-V/在线：gpt-4o系列等)，否则AI可能胡乱回复</value>
+  </data>
+  <data name="BUTTON_OPTIMIZE" xml:space="preserve">
+    <value>优化提示词</value>
+  </data>
+  <data name="LABEL_CURRENT_MODEL" xml:space="preserve">
+    <value>当前模型</value>
+  </data>
+  <data name="BUTTON_COPY_RESULT" xml:space="preserve">
+    <value>复制结果</value>
+  </data>
+  <data name="结果将在这里显示" xml:space="preserve">
+    <value>结果将在这里显示...</value>
+  </data>
+  <data name="全局模型" xml:space="preserve">
+    <value>全局模型</value>
+  </data>
+  <data name="特定模型" xml:space="preserve">
+    <value>特定模型</value>
+  </data>
+  <data name="Ollama模型" xml:space="preserve">
+    <value>Ollama 模型：</value>
+  </data>
+  <data name="下拉选择模型" xml:space="preserve">
+    <value>下拉选择模型</value>
+  </data>
+  <data name="在线模型" xml:space="preserve">
+    <value>在线模型：</value>
+  </data>
+  <data name="模型" xml:space="preserve">
+    <value>模型</value>
+  </data>
+  <data name="保存当前设置" xml:space="preserve">
+    <value>保存当前设置</value>
+  </data>
+  <data name="当前模型全局模式" xml:space="preserve">
+    <value>当前模型：全局模式</value>
+  </data>
+  <data name="当前模型" xml:space="preserve">
+    <value>当前模型：</value>
+  </data>
+  <data name="加载图片失败" xml:space="preserve">
+    <value>加载图片失败</value>
+  </data>
+  <data name="请先选择图片" xml:space="preserve">
+    <value>请先选择图片</value>
+  </data>
+  <data name="处理失败" xml:space="preserve">
+    <value>处理失败:</value>
+  </data>
+  <data name="错误请确认图片和提示词不为空" xml:space="preserve">
+    <value>错误：请确认图片和提示词不为空</value>
+  </data>
+  <data name="生成中请耐心等待" xml:space="preserve">
+    <value>生成中,请耐心等待……</value>
+  </data>
+  <data name="HTML文件名称" xml:space="preserve">
+    <value>HTML文件名称</value>
+  </data>
+  <data name="加载HTML文件失败" xml:space="preserve">
+    <value>加载HTML文件失败:</value>
+  </data>
+  <data name="发送提示词失败" xml:space="preserve">
+    <value>发送提示词失败:</value>
+  </data>
+  <data name="读取HTML文件失败" xml:space="preserve">
+    <value>读取HTML文件失败:</value>
+  </data>
+  <data name="请填入有效的文件名" xml:space="preserve">
+    <value>请填入有效的文件名</value>
+  </data>
+  <data name="保存成功" xml:space="preserve">
+    <value>保存成功</value>
+  </data>
+  <data name="保存HTML文件失败" xml:space="preserve">
+    <value>保存HTML文件失败:</value>
+  </data>
+  <data name="确认删除" xml:space="preserve">
+    <value>确认删除</value>
+  </data>
+  <data name="确定删除" xml:space="preserve">
+    <value>确定删除</value>
+  </data>
+  <data name="文件删除成功" xml:space="preserve">
+    <value>文件删除成功</value>
+  </data>
+  <data name="删除文件失败" xml:space="preserve">
+    <value>删除文件失败:</value>
+  </data>
+  <data name="请选择要删除的文件" xml:space="preserve">
+    <value>请选择要删除的文件</value>
+  </data>
+  <data name="确认覆盖" xml:space="preserve">
+    <value>确认覆盖</value>
+  </data>
+  <data name="已存在是否覆盖保存" xml:space="preserve">
+    <value>已存在，是否覆盖保存？</value>
+  </data>
+  <data name="请选择要保存的文件" xml:space="preserve">
+    <value>请选择要保存的文件</value>
+  </data>
+  <data name="保存文件失败" xml:space="preserve">
+    <value>保存文件失败:</value>
+  </data>
+  <data name="没有可运行的HTML内容" xml:space="preserve">
+    <value>没有可运行的HTML内容</value>
+  </data>
+  <data name="运行HTML失败" xml:space="preserve">
+    <value>运行HTML失败:</value>
+  </data>
+  <data name="思维链浏览" xml:space="preserve">
+    <value>思维链浏览</value>
+  </data>
+  <data name="原文与插入文本的区别" xml:space="preserve">
+    <value>原文与插入文本的区别:</value>
+  </data>
+  <data name="遇到错误" xml:space="preserve">
+    <value>遇到错误：</value>
+  </data>
+  <data name="请选择有效的文本进行批注" xml:space="preserve">
+    <value>请选择有效的文本进行批注。</value>
+  </data>
+  <data name="AI工作中" xml:space="preserve">
+    <value>AI 工作中...</value>
+  </data>
+  <data name="AI开始工作了请稍等" xml:space="preserve">
+    <value>AI开始工作了，请稍等</value>
+  </data>
+  <data name="发生错误" xml:space="preserve">
+    <value>发生错误: </value>
+  </data>
+  <data name="AI空闲中" xml:space="preserve">
+    <value>AI 空闲中</value>
+  </data>
+  <data name="无法打开网页" xml:space="preserve">
+    <value>无法打开网页：</value>
+  </data>
+  <data name="正在打开文档" xml:space="preserve">
+    <value>正在打开文档...</value>
+  </data>
+  <data name="对比文档中" xml:space="preserve">
+    <value>对比文档中...</value>
+  </data>
+  <data name="创建对比文档" xml:space="preserve">
+    <value>创建对比文档...</value>
+  </data>
+  <data name="分析中" xml:space="preserve">
+    <value>分析中...</value>
+  </data>
+  <data name="对方删除了这条文本" xml:space="preserve">
+    <value>对方删除了这条文本。</value>
+  </data>
+  <data name="无原文为对方新增文本" xml:space="preserve">
+    <value>无原文，为对方新增文本。</value>
+  </data>
+  <data name="原文本" xml:space="preserve">
+    <value>原文本:</value>
+  </data>
+  <data name="新文本" xml:space="preserve">
+    <value>新文本:</value>
+  </data>
+  <data name="AI分析" xml:space="preserve">
+    <value>AI分析:</value>
+  </data>
+  <data name="已分析" xml:space="preserve">
+    <value>已分析</value>
+  </data>
+  <data name="处修订" xml:space="preserve">
+    <value>处修订</value>
+  </data>
+  <data name="评估结束共处理" xml:space="preserve">
+    <value>评估结束！共处理</value>
+  </data>
+  <data name="处有效修订" xml:space="preserve">
+    <value>处有效修订。</value>
+  </data>
+  <data name="自定义提示词设置" xml:space="preserve">
+    <value>自定义提示词设置</value>
+  </data>
+  <data name="功能名称" xml:space="preserve">
+    <value>功能名称</value>
+  </data>
+  <data name="自定义名称" xml:space="preserve">
+    <value>自定义名称</value>
+  </data>
+  <data name="必填" xml:space="preserve">
+    <value>（必填）</value>
+  </data>
+  <data name="已选功能" xml:space="preserve">
+    <value>已选功能</value>
+  </data>
+  <data name="插入" xml:space="preserve">
+    <value>插入</value>
+  </data>
+  <data name="插入并对比" xml:space="preserve">
+    <value>插入并对比</value>
+  </data>
+  <data name="批注" xml:space="preserve">
+    <value>批注</value>
+  </data>
+  <data name="随意填写提示词小心过长" xml:space="preserve">
+    <value>随意填写提示词，小心过长</value>
+  </data>
+  <data name="更多" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="提示词需要点击格子三次" xml:space="preserve">
+    <value>提示词（需要点击格子三次）</value>
+  </data>
+  <data name="选择功能" xml:space="preserve">
+    <value>选择功能</value>
+  </data>
+  <data name="删除此行" xml:space="preserve">
+    <value>删除此行</value>
+  </data>
+  <data name="新增" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="自由创作" xml:space="preserve">
+    <value>自由创作</value>
+  </data>
+  <data name="创作" xml:space="preserve">
+    <value>创作</value>
+  </data>
+  <data name="希望生成的文本主题" xml:space="preserve">
+    <value>希望生成的文本主题</value>
+  </data>
+  <data name="选择模板" xml:space="preserve">
+    <value>选择模板</value>
+  </data>
+  <data name="具体创作需求" xml:space="preserve">
+    <value>具体创作需求</value>
+  </data>
+  <data name="优化需求" xml:space="preserve">
+    <value>优化需求</value>
+  </data>
+  <data name="开始生成" xml:space="preserve">
+    <value>开始生成</value>
+  </data>
+  <data name="内容生成区" xml:space="preserve">
+    <value>内容生成区</value>
+  </data>
+  <data name="模板管理" xml:space="preserve">
+    <value>模板管理</value>
+  </data>
+  <data name="模板名称" xml:space="preserve">
+    <value>模板名称</value>
+  </data>
+  <data name="删除此模板" xml:space="preserve">
+    <value>删除此模板</value>
+  </data>
+  <data name="请先填写完当前行再添加新行" xml:space="preserve">
+    <value>请先填写完当前行再添加新行。</value>
+  </data>
+  <data name="生成中" xml:space="preserve">
+    <value>生成中...</value>
+  </data>
+  <data name="模板已保存" xml:space="preserve">
+    <value>模板已保存</value>
+  </data>
+  <data name="确定要删除这个模板吗" xml:space="preserve">
+    <value>确定要删除这个模板吗？</value>
+  </data>
+  <data name="新模板" xml:space="preserve">
+    <value>新模板</value>
+  </data>
+  <data name="确定要删除这一行吗" xml:space="preserve">
+    <value>确定要删除这一行吗？</value>
+  </data>
+  <data name="成功" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="配置已保存" xml:space="preserve">
+    <value>配置已保存</value>
+  </data>
+  <data name="如果输出有思维链将会显示在这里" xml:space="preserve">
+    <value>如果输出有思维链，将会显示在这里</value>
+  </data>
+  <data name="文本转表格" xml:space="preserve">
+    <value>文本转表格</value>
+  </data>
+  <data name="在此输入需要转换的文本" xml:space="preserve">
+    <value>在此输入需要转换的文本...</value>
+  </data>
+  <data name="在此输入格式内容等需求可选" xml:space="preserve">
+    <value>在此输入格式、内容等需求（可选）</value>
+  </data>
+  <data name="生成表格" xml:space="preserve">
+    <value>生成表格</value>
+  </data>
+  <data name="插入到文档" xml:space="preserve">
+    <value>插入到文档</value>
+  </data>
+  <data name="AI输出结果不稳定会导致生成失败可多次重试" xml:space="preserve">
+    <value>AI输出结果不稳定，会导致生成失败，可多次重试。</value>
+  </data>
+  <data name="表格预览" xml:space="preserve">
+    <value>表格预览</value>
+  </data>
+  <data name="生成需求需要点击格子三次" xml:space="preserve">
+    <value>生成需求（需要点击格子三次）</value>
+  </data>
+  <data name="请输入需要转换的文本" xml:space="preserve">
+    <value>请输入需要转换的文本</value>
+  </data>
+  <data name="生成表格失败" xml:space="preserve">
+    <value>生成表格失败</value>
+  </data>
+  <data name="未找到活动的Word文档" xml:space="preserve">
+    <value>未找到活动的Word文档</value>
+  </data>
+  <data name="插入成功" xml:space="preserve">
+    <value>插入成功</value>
+  </data>
+  <data name="表格已成功插入到Word文档中" xml:space="preserve">
+    <value>表格已成功插入到Word文档中</value>
+  </data>
+  <data name="插入表格失败" xml:space="preserve">
+    <value>插入表格失败</value>
+  </data>
+  <data name="确定" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="必须包含以下列" xml:space="preserve">
+    <value>必须包含以下列：</value>
+  </data>
+  <data name="数据格式要求" xml:space="preserve">
+    <value>数据格式要求：</value>
+  </data>
+  <data name="要求" xml:space="preserve">
+    <value>要求：</value>
+  </data>
+  <data name="强制规范输出语言实验性" xml:space="preserve">
+    <value>强制规范输出语言（实验性）</value>
+  </data>
+  <data name="不强制由AI自行判断" xml:space="preserve">
+    <value>不强制（由AI自行判断）</value>
+  </data>
+  <data name="强制中文输出" xml:space="preserve">
+    <value>强制中文输出</value>
+  </data>
+  <data name="强制英文输出" xml:space="preserve">
+    <value>强制英文输出</value>
+  </data>
+  <data name="同原文语言实验性" xml:space="preserve">
+    <value>同原文语言（实验性）</value>
+  </data>
+  <data name="切换主题" xml:space="preserve">
+    <value>切换主题</value>
+  </data>
+  <data name="打开设置文件目录" xml:space="preserve">
+    <value>打开设置文件目录</value>
+  </data>
+  <data name="Ollama设置" xml:space="preserve">
+    <value>Ollama 设置</value>
+  </data>
+  <data name="默认HttpLocalhost11434" xml:space="preserve">
+    <value>默认: http://localhost:11434</value>
+  </data>
+  <data name="Tokens上限" xml:space="preserve">
+    <value>Tokens 上限</value>
+  </data>
+  <data name="影响AI回复内容的长度数值越大回复越长占用内存显存越多" xml:space="preserve">
+    <value>影响AI回复内容的长度，数值越大，回复越长，占用内存/显存越多</value>
+  </data>
+  <data name="推荐4096" xml:space="preserve">
+    <value>推荐 4096</value>
+  </data>
+  <data name="温度设置" xml:space="preserve">
+    <value>温度设置</value>
+  </data>
+  <data name="温度越低AI输出越严谨反之越具有创造性" xml:space="preserve">
+    <value>温度越低，AI输出越严谨，反之越具有创造性</value>
+  </data>
+  <data name="Ollama模型管理" xml:space="preserve">
+    <value>Ollama 模型管理</value>
+  </data>
+  <data name="下载新模型" xml:space="preserve">
+    <value>下载新模型</value>
+  </data>
+  <data name="下载完成前请勿关闭本设置窗口可最小化" xml:space="preserve">
+    <value>下载完成前请勿关闭本设置窗口（可最小化）</value>
+  </data>
+  <data name="输入模型名称" xml:space="preserve">
+    <value>输入模型名称</value>
+  </data>
+  <data name="下载" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="模型名称" xml:space="preserve">
+    <value>模型名称</value>
+  </data>
+  <data name="大小GB" xml:space="preserve">
+    <value>大小 (GB)</value>
+  </data>
+  <data name="参数量" xml:space="preserve">
+    <value>参数量</value>
+  </data>
+  <data name="拉取日期" xml:space="preserve">
+    <value>拉取日期</value>
+  </data>
+  <data name="删除所选模型" xml:space="preserve">
+    <value>删除所选模型</value>
+  </data>
+  <data name="在线模型设置" xml:space="preserve">
+    <value>在线模型设置</value>
+  </data>
+  <data name="影响AI回复内容的长度数值越大回复越长花费API费用越多" xml:space="preserve">
+    <value>影响AI回复内容的长度，数值越大，回复越长，花费API费用越多</value>
+  </data>
+  <data name="量钱包而行" xml:space="preserve">
+    <value>量钱包而行</value>
+  </data>
+  <data name="新增模型" xml:space="preserve">
+    <value>新增模型</value>
+  </data>
+  <data name="载入模型" xml:space="preserve">
+    <value>载入模型</value>
+  </data>
+  <data name="删除模型" xml:space="preserve">
+    <value>删除模型</value>
+  </data>
+  <data name="可自行填写或下拉选择常见服务商" xml:space="preserve">
+    <value>可自行填写或下拉选择常见服务商</value>
+  </data>
+  <data name="进阶设置" xml:space="preserve">
+    <value>进阶设置</value>
+  </data>
+  <data name="请充分了解各项内容后再进行修改修改完成后需要重启Ollama程序才能成功应用" xml:space="preserve">
+    <value>请充分了解各项内容后，再进行修改。修改完成后，需要重启Ollama程序才能成功应用。</value>
+  </data>
+  <data name="Ollama相关" xml:space="preserve">
+    <value>Ollama 相关</value>
+  </data>
+  <data name="Ollama模型保存位置OLLAMA_MODELS" xml:space="preserve">
+    <value>Ollama 模型保存位置 (OLLAMA_MODELS)</value>
+  </data>
+  <data name="修改" xml:space="preserve">
+    <value>修改</value>
+  </data>
+  <data name="恢复默认" xml:space="preserve">
+    <value>恢复默认</value>
+  </data>
+  <data name="默认CUsersUsernameOllamaModels" xml:space="preserve">
+    <value>默认: C:\Users\username\.ollama\models</value>
+  </data>
+  <data name="移动模型耗时较久请勿随意关闭程序" xml:space="preserve">
+    <value>移动模型耗时较久，请勿随意关闭程序。</value>
+  </data>
+  <data name="Ollama网络模式OLLAMA_HOST" xml:space="preserve">
+    <value>Ollama 网络模式 (OLLAMA_HOST)</value>
+  </data>
+  <data name="本地模式" xml:space="preserve">
+    <value>本地模式</value>
+  </data>
+  <data name="共享模式" xml:space="preserve">
+    <value>共享模式</value>
+  </data>
+  <data name="设置共享模式后请更换OllamaEndPoint为本机IP地址" xml:space="preserve">
+    <value>设置共享模式后，请更换Ollama EndPoint为本机IP地址。</value>
+  </data>
+  <data name="Ollama端口OLLAMA_PORT" xml:space="preserve">
+    <value>Ollama 端口 (OLLAMA_PORT)</value>
+  </data>
+  <data name="默认11434" xml:space="preserve">
+    <value>默认: 11434</value>
+  </data>
+  <data name="修改后请更改OllamaEndPoint的端口为上述端口" xml:space="preserve">
+    <value>修改后，请更改Ollama EndPoint的端口为上述端口。</value>
+  </data>
+  <data name="Ollama模型存活时间OLLAMA_KEEP_ALIVE" xml:space="preserve">
+    <value>Ollama 模型存活时间 (OLLAMA_KEEP_ALIVE)</value>
+  </data>
+  <data name="默认5m" xml:space="preserve">
+    <value>默认: 5m</value>
+  </data>
+  <data name="示例5m5分钟24h24小时1永远0生成完就立即释放模型" xml:space="preserve">
+    <value>示例：5m(5分钟)/24h（24小时）/-1(永远)/0（生成完就立即释放模型）。</value>
+  </data>
+  <data name="Ollama最大同时载入模型数OLLAMA_MAX_LOADED_MODELS" xml:space="preserve">
+    <value>Ollama 最大同时载入模型数 (OLLAMA_MAX_LOADED_MODELS)</value>
+  </data>
+  <data name="默认3GPU数量3CPU推理" xml:space="preserve">
+    <value>默认: 3 * GPU数量 / 3 (CPU推理)"</value>
+  </data>
+  <data name="大内存显存设备专享减少重新载入模型时间请设置不超过3GPU数量" xml:space="preserve">
+    <value>大内存/显存设备专享，减少重新载入模型时间。请设置不超过3 * GPU数量。</value>
+  </data>
+  <data name="更新说明" xml:space="preserve">
+    <value>更新说明</value>
+  </data>
+  <data name="本插件名称WordOllamaX0aX0a制作者李伯阳北京市隆安广州律师事务所X0aX0a声明X0a1本插件不会收集您的任何数据和个人信息X0a2AI人工智能所生成的内容仅供参考可能存在错误对于任何AI生成的文本本制作者不承担任何责任X0a3本插件完全免费如您在其他地方付费后获取本插件请进行举报X0aX0a如您对本插件有任何建议或疑惑请联系微信LegalLby" xml:space="preserve">
+    <value>本插件名称：WordOllama
+制作者：李伯阳 - 北京市隆安（广州）律师事务所
+
+声明：
+1. WordOllama 项目方不运营遥测，也不收集或留存用户文档。
+2. 用户主动使用 AI 或 MCP 时，相关内容会发送至用户配置的服务，并受该服务商政策约束。
+3. AI（人工智能）所生成的内容仅供参考，可能存在错误。对于任何AI生成的文本，本制作者不承担任何责任。
+4. 本插件完全免费，如您在其他地方付费后获取本插件，请进行举报。
+
+如您对本插件有任何建议或疑惑，请联系微信: legal-lby
+</value>
+  </data>
+  <data name="X0aX0a本插件ICONS来源" xml:space="preserve">
+    <value>工具栏图标为 WordOllama 项目原创资源。</value>
+  </data>
+  <data name="X0aX0a查看使用说明文档" xml:space="preserve">
+    <value>
+查看使用说明文档：</value>
+  </data>
+  <data name="获取模型信息错误请检查Ollama程序状态" xml:space="preserve">
+    <value>获取模型信息错误，请检查Ollama程序状态</value>
+  </data>
+  <data name="请先填写模型名字" xml:space="preserve">
+    <value>请先填写模型名字</value>
+  </data>
+  <data name="下载成功" xml:space="preserve">
+    <value>下载成功</value>
+  </data>
+  <data name="下载完成" xml:space="preserve">
+    <value>下载完成！</value>
+  </data>
+  <data name="下载错误" xml:space="preserve">
+    <value>下载错误</value>
+  </data>
+  <data name="状态" xml:space="preserve">
+    <value>状态:</value>
+  </data>
+  <data name="要删除" xml:space="preserve">
+    <value>要删除</value>
+  </data>
+  <data name="模型成功删除" xml:space="preserve">
+    <value>模型成功删除。</value>
+  </data>
+  <data name="模型删除失败" xml:space="preserve">
+    <value>模型删除失败。</value>
+  </data>
+  <data name="失败" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="删除时遇到错误" xml:space="preserve">
+    <value>删除时遇到错误:</value>
+  </data>
+  <data name="请先选择要删除的模型" xml:space="preserve">
+    <value>请先选择要删除的模型。</value>
+  </data>
+  <data name="创建ChatGPT模型文件错误" xml:space="preserve">
+    <value>创建ChatGPT模型文件错误：</value>
+  </data>
+  <data name="读取ChatGPT列表错误" xml:space="preserve">
+    <value>读取ChatGPT列表错误:</value>
+  </data>
+  <data name="加载ChatGPT模型时出错" xml:space="preserve">
+    <value>加载ChatGPT模型时出错:</value>
+  </data>
+  <data name="设置文件目录不存在已为您创建" xml:space="preserve">
+    <value>设置文件目录不存在，已为您创建。</value>
+  </data>
+  <data name="打开设置文件目录时出错" xml:space="preserve">
+    <value>打开设置文件目录时出错:</value>
+  </data>
+  <data name="保存模型信息时出错" xml:space="preserve">
+    <value>保存模型信息时出错: </value>
+  </data>
+  <data name="新增模型错误" xml:space="preserve">
+    <value>新增模型错误:</value>
+  </data>
+  <data name="模型已删除" xml:space="preserve">
+    <value>模型已删除。</value>
+  </data>
+  <data name="确定要删除模型" xml:space="preserve">
+    <value>确定要删除模型</value>
+  </data>
+  <data name="请先选择一个模型" xml:space="preserve">
+    <value>请先选择一个模型。</value>
+  </data>
+  <data name="未找到匹配的模型信息" xml:space="preserve">
+    <value>未找到匹配的模型信息。</value>
+  </data>
+  <data name="设置成功需要移动原有模型文件吗" xml:space="preserve">
+    <value>设置成功，需要移动原有模型文件吗？</value>
+  </data>
+  <data name="移动模型文件" xml:space="preserve">
+    <value>移动模型文件</value>
+  </data>
+  <data name="设置成功请重启Ollama" xml:space="preserve">
+    <value>设置成功，请重启Ollama</value>
+  </data>
+  <data name="路径格式错误请检查" xml:space="preserve">
+    <value>路径格式错误，请检查</value>
+  </data>
+  <data name="设置遇到错误" xml:space="preserve">
+    <value>设置遇到错误:</value>
+  </data>
+  <data name="读取Ollama环境变量错误" xml:space="preserve">
+    <value>读取Ollama环境变量错误:</value>
+  </data>
+  <data name="恢复成功需要移动原有模型文件吗" xml:space="preserve">
+    <value>恢复成功，需要移动原有模型文件吗？</value>
+  </data>
+  <data name="已恢复默认路径请重启Ollama" xml:space="preserve">
+    <value>已恢复默认路径，请重启Ollama</value>
+  </data>
+  <data name="路径为默认状态无需恢复" xml:space="preserve">
+    <value>路径为默认状态，无需恢复。</value>
+  </data>
+  <data name="恢复遇到错误" xml:space="preserve">
+    <value>恢复遇到错误:</value>
+  </data>
+  <data name="文件和文件夹已成功移动" xml:space="preserve">
+    <value>文件和文件夹已成功移动！</value>
+  </data>
+  <data name="移动文件和文件夹时出错" xml:space="preserve">
+    <value>移动文件和文件夹时出错:</value>
+  </data>
+  <data name="源目录不存在或无法找到" xml:space="preserve">
+    <value>源目录不存在或无法找到: </value>
+  </data>
+  <data name="已为0的值修改成1" xml:space="preserve">
+    <value>已为{0}的值修改成{1}</value>
+  </data>
+  <data name="_0写入错误1" xml:space="preserve">
+    <value>{0}写入错误:{1}</value>
+  </data>
+  <data name="已恢复0的默认值" xml:space="preserve">
+    <value>已恢复{0}的默认值</value>
+  </data>
+  <data name="_0重置错误1" xml:space="preserve">
+    <value>{0}重置错误:{1}</value>
+  </data>
+  <data name="查看思维链" xml:space="preserve">
+    <value>查看思维链</value>
+  </data>
+  <data name="当前状态" xml:space="preserve">
+    <value>当前状态</value>
+  </data>
+  <data name="当前模式模型" xml:space="preserve">
+    <value>当前模式/模型</value>
+  </data>
+  <data name="当前模式" xml:space="preserve">
+    <value>当前模式</value>
+  </data>
+  <data name="设置" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="配置" xml:space="preserve">
+    <value>配置</value>
+  </data>
+  <data name="自定义功能" xml:space="preserve">
+    <value>自定义功能</value>
+  </data>
+  <data name="对话模式" xml:space="preserve">
+    <value>对话模式</value>
+  </data>
+  <data name="对话" xml:space="preserve">
+    <value>对话</value>
+  </data>
+  <data name="合同修订评估" xml:space="preserve">
+    <value>合同修订评估</value>
+  </data>
+  <data name="对两份合同文件的修订内容进行风险评估" xml:space="preserve">
+    <value>对两份合同文件的修订内容进行风险评估。</value>
+  </data>
+  <data name="模拟法庭调查" xml:space="preserve">
+    <value>模拟法庭调查</value>
+  </data>
+  <data name="公平性改写" xml:space="preserve">
+    <value>公平性改写</value>
+  </data>
+  <data name="把文本修改得更公平" xml:space="preserve">
+    <value>把文本修改得更公平</value>
+  </data>
+  <data name="批注风险" xml:space="preserve">
+    <value>批注风险</value>
+  </data>
+  <data name="法务" xml:space="preserve">
+    <value>法务</value>
+  </data>
+  <data name="翻译到" xml:space="preserve">
+    <value>翻译到</value>
+  </data>
+  <data name="韩语" xml:space="preserve">
+    <value>韩语</value>
+  </data>
+  <data name="西班牙语" xml:space="preserve">
+    <value>西班牙语</value>
+  </data>
+  <data name="意大利语" xml:space="preserve">
+    <value>意大利语</value>
+  </data>
+  <data name="俄罗斯语" xml:space="preserve">
+    <value>俄罗斯语</value>
+  </data>
+  <data name="翻译到英文" xml:space="preserve">
+    <value>翻译到英文</value>
+  </data>
+  <data name="翻译到中文" xml:space="preserve">
+    <value>翻译到中文</value>
+  </data>
+  <data name="自由翻译" xml:space="preserve">
+    <value>自由翻译</value>
+  </data>
+  <data name="翻译" xml:space="preserve">
+    <value>翻译</value>
+  </data>
+  <data name="对比结果" xml:space="preserve">
+    <value>对比结果</value>
+  </data>
+  <data name="改错" xml:space="preserve">
+    <value>改错</value>
+  </data>
+  <data name="修改文段错别字与病句" xml:space="preserve">
+    <value>修改文段错别字与病句</value>
+  </data>
+  <data name="归纳" xml:space="preserve">
+    <value>归纳</value>
+  </data>
+  <data name="对文本内容进行归纳" xml:space="preserve">
+    <value>对文本内容进行归纳</value>
+  </data>
+  <data name="续写" xml:space="preserve">
+    <value>续写</value>
+  </data>
+  <data name="对文本进行续写" xml:space="preserve">
+    <value>对文本进行续写</value>
+  </data>
+  <data name="简化" xml:space="preserve">
+    <value>简化</value>
+  </data>
+  <data name="对文本进行简化" xml:space="preserve">
+    <value>对文本进行简化</value>
+  </data>
+  <data name="扩写" xml:space="preserve">
+    <value>扩写</value>
+  </data>
+  <data name="对文本进行扩写" xml:space="preserve">
+    <value>对文本进行扩写</value>
+  </data>
+  <data name="润色文本" xml:space="preserve">
+    <value>润色文本</value>
+  </data>
+  <data name="对本文进行润色" xml:space="preserve">
+    <value>对本文进行润色</value>
+  </data>
+  <data name="编辑" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="HTML应用" xml:space="preserve">
+    <value>HTML应用</value>
+  </data>
+  <data name="图片理解" xml:space="preserve">
+    <value>图片理解</value>
+  </data>
+  <data name="按需修改" xml:space="preserve">
+    <value>按需修改</value>
+  </data>
+  <data name="Agent任务" xml:space="preserve">
+    <value>Agent 任务</value>
+  </data>
+  <data name="Agent正在分析需求" xml:space="preserve">
+    <value>Agent 正在分析需求并规划任务...</value>
+  </data>
+  <data name="Agent规划完成" xml:space="preserve">
+    <value>Agent 规划完成</value>
+  </data>
+  <data name="Agent任务完成" xml:space="preserve">
+    <value>Agent 任务完成！</value>
+  </data>
+  <data name="Agent执行出错" xml:space="preserve">
+    <value>Agent 执行出错:</value>
+  </data>
+  <data name="正在执行步骤" xml:space="preserve">
+    <value>正在执行步骤</value>
+  </data>
+  <data name="步骤执行失败" xml:space="preserve">
+    <value>步骤执行失败:</value>
+  </data>
+  <data name="正在汇总结果" xml:space="preserve">
+    <value>正在汇总所有步骤结果...</value>
+  </data>
+  <data name="输入你的需求" xml:space="preserve">
+    <value>输入你的需求，Agent 会自动规划并执行多个步骤</value>
+  </data>
+  <data name="开始执行" xml:space="preserve">
+    <value>开始执行</value>
+  </data>
+  <data name="取消任务" xml:space="preserve">
+    <value>取消任务</value>
+  </data>
+  <data name="请先选择文本" xml:space="preserve">
+    <value>请先选择文本</value>
+  </data>
+  <data name="任务进度" xml:space="preserve">
+    <value>任务进度</value>
+  </data>
+  <data name="步骤详情" xml:space="preserve">
+    <value>步骤详情</value>
+  </data>
+  <data name="已完成步骤" xml:space="preserve">
+    <value>已完成步骤</value>
+  </data>
+  <data name="总步骤数" xml:space="preserve">
+    <value>总步骤数</value>
+  </data>
+  <!-- Agent 面板 UI 字符串 -->
+  <data name="Agent_Title" xml:space="preserve">
+    <value>AI Agent 助理</value>
+  </data>
+  <data name="Agent_CancelTask" xml:space="preserve">
+    <value>取消任务</value>
+  </data>
+  <data name="Agent_CancelTaskTip" xml:space="preserve">
+    <value>取消当前正在执行的 Agent 任务</value>
+  </data>
+  <data name="Agent_SilentLinter" xml:space="preserve">
+    <value>静默审查</value>
+  </data>
+  <data name="Agent_SilentLinterTip" xml:space="preserve">
+    <value>保存时自动审查变更段落</value>
+  </data>
+  <data name="Agent_QuickPolish" xml:space="preserve">
+    <value>✨ 润色选中</value>
+  </data>
+  <data name="Agent_QuickTable" xml:space="preserve">
+    <value>📊 提取为表格</value>
+  </data>
+  <data name="Agent_QuickReview" xml:space="preserve">
+    <value>⚖️ 审查全文</value>
+  </data>
+  <data name="Agent_InputHint" xml:space="preserve">
+    <value>输入指令 (Enter 换行, Ctrl+Enter 发送)...</value>
+  </data>
+  <data name="Agent_AnswerReceived" xml:space="preserve">
+    <value>👤 已收到用户回答，Agent 继续工作中...</value>
+  </data>
+  <data name="Agent_Interrupted" xml:space="preserve">
+    <value>⚠️ 任务被用户中断</value>
+  </data>
+  <data name="Agent_Cancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="Agent_Error" xml:space="preserve">
+    <value>异常：{0}</value>
+  </data>
+  <data name="Agent_AskLog" xml:space="preserve">
+    <value>❓ AI 提问：{0}</value>
+  </data>
+  <data name="Agent_AskPrompt" xml:space="preserve">
+    <value>💬 请在下方输入您的回答并发送...</value>
+  </data>
+  <data name="Agent_StatusThinking" xml:space="preserve">
+    <value>Agent 思考中...</value>
+  </data>
+  <data name="Agent_StatusActing" xml:space="preserve">
+    <value>Agent 执行行动中...</value>
+  </data>
+  <data name="Agent_StatusObserving" xml:space="preserve">
+    <value>Agent 观察结果中...</value>
+  </data>
+  <data name="Agent_StatusStarting" xml:space="preserve">
+    <value>Agent 启动中...</value>
+  </data>
+  <data name="Agent_StatusDone" xml:space="preserve">
+    <value>任务完成</value>
+  </data>
+  <data name="Agent_StatusWaiting" xml:space="preserve">
+    <value>等待用户回答...</value>
+  </data>
+  <data name="Agent_Iteration" xml:space="preserve">
+    <value>第 {0} 轮</value>
+  </data>
+  <!-- AgentWindow UI 字符串 -->
+  <data name="Agent_WindowTitle" xml:space="preserve">
+    <value>智能助理 (Agent)</value>
+  </data>
+  <data name="Agent_WindowSubtitle" xml:space="preserve">
+    <value>让 AI 自主操作文档</value>
+  </data>
+  <data name="Agent_WindowLoading" xml:space="preserve">
+    <value>正在获取文档信息...</value>
+  </data>
+  <data name="Agent_WindowHint" xml:space="preserve">
+    <value>输入你想让 AI 帮你做什么（例如：帮我把第一段变成大标题，然后总结全文）...</value>
+  </data>
+  <data name="Agent_WindowLog" xml:space="preserve">
+    <value>Agent 动态日志</value>
+  </data>
+  <data name="Agent_WindowIdle" xml:space="preserve">
+    <value>闲置中...</value>
+  </data>
+  <data name="Agent_WindowStop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Agent_WindowStart" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="Agent_WindowRespond" xml:space="preserve">
+    <value>回应</value>
+  </data>
+  <data name="Agent_WindowCancelled" xml:space="preserve">
+    <value>已手动取消</value>
+  </data>
+  <data name="Agent_WindowError" xml:space="preserve">
+    <value>发生异常：{0}</value>
+  </data>
+  <data name="Agent_WindowAsk" xml:space="preserve">
+    <value>AI 提问：
+{0}
+
+请在上方输入框中输入您的回答，然后点击「回应」按钮。</value>
+  </data>
+  <data name="Agent_DocInfo" xml:space="preserve">
+    <value>📄 当前文档：{0} | {1} 个段落</value>
+  </data>
+  <data name="Agent_NoDoc" xml:space="preserve">
+    <value>⚠️ 没有打开的文档</value>
+  </data>
+  <data name="Agent_PresetWrite" xml:space="preserve">
+    <value>根据选中文字续写</value>
+  </data>
+  <data name="Agent_PresetPolish" xml:space="preserve">
+    <value>润色并替换选中文本</value>
+  </data>
+  <data name="Agent_PresetFormat" xml:space="preserve">
+    <value>自动整理排版</value>
+  </data>
+  <data name="Agent_PresetReview" xml:space="preserve">
+    <value>审查潜在风险</value>
+  </data>
+  <data name="Agent_PresetWriteText" xml:space="preserve">
+    <value>1. 获取我当前选中的文本。
+2. 根据这段文本的意思，帮我在文档最末尾续写两段内容。
+3. 写完后告诉我。</value>
+  </data>
+  <data name="Agent_PresetPolishText" xml:space="preserve">
+    <value>1. 找到我当前选中的文本以及它所在的段落。
+2. 运用专业的表达方式对该段落进行润色。
+3. 直接将原文段落替换为润色后的内容。</value>
+  </data>
+  <data name="Agent_PresetFormatText" xml:space="preserve">
+    <value>请帮我整理文档排版：
+1. 读取前 5 个段落的内容。
+2. 判断哪个段落看起来像是标题。
+3. 将被判定为标题的段落应用 '标题 1' 样式。
+4. 将其他段落应用 '正文' 样式。</value>
+  </data>
+  <data name="Agent_PresetReviewText" xml:space="preserve">
+    <value>请审查整个文档的风险：
+1. 逐段读取全文。
+2. 如果发现有日期、金额错误，或者偏向性条款，请在对应的文字上添加批注进行提醒。
+3. 最终输出一份简短的审查汇总。</value>
+  </data>
+  <data name="Agent_NotifStart" xml:space="preserve">
+    <value>🤖 Agent 开始执行任务...</value>
+  </data>
+  <data name="Agent_NotifDone" xml:space="preserve">
+    <value>✅ Agent 任务完成！</value>
+  </data>
+  <data name="Agent_NotifCancelled" xml:space="preserve">
+    <value>⏹ Agent 任务已取消</value>
+  </data>
+  <!-- DocumentAgent 内部日志/状态 -->
+  <data name="Agent_LogStarting" xml:space="preserve">
+    <value>开始执行任务</value>
+  </data>
+  <data name="Agent_StatusRound" xml:space="preserve">
+    <value>Agent 思考中...（第 {0} 轮{1}）</value>
+  </data>
+  <data name="Agent_MaxIterReached" xml:space="preserve">
+    <value>达到最大迭代次数，任务被迫终止。部分工作可能未完成。</value>
+  </data>
+  <!-- AgentWindow 图片粘贴 -->
+  <data name="Agent_ImagePastedHint" xml:space="preserve">
+    <value>图片已粘贴，将随需求一起发送给 AI 分析</value>
+  </data>
+  <data name="Agent_ClearImage" xml:space="preserve">
+    <value>移除图片</value>
+  </data>
+  <data name="Agent_ImageInfo" xml:space="preserve">
+    <value>图片已粘贴 ({0}×{1})</value>
+  </data>
+  <!-- AgentWindow 执行状态 -->
+  <data name="Agent_BtnResponding" xml:space="preserve">
+    <value>开始执行 🚀</value>
+  </data>
+  <data name="Agent_Stopping" xml:space="preserve">
+    <value>正在停止...</value>
+  </data>
+  <data name="Agent_ResultPrefix" xml:space="preserve">
+    <value>🎉 </value>
+  </data>
+  <!-- AgentWindow 断点恢复 -->
+  <data name="Agent_CheckpointTitle" xml:space="preserve">
+    <value>恢复断点</value>
+  </data>
+  <data name="Agent_CheckpointPrompt" xml:space="preserve">
+    <value>检测到上次 Agent 任务未完成，是否恢复执行？
+
+选择「是」将继续之前的任务。
+选择「否」将清除断点并开始新任务。</value>
+  </data>
+  <data name="Agent_CheckpointResumeLog" xml:space="preserve">
+    <value>♻️ 检测到断点，正在恢复上次的任务...</value>
+  </data>
+  <!-- AgentWindow 计划确认 -->
+  <data name="Agent_PlanTitle" xml:space="preserve">
+    <value>执行计划确认</value>
+  </data>
+  <data name="Agent_PlanPrompt" xml:space="preserve">
+    <value>AI 建议按以下计划执行：
+
+{0}
+
+是否确认执行？</value>
+  </data>
+  <!-- AgentWindow 变更审查 -->
+  <data name="Agent_DiffTitle" xml:space="preserve">
+    <value>文档更改审查</value>
+  </data>
+  <data name="Agent_DiffPrompt" xml:space="preserve">
+    <value>Agent 执行完成，检测到 {0} 处文档变更。
+是否立即审查更改？</value>
+  </data>
+  <!-- AgentWindow 取消响应 -->
+  <data name="Agent_CancelResponse" xml:space="preserve">
+    <value>[用户取消了任务]</value>
+  </data>
+  <data name="Markdown转换" xml:space="preserve">
+    <value>Markdown 转换</value>
+  </data>
+  <data name="刷新样式列表" xml:space="preserve">
+    <value>刷新样式列表</value>
+  </data>
+  <data name="选择服务商" xml:space="preserve">
+    <value>选择服务商</value>
+  </data>
+  <data name="API类型" xml:space="preserve">
+    <value>API 类型</value>
+  </data>
+  <data name="获取模型列表" xml:space="preserve">
+    <value>获取模型列表</value>
+  </data>
+  <data name="端点Endpoint" xml:space="preserve">
+    <value>端点 (Endpoint)</value>
+  </data>
+  <data name="新建Word样式" xml:space="preserve">
+    <value>新建 Word 样式</value>
+  </data>
+  <data name="创建样式" xml:space="preserve">
+    <value>创建样式</value>
+  </data>
+  <data name="Markdown转换样式设置" xml:space="preserve">
+    <value>Markdown 转换样式设置</value>
+  </data>
+  <data name="I18n_SettingsTitle" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="I18n_DisableTaskNotifications" xml:space="preserve">
+    <value>关闭任务提醒</value>
+  </data>
+  <data name="I18n_DisableTaskNotificationsDesc" xml:space="preserve">
+    <value>关闭 LLM 调用开始和完成时的系统托盘通知</value>
+  </data>
+  <data name="I18n_SkipPlanConfirm" xml:space="preserve">
+    <value>免计划确认</value>
+  </data>
+  <data name="I18n_SkipPlanConfirmDesc" xml:space="preserve">
+    <value>Agent 制定计划后自动执行，不再弹出确认对话框</value>
+  </data>
+  <data name="I18n_SkipDiffReview" xml:space="preserve">
+    <value>免变更审查弹窗</value>
+  </data>
+  <data name="I18n_SkipDiffReviewDesc" xml:space="preserve">
+    <value>Agent 执行完毕后自动跳过文档变更审查弹窗</value>
+  </data>
+  <data name="I18n_OnlineMaxTokens" xml:space="preserve">
+    <value>输出长度上限 (max_tokens)</value>
+  </data>
+  <data name="I18n_OnlineMaxTokensDesc" xml:space="preserve">
+    <value>控制 AI 单次回复的最大 Token 数量，数值越大回复越长，花费 API 费用越多。</value>
+  </data>
+  <data name="I18n_ContextWindow" xml:space="preserve">
+    <value>上下文窗口 (Context Window)</value>
+  </data>
+  <data name="I18n_ContextWindowDesc" xml:space="preserve">
+    <value>模型支持的上下文长度（输入+输出总和）。Ollama 使用 num_ctx 参数，在线模型默认 256K。</value>
+  </data>
+  <data name="I18n_Thinking" xml:space="preserve">
+    <value>思维链 (Thinking)</value>
+  </data>
+  <data name="I18n_EnableThinking" xml:space="preserve">
+    <value>启用思维链</value>
+  </data>
+  <data name="I18n_ThinkingDesc" xml:space="preserve">
+    <value>思维链启用时，API 会输出推理过程并在侧边栏显示。关闭后可降低延迟与 Token 消耗。</value>
+  </data>
+  <data name="I18n_Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="I18n_Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="I18n_SkillMcpServers" xml:space="preserve">
+    <value>Skill &amp; MCP 服务器</value>
+  </data>
+  <data name="I18n_InstalledSkills" xml:space="preserve">
+    <value>已安装的 Skills</value>
+  </data>
+  <data name="I18n_SkillsDesc" xml:space="preserve">
+    <value>Skill 存放在 我的文档/WordAgentSkills/ 目录下，每个 Skill 一个子文件夹，内含 SKILL.md</value>
+  </data>
+  <data name="I18n_OpenSkillFolder" xml:space="preserve">
+    <value>打开 Skill 文件夹</value>
+  </data>
+  <data name="I18n_ImportSkillZip" xml:space="preserve">
+    <value>导入 Skill (ZIP)</value>
+  </data>
+  <data name="I18n_RefreshList" xml:space="preserve">
+    <value>刷新列表</value>
+  </data>
+  <data name="I18n_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="I18n_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="I18n_Actions" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="I18n_Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="I18n_McpServers" xml:space="preserve">
+    <value>MCP 服务器</value>
+  </data>
+  <data name="I18n_McpServersDesc" xml:space="preserve">
+    <value>MCP 服务器可通过 stdio、Streamable HTTP 或 SSE 接入，Agent 可调用外部工具。</value>
+  </data>
+  <data name="I18n_AddServer" xml:space="preserve">
+    <value>添加服务器</value>
+  </data>
+  <data name="I18n_Transport" xml:space="preserve">
+    <value>传输</value>
+  </data>
+  <data name="I18n_Command" xml:space="preserve">
+    <value>命令</value>
+  </data>
+  <data name="I18n_Args" xml:space="preserve">
+    <value>参数</value>
+  </data>
+  <data name="I18n_WorkingDirectory" xml:space="preserve">
+    <value>工作目录</value>
+  </data>
+  <data name="I18n_Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="I18n_Test" xml:space="preserve">
+    <value>测试</value>
+  </data>
+  <data name="I18n_TestMcpTooltip" xml:space="preserve">
+    <value>测试连接并发现工具</value>
+  </data>
+  <data name="I18n_EditTooltip" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="I18n_DeleteTooltip" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="I18n_AddMcpServer" xml:space="preserve">
+    <value>添加 MCP 服务器</value>
+  </data>
+  <data name="I18n_EditMcpServer" xml:space="preserve">
+    <value>编辑 MCP 服务器</value>
+  </data>
+  <data name="I18n_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="I18n_OK" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="I18n_AgentSettings" xml:space="preserve">
+    <value>Agent 设置</value>
+  </data>
+  <data name="I18n_MaxTaskIterations" xml:space="preserve">
+    <value>最大任务轮数</value>
+  </data>
+  <data name="I18n_MaxTaskIterationsDesc" xml:space="preserve">
+    <value>Agent 单次任务最多执行多少轮。设置为 0 表示无上限（需手动停止）。</value>
+  </data>
+  <data name="I18n_Unlimited" xml:space="preserve">
+    <value>无上限</value>
+  </data>
+  <data name="I18n_MaxRounds" xml:space="preserve">
+    <value>最大轮数：</value>
+  </data>
+  <data name="I18n_SilentReview" xml:space="preserve">
+    <value>静默审查</value>
+  </data>
+  <data name="I18n_SilentReviewDesc" xml:space="preserve">
+    <value>定时轮询检查最近输入的内容（保存时也触发）</value>
+  </data>
+  <data name="I18n_SilentReviewModel" xml:space="preserve">
+    <value>静默审查模型</value>
+  </data>
+  <data name="I18n_SilentReviewModelDesc" xml:space="preserve">
+    <value>静默审查使用独立的小模型定时轮询检查文档。留空则使用主模型。</value>
+  </data>
+  <data name="I18n_OllamaModel" xml:space="preserve">
+    <value>Ollama 模型：</value>
+  </data>
+  <data name="I18n_OnlineModel" xml:space="preserve">
+    <value>在线模型：</value>
+  </data>
+  <data name="I18n_ModelName" xml:space="preserve">
+    <value>模型名称：</value>
+  </data>
+  <data name="I18n_ReviewIntervalSeconds" xml:space="preserve">
+    <value>审查间隔(秒)：</value>
+  </data>
+  <data name="I18n_SaveReviewSettings" xml:space="preserve">
+    <value>保存审查设置</value>
+  </data>
+  <data name="I18n_SaveReviewSettingsSaved" xml:space="preserve">
+    <value>静默审查设置已保存</value>
+  </data>
+  <data name="I18n_SelectSkillZipTitle" xml:space="preserve">
+    <value>选择 Skill ZIP 文件</value>
+  </data>
+  <data name="I18n_ZipFileFilter" xml:space="preserve">
+    <value>ZIP 文件|*.zip</value>
+  </data>
+  <data name="I18n_SkillZipNoSkillMd" xml:space="preserve">
+    <value>ZIP 文件中未找到 SKILL.md，导入失败。</value>
+  </data>
+  <data name="I18n_ImportFailedTitle" xml:space="preserve">
+    <value>导入失败</value>
+  </data>
+  <data name="I18n_SkillImportSucceeded" xml:space="preserve">
+    <value>Skill "{0}" 导入成功！</value>
+  </data>
+  <data name="I18n_ImportFailed" xml:space="preserve">
+    <value>导入失败：{0}</value>
+  </data>
+  <data name="I18n_DeleteSkillConfirm" xml:space="preserve">
+    <value>确定要删除 Skill 文件夹吗？
+{0}
+
+此操作不可撤销。</value>
+  </data>
+  <data name="I18n_DeleteConfirmTitle" xml:space="preserve">
+    <value>确认删除</value>
+  </data>
+  <data name="I18n_SkillDeleted" xml:space="preserve">
+    <value>Skill 已删除</value>
+  </data>
+  <data name="I18n_DeleteFailed" xml:space="preserve">
+    <value>删除失败：{0}</value>
+  </data>
+  <data name="I18n_DeleteMcpConfirm" xml:space="preserve">
+    <value>确定要删除 MCP 服务器 "{0}" 吗？</value>
+  </data>
+  <data name="I18n_McpTestSuccess" xml:space="preserve">
+    <value>连接成功，发现 {0} 个工具。</value>
+  </data>
+  <data name="I18n_McpTestFailed" xml:space="preserve">
+    <value>连接失败。请检查启动命令、参数、运行环境和服务器日志。</value>
+  </data>
+  <data name="I18n_McpTestError" xml:space="preserve">
+    <value>连接失败：{0}</value>
+  </data>
+  <data name="I18n_McpTestTitle" xml:space="preserve">
+    <value>MCP 测试</value>
+  </data>
+  <data name="I18n_NameRequired" xml:space="preserve">
+    <value>名称不能为空。</value>
+  </data>
+  <data name="I18n_StdioCommandRequired" xml:space="preserve">
+    <value>stdio 传输需要填写启动命令。</value>
+  </data>
+  <data name="I18n_RemoteMcpUrlRequired" xml:space="preserve">
+    <value>远程 MCP 传输需要填写 URL。</value>
+  </data>
+  <data name="I18n_McpNameExists" xml:space="preserve">
+    <value>已存在名为 "{0}" 的服务器。</value>
+  </data>
+  <data name="I18n_WordOllamaTitle" xml:space="preserve">
+    <value>WordOllama</value>
+  </data>
+  <data name="I18n_OAuthCancelled" xml:space="preserve">
+    <value>OAuth2 已取消</value>
+  </data>
+  <data name="I18n_Authenticating" xml:space="preserve">
+    <value>认证中...</value>
+  </data>
+  <data name="I18n_OAuthSucceeded" xml:space="preserve">
+    <value>OAuth2 认证成功</value>
+  </data>
+  <data name="I18n_OAuthFailed" xml:space="preserve">
+    <value>OAuth2 认证失败或已取消</value>
+  </data>
+  <data name="I18n_OAuthError" xml:space="preserve">
+    <value>OAuth2 错误: {0}</value>
+  </data>
+  <data name="I18n_ApiKeyRequired" xml:space="preserve">
+    <value>请先输入 API Key</value>
+  </data>
+  <data name="I18n_Fetching" xml:space="preserve">
+    <value>获取中...</value>
+  </data>
+  <data name="I18n_FetchedModels" xml:space="preserve">
+    <value>获取到 {0} 个可用模型</value>
+  </data>
+  <data name="I18n_NoModelsFetched" xml:space="preserve">
+    <value>未获取到模型列表，可手动输入模型名称</value>
+  </data>
+  <data name="I18n_FetchModelsFailed" xml:space="preserve">
+    <value>获取模型列表失败: {0}</value>
+  </data>
+  <data name="I18n_EditModel" xml:space="preserve">
+    <value>编辑模型</value>
+  </data>
+  <data name="I18n_ModelLoaded" xml:space="preserve">
+    <value>已载入模型: {0}</value>
+  </data>
+  <data name="I18n_StyleListRefreshed" xml:space="preserve">
+    <value>样式列表已刷新</value>
+  </data>
+  <data name="I18n_StyleNameRequired" xml:space="preserve">
+    <value>请输入样式名称</value>
+  </data>
+  <data name="I18n_StyleCreated" xml:space="preserve">
+    <value>样式 "{0}" 已创建</value>
+  </data>
+  <data name="I18n_StyleExists" xml:space="preserve">
+    <value>样式 "{0}" 已存在</value>
+  </data>
+  <data name="I18n_CreateStyleFailed" xml:space="preserve">
+    <value>创建样式失败: {0}</value>
+  </data>
+  <data name="I18n_NoClipboardText" xml:space="preserve">
+    <value>剪贴板中没有文本内容。请先复制 Markdown 文本到剪贴板。</value>
+  </data>
+  <data name="I18n_MarkdownConverted" xml:space="preserve">
+    <value>Markdown 已转换为 Word 样式</value>
+  </data>
+  <data name="I18n_ConversionFailed" xml:space="preserve">
+    <value>转换失败: {0}</value>
+  </data>
+  <data name="I18n_RestoreFailed" xml:space="preserve">
+    <value>恢复失败：{0}</value>
+  </data>
+  <data name="I18n_CustomNotConfigured" xml:space="preserve">
+    <value>该自定义功能尚未进行配置，请检查提示词是否已填写</value>
+  </data>
+  <data name="I18n_CustomPromptNotFound" xml:space="preserve">
+    <value>未找到对应的提示词配置</value>
+  </data>
+  <data name="I18n_CustomPromptEmpty" xml:space="preserve">
+    <value>该自定义功能配置有空值，请检查提示词是否已填写完整</value>
+  </data>
+  <data name="I18n_StartExecuting" xml:space="preserve">
+    <value>开始执行{0}</value>
+  </data>
+  <data name="I18n_ErrorTitle" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="I18n_SilentReviewChanged" xml:space="preserve">
+    <value>静默审查 {0} 个变更段落...</value>
+  </data>
+  <data name="I18n_SilentReviewRunning" xml:space="preserve"><value>静默审查进行中</value></data>
+  <data name="I18n_SilentReviewFound" xml:space="preserve">
+    <value>静默审查发现 {0} 个问题，已加入问题面板。</value>
+  </data>
+  <data name="I18n_SilentReviewCompletedFound" xml:space="preserve">
+    <value>静默审查完成，发现 {0} 个问题</value>
+  </data>
+  <data name="I18n_SilentReviewPassed" xml:space="preserve">
+    <value>静默审查通过，未发现问题。</value>
+  </data>
+  <data name="I18n_SilentReviewPassedShort" xml:space="preserve">
+    <value>静默审查通过</value>
+  </data>
+  <data name="I18n_SilentReviewException" xml:space="preserve">
+    <value>静默审查异常：{0}</value>
+  </data>
+  <data name="I18n_SilentReviewExceptionShort" xml:space="preserve">
+    <value>静默审查异常</value>
+  </data>
+  <data name="I18n_SilentReviewSource" xml:space="preserve">
+    <value>静默审查</value>
+  </data>
+  <data name="I18n_AgentIssuesTitle" xml:space="preserve">
+    <value>Agent 发现的问题</value>
+  </data>
+  <data name="I18n_GenericErrorPrefix" xml:space="preserve">
+    <value>发生错误: </value>
+  </data>
+  <data name="I18n_UiReviewTab" xml:space="preserve">
+    <value>审阅</value>
+  </data>
+  <data name="I18n_UiChatTab" xml:space="preserve">
+    <value>对话</value>
+  </data>
+  <data name="I18n_UiIssuesTab" xml:space="preserve">
+    <value>问题</value>
+  </data>
+  <data name="I18n_UiAgentTitle" xml:space="preserve">
+    <value>Agent</value>
+  </data>
+  <data name="I18n_UiStop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="I18n_UiThinking" xml:space="preserve">
+    <value>思考中...</value>
+  </data>
+  <data name="I18n_UiConfirmPlan" xml:space="preserve">
+    <value>确认执行</value>
+  </data>
+  <data name="I18n_UiRevisePlan" xml:space="preserve">
+    <value>修改需求</value>
+  </data>
+  <data name="I18n_UiNoIssues" xml:space="preserve">
+    <value>暂无审查问题</value>
+  </data>
+  <data name="I18n_UiClear" xml:space="preserve">
+    <value>清空</value>
+  </data>
+  <data name="I18n_UiReviewSelection" xml:space="preserve">
+    <value>审查选区</value>
+  </data>
+  <data name="I18n_UiReviewDocument" xml:space="preserve">
+    <value>审查全文</value>
+  </data>
+  <data name="I18n_UiIssuesEmpty" xml:space="preserve">
+    <value>审查结果会出现在这里</value>
+  </data>
+  <data name="I18n_UiJump" xml:space="preserve">
+    <value>定位</value>
+  </data>
+  <data name="I18n_UiComment" xml:space="preserve">
+    <value>批注</value>
+  </data>
+  <data name="I18n_UiIgnore" xml:space="preserve">
+    <value>忽略</value>
+  </data>
+  <data name="I18n_UiInputHint" xml:space="preserve">
+    <value>输入指令...</value>
+  </data>
+  <data name="I18n_UiRemoveImage" xml:space="preserve">
+    <value>移除图片</value>
+  </data>
+  <data name="I18n_UiReviewWorkspaceTitle" xml:space="preserve">
+    <value>非破坏式审阅</value>
+  </data>
+  <data name="I18n_UiReviewPaneTitle" xml:space="preserve">
+    <value>审阅工作台</value>
+  </data>
+  <data name="I18n_UiReviewWorkspaceSubtitle" xml:space="preserve">
+    <value>先选择审阅范围，再生成建议。接受、插入或批注前不会修改正文。</value>
+  </data>
+  <data name="I18n_UiLoadSelection" xml:space="preserve">
+    <value>载入选区</value>
+  </data>
+  <data name="I18n_UiLoadParagraphs" xml:space="preserve">
+    <value>当前段落</value>
+  </data>
+  <data name="I18n_UiLoadDocument" xml:space="preserve">
+    <value>全文</value>
+  </data>
+  <data name="I18n_UiReviewScopeLabel" xml:space="preserve">
+    <value>审阅范围</value>
+  </data>
+  <data name="I18n_UiReviewScopeHint" xml:space="preserve">
+    <value>选区适合精确处理，当前段落适合快速修改，全文适合分段生成建议。</value>
+  </data>
+  <data name="I18n_UiReviewScopeNone" xml:space="preserve">
+    <value>尚未载入范围。请选择一种审阅范围。</value>
+  </data>
+  <data name="I18n_UiReviewGenerationLabel" xml:space="preserve">
+    <value>生成建议</value>
+  </data>
+  <data name="I18n_UiReviewBatchActions" xml:space="preserve">
+    <value>批量处理</value>
+  </data>
+  <data name="I18n_UiReviewLoadedCount" xml:space="preserve">
+    <value>已载入 {0} 个审阅单元。</value>
+  </data>
+  <data name="I18n_UiGenerateAll" xml:space="preserve">
+    <value>生成全部</value>
+  </data>
+  <data name="I18n_UiProfileLabel" xml:space="preserve">
+    <value>写作 Profile / Story Bible</value>
+  </data>
+  <data name="I18n_UiProfileHint" xml:space="preserve">
+    <value>人物名、术语、特殊拼写、语法偏好、风格规则等。优先保存在当前文档同目录，并随审阅提示词一起发送给当前模型。</value>
+  </data>
+  <data name="I18n_UiSaveProfile" xml:space="preserve">
+    <value>保存 Profile</value>
+  </data>
+  <data name="I18n_UiAcceptAll" xml:space="preserve"><value>全部接受</value></data>
+  <data name="I18n_UiInsertAll" xml:space="preserve"><value>全部插入</value></data>
+  <data name="I18n_UiCommentAll" xml:space="preserve"><value>全部批注</value></data>
+  <data name="I18n_UiSkipAll" xml:space="preserve"><value>全部跳过</value></data>
+  <data name="I18n_UiEmptySuggestions" xml:space="preserve">
+    <value>载入审阅范围后，逐段建议会出现在这里</value>
+  </data>
+  <data name="I18n_UiGenerate" xml:space="preserve">
+    <value>生成</value>
+  </data>
+  <data name="I18n_UiFocus" xml:space="preserve">
+    <value>定位</value>
+  </data>
+  <data name="I18n_UiAcceptReplace" xml:space="preserve">
+    <value>接受替换</value>
+  </data>
+  <data name="I18n_UiInsertBelow" xml:space="preserve">
+    <value>插入下方</value>
+  </data>
+  <data name="I18n_UiCopy" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="I18n_UiSkip" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="I18n_UiOriginal" xml:space="preserve">
+    <value>原文</value>
+  </data>
+  <data name="I18n_UiSuggestion" xml:space="preserve">
+    <value>建议稿</value>
+  </data>
+  <data name="I18n_UiCustomInstruction" xml:space="preserve">
+    <value>审阅要求</value>
+  </data>
+  <data name="I18n_UiCustomInstructionHint" xml:space="preserve">
+    <value>例如：保留作者风格，修复语法和节奏问题，不改变角色口吻。</value>
+  </data>
+  <data name="I18n_UiDefaultReviewInstruction" xml:space="preserve">
+    <value>请润色并审阅文本，保持原意、口吻和段落格式，只输出修改后的文本。</value>
+  </data>
+  <data name="I18n_AboutTitle" xml:space="preserve">
+    <value>关于 WordOllama</value>
+  </data>
+  <data name="I18n_AboutDescription" xml:space="preserve">
+    <value>基于 AI 的 Word 智能助理插件
+支持多模型对话、文档审查、翻译、排版
+ReAct 自主 Agent 模式</value>
+  </data>
+  <data name="I18n_Confirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="I18n_Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="I18n_ConfirmationSessionSkip" xml:space="preserve">
+    <value>本次会话不再询问</value>
+  </data>
+  <data name="I18n_ConfirmationPermanentSkip" xml:space="preserve">
+    <value>永久不再询问（可在设置中重新开启）</value>
+  </data>
+  <data name="I18n_ChatModelNotSelected" xml:space="preserve">
+    <value>模型：未选择</value>
+  </data>
+  <data name="I18n_ChatInputHint" xml:space="preserve">
+    <value>输入消息...</value>
+  </data>
+  <data name="I18n_ChatGreetingInitial" xml:space="preserve">
+    <value>您好，请问今天有什么能帮到您？</value>
+  </data>
+  <data name="I18n_ChatGreetingAgain" xml:space="preserve">
+    <value>您好，我们又见面了。</value>
+  </data>
+  <data name="I18n_ChatSystemGreeting" xml:space="preserve">
+    <value>您好！请问有什么能帮到您？</value>
+  </data>
+  <data name="I18n_ChatIdle" xml:space="preserve">
+    <value>{0}:空闲中</value>
+  </data>
+  <data name="I18n_ChatTyping" xml:space="preserve">
+    <value>{0}:正在输入中...</value>
+  </data>
+  <data name="I18n_ChatEmptyInput" xml:space="preserve">
+    <value>请输入内容后再发送！</value>
+  </data>
+  <data name="I18n_ChatClearConfirm" xml:space="preserve">
+    <value>确认清除全部记录吗？</value>
+  </data>
+  <data name="I18n_ChatClearTitle" xml:space="preserve">
+    <value>清除记录</value>
+  </data>
+  <data name="I18n_DiffReviewTitle" xml:space="preserve">
+    <value>文档更改审查</value>
+  </data>
+  <data name="I18n_DiffLoadingStats" xml:space="preserve">
+    <value>正在加载变更统计...</value>
+  </data>
+  <data name="I18n_DiffBefore" xml:space="preserve">
+    <value>修改前</value>
+  </data>
+  <data name="I18n_DiffAfter" xml:space="preserve">
+    <value>修改后</value>
+  </data>
+  <data name="I18n_DiffAccept" xml:space="preserve">
+    <value>✔ 接受</value>
+  </data>
+  <data name="I18n_DiffReject" xml:space="preserve">
+    <value>✖ 拒绝</value>
+  </data>
+  <data name="I18n_DiffApplyEdit" xml:space="preserve">
+    <value>✏ 应用修改</value>
+  </data>
+  <data name="I18n_DiffAcceptAll" xml:space="preserve">
+    <value>✔ 全部接受</value>
+  </data>
+  <data name="I18n_DiffRejectAll" xml:space="preserve">
+    <value>✖ 全部拒绝</value>
+  </data>
+  <data name="I18n_DiffNoChangesAccept" xml:space="preserve">
+    <value>✔ 无变更</value>
+  </data>
+  <data name="I18n_DiffNoChangesReject" xml:space="preserve">
+    <value>✖ 无变更</value>
+  </data>
+  <data name="I18n_DiffSummary" xml:space="preserve">
+    <value>文档变更统计：{0} 处新增、{1} 处修改、{2} 处删除（共 {3} 处变更）</value>
+  </data>
+  <data name="I18n_DiffAcceptedAll" xml:space="preserve">
+    <value>已接受所有修订。</value>
+  </data>
+  <data name="I18n_DiffRejectedAll" xml:space="preserve">
+    <value>已拒绝所有修订。</value>
+  </data>
+  <data name="I18n_DiffAcceptError" xml:space="preserve">
+    <value>接受修订时出错：{0}</value>
+  </data>
+  <data name="I18n_DiffRejectError" xml:space="preserve">
+    <value>拒绝修订时出错：{0}</value>
+  </data>
+  <data name="I18n_DiffRejectConfirm" xml:space="preserve">
+    <value>确定要拒绝所有修订吗？文档将还原到执行前的状态。</value>
+  </data>
+  <data name="I18n_DiffRejectConfirmTitle" xml:space="preserve">
+    <value>确认拒绝</value>
+  </data>
+  <data name="I18n_DiffEmptyEditedContent" xml:space="preserve">
+    <value>修改后的内容不能为空。</value>
+  </data>
+  <data name="I18n_Completed" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="I18n_Info" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="I18n_Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="I18n_DocxDiffTitle" xml:space="preserve">
+    <value>文档分析</value>
+  </data>
+  <data name="I18n_Document1" xml:space="preserve">
+    <value>文档 1</value>
+  </data>
+  <data name="I18n_Document2" xml:space="preserve">
+    <value>文档 2</value>
+  </data>
+  <data name="I18n_SelectOriginalDocument" xml:space="preserve">
+    <value>选择原文档</value>
+  </data>
+  <data name="I18n_SelectNewDocument" xml:space="preserve">
+    <value>选择新文档</value>
+  </data>
+  <data name="I18n_OurRole" xml:space="preserve">
+    <value>我方身份</value>
+  </data>
+  <data name="I18n_PartyA" xml:space="preserve">
+    <value>甲方</value>
+  </data>
+  <data name="I18n_PartyB" xml:space="preserve">
+    <value>乙方</value>
+  </data>
+  <data name="I18n_PartyC" xml:space="preserve">
+    <value>丙方</value>
+  </data>
+  <data name="I18n_PartyD" xml:space="preserve">
+    <value>丁方</value>
+  </data>
+  <data name="I18n_StartCompareAnalyze" xml:space="preserve">
+    <value>开始对比分析</value>
+  </data>
+  <data name="I18n_DocxDiffWarning" xml:space="preserve">
+    <value>* 本功能耗时较久，请耐心等待。如果打开了系统的预览功能，可能会导致无法读取文档。</value>
+  </data>
+  <data name="I18n_SelectDocumentTitle" xml:space="preserve">
+    <value>选择文档</value>
+  </data>
+  <data name="I18n_WordDocumentsFilter" xml:space="preserve">
+    <value>Word 文档|*.docx</value>
+  </data>
+  <data name="I18n_DocxDiffSelectDocsError" xml:space="preserve">
+    <value>请先选择需要对比的文档。</value>
+  </data>
+  <data name="I18n_DocxDiffSelectRoleError" xml:space="preserve">
+    <value>请选择或填写我方身份。</value>
+  </data>
+  <data name="I18n_DocxDiffRunning" xml:space="preserve">
+    <value>正在进行对比分析...</value>
+  </data>
+  <data name="I18n_DocxDiffComplete" xml:space="preserve">
+    <value>对比分析完成</value>
+  </data>
+  <data name="I18n_LawSearchTitle" xml:space="preserve">
+    <value>法条查询</value>
+  </data>
+  <data name="I18n_LawNameHint" xml:space="preserve">
+    <value>法律名称（如：中华人民共和国民法典）</value>
+  </data>
+  <data name="I18n_ArticleNumberHint" xml:space="preserve">
+    <value>条号（如：14）</value>
+  </data>
+  <data name="I18n_ArticlePrefix" xml:space="preserve">
+    <value> 第</value>
+  </data>
+  <data name="I18n_ArticleSuffix" xml:space="preserve">
+    <value>条</value>
+  </data>
+  <data name="I18n_Search" xml:space="preserve">
+    <value>查询</value>
+  </data>
+  <data name="I18n_CopyAll" xml:space="preserve">
+    <value>复制全部</value>
+  </data>
+  <data name="I18n_CopyThisArticle" xml:space="preserve">
+    <value>复制本条法条</value>
+  </data>
+  <data name="I18n_LoadingPleaseWait" xml:space="preserve">
+    <value>加载中，请耐心等待...</value>
+  </data>
+  <data name="I18n_ModWritingTitle" xml:space="preserve">
+    <value>按需修改</value>
+  </data>
+  <data name="I18n_ModifyTab" xml:space="preserve">
+    <value>修改</value>
+  </data>
+  <data name="I18n_SourceTextArea" xml:space="preserve">
+    <value>原文区</value>
+  </data>
+  <data name="I18n_SelectTemplate" xml:space="preserve">
+    <value>选择模板</value>
+  </data>
+  <data name="I18n_ModRequestHint" xml:space="preserve">
+    <value>填写需求（请注意 Tokens 总数）</value>
+  </data>
+  <data name="I18n_OptimizePrompt" xml:space="preserve">
+    <value>优化提示词</value>
+  </data>
+  <data name="I18n_StartModify" xml:space="preserve">
+    <value>开始修改</value>
+  </data>
+  <data name="I18n_ModifyResult" xml:space="preserve">
+    <value>修改结果</value>
+  </data>
+  <data name="I18n_CopyResult" xml:space="preserve">
+    <value>复制结果</value>
+  </data>
+  <data name="I18n_Compare" xml:space="preserve">
+    <value>对比</value>
+  </data>
+  <data name="I18n_BeforeAfterCompare" xml:space="preserve">
+    <value>前后对比</value>
+  </data>
+  <data name="I18n_TemplateManagement" xml:space="preserve">
+    <value>模板管理</value>
+  </data>
+  <data name="I18n_TemplateName" xml:space="preserve">
+    <value>模板名称</value>
+  </data>
+  <data name="I18n_PromptClickThreeTimes" xml:space="preserve">
+    <value>提示词（需要点击格子三次）</value>
+  </data>
+  <data name="I18n_DeleteTemplate" xml:space="preserve">
+    <value>删除此模板</value>
+  </data>
+  <data name="I18n_Add" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="I18n_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="I18n_TemplateSaved" xml:space="preserve">
+    <value>模板已保存</value>
+  </data>
+  <data name="I18n_DeleteTemplateConfirm" xml:space="preserve">
+    <value>确定要删除这个模板吗？</value>
+  </data>
+  <data name="I18n_ModifyError" xml:space="preserve">
+    <value>发生错误：{0}</value>
+  </data>
+  <data name="I18n_RowIncomplete" xml:space="preserve">
+    <value>请先填写完当前行再添加新行。</value>
+  </data>
+  <data name="I18n_MootCourtTitle" xml:space="preserve">
+    <value>模拟法庭调查</value>
+  </data>
+  <data name="I18n_PleadingType" xml:space="preserve">
+    <value>诉状类型</value>
+  </data>
+  <data name="I18n_Indictment" xml:space="preserve">
+    <value>起诉状</value>
+  </data>
+  <data name="I18n_Defense" xml:space="preserve">
+    <value>答辩状</value>
+  </data>
+  <data name="I18n_PleadingToReview" xml:space="preserve">
+    <value>待提问状书</value>
+  </data>
+  <data name="I18n_InputTextHere" xml:space="preserve">
+    <value>在此输入文本（可删除不重要内容）</value>
+  </data>
+  <data name="I18n_ReviewResult" xml:space="preserve">
+    <value>审查结果</value>
+  </data>
+  <data name="I18n_ReviewResultHere" xml:space="preserve">
+    <value>审查结果将在此显示</value>
+  </data>
+  <data name="I18n_StartReview" xml:space="preserve">
+    <value>开始审查</value>
+  </data>
+  <data name="I18n_MootCourtResultPrefix" xml:space="preserve">
+    <value>以下为模拟法庭调查问题：</value>
+  </data>
+  <data name="I18n_ModelReturnedEmpty" xml:space="preserve">
+    <value>模型返回空白结果，请检查输入内容</value>
+  </data>
+  <data name="I18n_TranslatorTitle" xml:space="preserve">
+    <value>自由翻译</value>
+  </data>
+  <data name="I18n_UpdateLogTitle" xml:space="preserve">
+    <value>更新说明</value>
+  </data>
+  <data name="I18n_UpdateLogRuntimePlaceholder" xml:space="preserve">
+    <value>更新说明内容将在运行时加载。</value>
+  </data>
+  <data name="I18n_OnlineMaxTokensHint" xml:space="preserve">
+    <value>量钱包而行</value>
+  </data>
+  <data name="I18n_DefaultContextWindowHint" xml:space="preserve">
+    <value>默认 256000</value>
+  </data>
+  <data name="I18n_AutoEndpointHint" xml:space="preserve">
+    <value>自动填入端点</value>
+  </data>
+  <data name="I18n_SelectModelHint" xml:space="preserve">
+    <value>选择模型</value>
+  </data>
+  <data name="I18n_McpNameHint" xml:space="preserve">
+    <value>服务器名称（唯一标识）</value>
+  </data>
+  <data name="I18n_McpTransportHint" xml:space="preserve">
+    <value>传输类型</value>
+  </data>
+  <data name="I18n_McpUrlHint" xml:space="preserve">
+    <value>远程 MCP URL（streamable-http / sse）</value>
+  </data>
+  <data name="I18n_McpCommandHint" xml:space="preserve">
+    <value>启动命令（如 npx, node, python）</value>
+  </data>
+  <data name="I18n_McpArgsHint" xml:space="preserve">
+    <value>命令参数（可选）</value>
+  </data>
+  <data name="I18n_McpWorkingDirectoryHint" xml:space="preserve">
+    <value>工作目录 cwd（可选）</value>
+  </data>
+  <data name="I18n_McpEnvHint" xml:space="preserve">
+    <value>环境变量（可选，每行 KEY=VALUE）</value>
+  </data>
+  <data name="I18n_McpHeadersHint" xml:space="preserve">
+    <value>HTTP 请求头（可选，每行 Header=Value）</value>
+  </data>
+  <data name="I18n_PositiveIntegerHint" xml:space="preserve">
+    <value>正整数</value>
+  </data>
+  <data name="I18n_SelectOptionalModelHint" xml:space="preserve">
+    <value>选择模型（留空=主模型）</value>
+  </data>
+  <data name="I18n_ManualOrDropdownHint" xml:space="preserve">
+    <value>手动填写或从下拉选择</value>
+  </data>
+  <data name="I18n_UseMainEndpointHint" xml:space="preserve">
+    <value>留空则使用主 EndPoint</value>
+  </data>
+  <data name="I18n_MarkdownStyleDescription" xml:space="preserve">
+    <value>设置 Markdown 元素对应的 Word 样式名称。修改后需要点击保存按钮才能生效。</value>
+  </data>
+  <data name="I18n_MarkdownElement" xml:space="preserve">
+    <value>Markdown 元素</value>
+  </data>
+  <data name="I18n_WordStyleName" xml:space="preserve">
+    <value>Word 样式名称</value>
+  </data>
+  <data name="I18n_Heading1Markdown" xml:space="preserve">
+    <value>标题 1 (##)</value>
+  </data>
+  <data name="I18n_Heading2Markdown" xml:space="preserve">
+    <value>标题 2 (###)</value>
+  </data>
+  <data name="I18n_Heading3Markdown" xml:space="preserve">
+    <value>标题 3 (####)</value>
+  </data>
+  <data name="I18n_BodyText" xml:space="preserve">
+    <value>正文</value>
+  </data>
+  <data name="I18n_CodeBlock" xml:space="preserve">
+    <value>代码块</value>
+  </data>
+  <data name="I18n_BlockQuoteMarkdown" xml:space="preserve">
+    <value>引用 (&gt;)</value>
+  </data>
+  <data name="I18n_UnorderedList" xml:space="preserve">
+    <value>无序列表</value>
+  </data>
+  <data name="I18n_CreateStyleDescription" xml:space="preserve">
+    <value>输入样式名称后点击「创建样式」将在当前文档中创建该样式（可稍后在 Word 中修改其格式）。</value>
+  </data>
+  <data name="I18n_NewStyleNameHint" xml:space="preserve">
+    <value>新样式名称</value>
+  </data>
+  <data name="I18n_MarkdownScreenTip" xml:space="preserve">
+    <value>将 Markdown 文本转换为 Word 样式后插入文档</value>
+  </data>
+  <data name="I18n_TaskStatusPending" xml:space="preserve">
+    <value>等待中</value>
+  </data>
+  <data name="I18n_TaskStatusRunning" xml:space="preserve">
+    <value>执行中</value>
+  </data>
+  <data name="I18n_TaskStatusCompleted" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="I18n_TaskStatusFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="I18n_TaskStatusCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="I18n_NoActiveDocument" xml:space="preserve">
+    <value>无激活中的文档，请先打开一个文档</value>
+  </data>
+  <data name="I18n_ClickOnceTooSoon" xml:space="preserve">
+    <value>距离上次检查更新的时间不足 {0} 分钟。请稍后再试。</value>
+  </data>
+  <data name="I18n_TooSoonTitle" xml:space="preserve">
+    <value>太快啦！</value>
+  </data>
+  <data name="I18n_UpdateDownloadFailed" xml:space="preserve">
+    <value>无法下载应用程序的新版本。
+
+请检查您的网络连接，或稍后再试。错误：{0}</value>
+  </data>
+  <data name="I18n_UpdateCheckFailed" xml:space="preserve">
+    <value>无法检查应用程序的新版本。ClickOnce 部署可能已损坏。请重新部署应用程序并再试一次。错误：{0}</value>
+  </data>
+  <data name="I18n_UpdateNotClickOnce" xml:space="preserve">
+    <value>无法更新此应用程序。它可能不是 ClickOnce 应用程序。错误：{0}</value>
+  </data>
+  <data name="I18n_UpdateAvailableQuestion" xml:space="preserve">
+    <value>检测到有新版本可用，是否立即更新应用程序？</value>
+  </data>
+  <data name="I18n_UpdateAvailableTitle" xml:space="preserve">
+    <value>有更新可用</value>
+  </data>
+  <data name="I18n_UpdateRequired" xml:space="preserve">
+    <value>该应用程序检测到必须从当前版本更新到版本 {0}。应用程序将现在安装更新并重新启动。</value>
+  </data>
+  <data name="I18n_UpdateRestart" xml:space="preserve">
+    <value>应用程序已升级，即将重新启动。</value>
+  </data>
+  <data name="I18n_UpdateInstallFailed" xml:space="preserve">
+    <value>无法安装应用程序的最新版本。
+
+请检查您的网络连接，或稍后再试。错误：{0}</value>
+  </data>
+  <data name="I18n_UpdateUnavailableOffline" xml:space="preserve">
+    <value>此应用程序不是通过 ClickOnce 部署的，无法执行更新检查。</value>
+  </data>
+  <data name="I18n_UpdateUnavailableTitle" xml:space="preserve">
+    <value>无法更新</value>
+  </data>
+  <data name="I18n_OnlineModelLabel" xml:space="preserve">
+    <value>在线模型</value>
+  </data>
+  <data name="I18n_ReviewPaneButton" xml:space="preserve">
+    <value>审阅工作台</value>
+  </data>
+  <data name="I18n_ReviewPaneButtonTip" xml:space="preserve">
+    <value>在侧边栏中生成建议，确认后再替换正文。</value>
+  </data>
+  <data name="I18n_LawSearching" xml:space="preserve">
+    <value>查询中，请稍候...</value>
+  </data>
+  <data name="I18n_LawLogText" xml:space="preserve">
+    <value>法条：{0} {1}</value>
+  </data>
+  <data name="I18n_LawQueryFailed" xml:space="preserve">
+    <value>查询失败：{0}</value>
+  </data>
+  <data name="I18n_LawQuerySuccess" xml:space="preserve">
+    <value>查询成功 ({0})</value>
+  </data>
+  <data name="I18n_LawNotFound" xml:space="preserve">
+    <value>未找到相关内容 ({0})</value>
+  </data>
+  <data name="I18n_LawRequestFailed" xml:space="preserve">
+    <value>请求失败：{0}</value>
+  </data>
+  <data name="I18n_NoCopyableResult" xml:space="preserve">
+    <value>没有可复制的结果</value>
+  </data>
+  <data name="I18n_CopiedLawArticles" xml:space="preserve">
+    <value>✅ 已复制 {0} 条法条到剪贴板</value>
+  </data>
+  <data name="I18n_CopiedArticle" xml:space="preserve">
+    <value>✅ 已复制：{0}</value>
+  </data>
+  <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>取消排队生成</value></data>
+  <data name="I18n_DefaultOutputMode" xml:space="preserve">
+    <value>默认输出方式</value>
+  </data>
+  <data name="I18n_OutputModeAuto" xml:space="preserve">
+    <value>自动（短文本插入，长文本进入审阅工作台）</value>
+  </data>
+  <data name="I18n_OutputModeInsertBelow" xml:space="preserve">
+    <value>插入到选区下方</value>
+  </data>
+  <data name="I18n_OutputModeInsertWithDiff" xml:space="preserve">
+    <value>插入并附带对比批注</value>
+  </data>
+  <data name="I18n_OutputModeComment" xml:space="preserve">
+    <value>写入批注</value>
+  </data>
+  <data name="I18n_OutputModeReviewPane" xml:space="preserve">
+    <value>发送到审阅工作台</value>
+  </data>
+  <data name="I18n_AgentExecutionMode" xml:space="preserve">
+    <value>Agent 执行模式</value>
+  </data>
+  <data name="I18n_AgentExecutionModeDesc" xml:space="preserve">
+    <value>仅查看不会改动文档；仅提出建议会拦截 Agent 写入；修订模式会将所有 Agent 改动标记为修订。</value>
+  </data>
+  <data name="I18n_AgentExternalToolsTitle" xml:space="preserve"><value>外部工具权限</value></data>
+  <data name="I18n_AgentExternalToolsDesc" xml:space="preserve"><value>命令、Python、网络请求和 MCP 可能访问文档以外的系统资源。默认关闭；关闭时每个 Agent 任务会先询问是否仅为本次任务启用。</value></data>
+  <data name="I18n_AgentExternalToolsToggle" xml:space="preserve"><value>默认允许外部工具（谨慎开启）</value></data>
+  <data name="I18n_AgentModeViewOnly" xml:space="preserve">
+    <value>仅查看</value>
+  </data>
+  <data name="I18n_AgentModeProposeChanges" xml:space="preserve">
+    <value>仅提出建议</value>
+  </data>
+  <data name="I18n_AgentModeTrackedChanges" xml:space="preserve">
+    <value>编辑并使用修订</value>
+  </data>
+  <data name="I18n_Diagnostics" xml:space="preserve">
+    <value>诊断</value>
+  </data>
+  <data name="I18n_EnableDiagnosticLogging" xml:space="preserve">
+    <value>本次会话启用诊断日志</value>
+  </data>
+  <data name="I18n_EnableDiagnosticLoggingDesc" xml:space="preserve">
+    <value>诊断日志默认关闭。启用后仅记录经过脱敏的元数据，不保存文档内容；关闭 Word 后自动恢复为关闭。</value>
+  </data>
+  <data name="I18n_ClearDiagnosticLog" xml:space="preserve">
+    <value>清除诊断日志</value>
+  </data>
+  <data name="I18n_DiagnosticLogCleared" xml:space="preserve">
+    <value>诊断日志已清除</value>
+  </data>
+  <data name="I18n_CopyDiagnostics" xml:space="preserve"><value>复制诊断信息</value></data>
+  <data name="I18n_DiagnosticsCopied" xml:space="preserve"><value>已复制脱敏诊断信息</value></data>
+  <data name="I18n_McpHealth" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="I18n_McpTools" xml:space="preserve">
+    <value>工具权限</value>
+  </data>
+  <data name="I18n_McpToolsTooltip" xml:space="preserve">
+    <value>选择允许 Agent 调用的工具</value>
+  </data>
+  <data name="I18n_McpToolsDesc" xml:space="preserve">
+    <value>只有明确勾选的工具会提供给 Agent。MCP 工具可能访问网络、文件或其他系统资源，调用时仍会要求本次任务授权。</value>
+  </data>
+  <data name="I18n_McpDiscoverToolsFirst" xml:space="preserve">
+    <value>请先测试服务器以发现可用工具，然后再配置工具权限。</value>
+  </data>
+  <data name="I18n_McpTrustServer" xml:space="preserve"><value>信任此 MCP 服务器（本机保存）</value></data>
+  <data name="I18n_McpTrustServerTooltip" xml:space="preserve"><value>受信任服务器可跳过重复的 MCP 调用确认，但工具白名单仍然生效。</value></data>
+  <data name="I18n_ToolCallingMode" xml:space="preserve"><value>工具调用模式</value></data>
+  <data name="I18n_ToolCallingAuto" xml:space="preserve"><value>自动检测</value></data>
+  <data name="I18n_ToolCallingReAct" xml:space="preserve"><value>JSON / ReAct（兼容性优先）</value></data>
+  <data name="I18n_ToolCallingNative" xml:space="preserve"><value>原生 Tool Calling</value></data>
+  <data name="I18n_TestConnection" xml:space="preserve"><value>测试连接</value></data>
+  <data name="I18n_TestingConnection" xml:space="preserve"><value>正在测试连接...</value></data>
+  <data name="I18n_ConnectionTestMissingSettings" xml:space="preserve"><value>请先填写服务地址和模型名称。</value></data>
+  <data name="I18n_ConnectionTestSuccess" xml:space="preserve"><value>连接成功，测试时间：{0}</value></data>
+  <data name="I18n_ConnectionTestFailed" xml:space="preserve"><value>连接失败：{0}</value></data>
+  <data name="I18n_ConnectionTestUnknownError" xml:space="preserve"><value>未知错误</value></data>
+  <data name="I18n_UiApiTab" xml:space="preserve"><value>接口与 Skill</value></data>
+  <data name="I18n_UiApiTitle" xml:space="preserve"><value>Agent 接口文档</value></data>
+  <data name="I18n_UiApiDescription" xml:space="preserve"><value>以下目录由当前 Agent 工具自动生成，展示可调用的 Word 能力、参数和副作用。文档不会暴露原始 COM 对象。</value></data>
+  <data name="I18n_UiRefreshApi" xml:space="preserve"><value>刷新接口文档</value></data>
+  <data name="I18n_UiCopyApi" xml:space="preserve"><value>复制文档</value></data>
+  <data name="I18n_UiApiSafetyNote" xml:space="preserve"><value>Skill 只保存为 SKILL.md，不会生成或执行脚本。文档写入、网络、本地进程和 MCP 调用仍受 Agent 权限控制。</value></data>
+  <data name="I18n_UiSkillName" xml:space="preserve"><value>Skill 名称，例如：小说润色</value></data>
+  <data name="I18n_UiSkillDescription" xml:space="preserve"><value>Skill 简短描述（可选）</value></data>
+  <data name="I18n_UiSkillGoal" xml:space="preserve"><value>告诉 AI 你希望这个 Skill 如何工作</value></data>
+  <data name="I18n_UiGenerateSkill" xml:space="preserve"><value>AI 创建 Skill</value></data>
+  <data name="I18n_UiSaveSkill" xml:space="preserve"><value>保存 Skill</value></data>
+  <data name="I18n_UiSkillDraft" xml:space="preserve"><value>Skill 草稿（保存前可编辑）</value></data>
+  <data name="I18n_UiApiNameRequired" xml:space="preserve"><value>请填写 Skill 名称。</value></data>
+  <data name="I18n_UiApiGoalRequired" xml:space="preserve"><value>请描述你希望 Skill 完成的工作。</value></data>
+  <data name="I18n_UiApiGenerating" xml:space="preserve"><value>正在生成 Skill...</value></data>
+  <data name="I18n_UiApiGenerationFailed" xml:space="preserve"><value>Skill 生成失败：{0}</value></data>
+  <data name="I18n_UiApiSkillSaved" xml:space="preserve"><value>Skill 已保存到：{0}</value></data>
+  <data name="I18n_UiApiSkillExists" xml:space="preserve"><value>Skill 已存在，是否覆盖？</value></data>
+  <data name="I18n_UiApiInvalidSkillName" xml:space="preserve"><value>Skill 名称无法生成安全的文件夹名称。</value></data>
+  <data name="I18n_UiApiBuildFailed" xml:space="preserve"><value>接口文档生成失败：{0}</value></data>
+  <data name="I18n_UiApiCopied" xml:space="preserve"><value>接口文档已复制。</value></data>
+  <data name="I18n_UiApiEmptyModel" xml:space="preserve"><value>模型返回空白结果。</value></data>
+  <data name="I18n_UiApiDraftRequired" xml:space="preserve"><value>请先生成或编辑 Skill 草稿。</value></data>
+  <data name="I18n_ProfileVisionDisabled" xml:space="preserve"><value>当前模型配置已禁用图像输入。</value></data>
+  <data name="I18n_ModelCapabilities" xml:space="preserve"><value>模型能力</value></data>
+  <data name="I18n_ModelCapabilitiesDesc" xml:space="preserve"><value>为当前模型手动声明能力，避免向兼容 API 发送不支持的参数。</value></data>
+  <data name="I18n_CapabilityStreaming" xml:space="preserve"><value>流式输出</value></data>
+  <data name="I18n_CapabilityVision" xml:space="preserve"><value>图像输入</value></data>
+  <data name="I18n_CapabilityJson" xml:space="preserve"><value>原生 JSON 输出</value></data>
+  <data name="I18n_CapabilityContextWindow" xml:space="preserve"><value>上下文窗口</value></data>
+  <data name="I18n_CapabilityContextWindowHint" xml:space="preserve"><value>例如 128000</value></data>
+  <data name="I18n_UiClearPane" xml:space="preserve"><value>清空窗口</value></data>
+  <data name="I18n_UiNewChat" xml:space="preserve"><value>新对话</value></data>
+  <data name="I18n_UiRefreshSkills" xml:space="preserve"><value>重新加载技能</value></data>
+  <data name="I18n_UiUseSkill" xml:space="preserve"><value>请使用「{0}」技能: </value></data>
+  <data name="I18n_UiSkillsReloaded" xml:space="preserve"><value>技能已重新加载（{0} 个可用）</value></data>
+  <data name="I18n_UiUserInterrupted" xml:space="preserve"><value>[用户打断，启动新任务]</value></data>
+  <data name="I18n_UiUserCancelled" xml:space="preserve"><value>[用户取消了任务]</value></data>
+  <data name="I18n_UiResumeCheckpointPrompt" xml:space="preserve"><value>检测到上次 Agent 任务未完成，是否恢复执行？&#10;&#10;选择「是」将继续之前的任务。&#10;选择「否」将清除断点并开始新任务。</value></data>
+  <data name="I18n_UiResumeCheckpointTitle" xml:space="preserve"><value>恢复断点</value></data>
+  <data name="I18n_UiCheckpointResuming" xml:space="preserve"><value>检测到断点，正在恢复上次的任务...</value></data>
+  <data name="I18n_UiAgentChangesDetected" xml:space="preserve"><value>Agent 执行完成，检测到 {0} 处文档变更。&#10;是否立即审查更改？</value></data>
+  <data name="I18n_UiDocumentChangeReview" xml:space="preserve"><value>文档更改审查</value></data>
+  <data name="I18n_UiPlanConfirmPrompt" xml:space="preserve"><value>是否确认执行以上计划？</value></data>
+  <data name="I18n_UiPlanConfirmTitle" xml:space="preserve"><value>执行计划确认</value></data>
+  <data name="I18n_UiWritingProfileSaved" xml:space="preserve"><value>写作 Profile 已保存到当前文档。</value></data>
+  <data name="I18n_UiOpenDocumentFirst" xml:space="preserve"><value>请先打开一个 Word 文档。</value></data>
+  <data name="I18n_UiSelectReviewTextFirst" xml:space="preserve"><value>请先选择需要审阅的文本。</value></data>
+  <data name="I18n_UiLoadSelectionFailed" xml:space="preserve"><value>载入选区失败：{0}</value></data>
+  <data name="I18n_UiReady" xml:space="preserve"><value>待生成</value></data>
+  <data name="I18n_UiReviewQueueCancelled" xml:space="preserve"><value>已取消排队中的审阅建议。</value></data>
+  <data name="I18n_UiGenerating" xml:space="preserve"><value>生成中...</value></data>
+  <data name="I18n_UiGeneratingReviewSuggestion" xml:space="preserve"><value>正在生成审阅建议</value></data>
+  <data name="I18n_UiNoOutput" xml:space="preserve"><value>无返回</value></data>
+  <data name="I18n_UiGenerated" xml:space="preserve"><value>已生成</value></data>
+  <data name="I18n_UiGenerationFailed" xml:space="preserve"><value>生成失败</value></data>
+  <data name="I18n_UiGenerateSuggestionFailed" xml:space="preserve"><value>生成建议失败：{0}</value></data>
+  <data name="I18n_UiCopied" xml:space="preserve"><value>已复制</value></data>
+  <data name="I18n_UiSkipped" xml:space="preserve"><value>已跳过</value></data>
+  <data name="I18n_UiSuggestionRequired" xml:space="preserve"><value>请先生成或填写建议稿。</value></data>
+  <data name="I18n_UiOriginalNotLocated" xml:space="preserve"><value>未能定位到原文。</value></data>
+  <data name="I18n_UiReplaced" xml:space="preserve"><value>已替换</value></data>
+  <data name="I18n_UiInserted" xml:space="preserve"><value>已插入</value></data>
+  <data name="I18n_UiCommented" xml:space="preserve"><value>已批注</value></data>
+  <data name="I18n_UiApplySuggestionFailed" xml:space="preserve"><value>应用建议失败：{0}</value></data>
+  <data name="I18n_UiOriginalChangedPrompt" xml:space="preserve"><value>原文似乎已经被修改。是否仍然把建议应用到当前位置？</value></data>
+  <data name="I18n_UiIssueCount" xml:space="preserve"><value>审查问题 {0} 条</value></data>
+  <data name="I18n_UiAgentRunningReview" xml:space="preserve"><value>当前 Agent 正在执行，请稍后再启动审查。</value></data>
+  <data name="I18n_UiSelectTextFirst" xml:space="preserve"><value>请先选择需要审查的文本。</value></data>
+  <data name="I18n_UiNoReviewableText" xml:space="preserve"><value>当前文档没有可审查的文本。</value></data>
+  <data name="I18n_UiReviewingIssues" xml:space="preserve"><value>正在审查问题</value></data>
+  <data name="I18n_UiReviewing" xml:space="preserve"><value>正在审查...</value></data>
+  <data name="I18n_UiManualSelectionReview" xml:space="preserve"><value>手动审查：选区</value></data>
+  <data name="I18n_UiManualDocumentReview" xml:space="preserve"><value>手动审查：全文</value></data>
+  <data name="I18n_UiReviewCompleteNoIssues" xml:space="preserve"><value>审查完成，未发现可定位的问题。</value></data>
+  <data name="I18n_UiReviewComplete" xml:space="preserve"><value>审查完成</value></data>
+  <data name="I18n_UiReviewAdded" xml:space="preserve"><value>审查完成，新增 {0} 条问题。</value></data>
+  <data name="I18n_UiReviewAddedStatus" xml:space="preserve"><value>审查完成，新增 {0} 条问题</value></data>
+  <data name="I18n_UiReviewFailed" xml:space="preserve"><value>审查失败：{0}</value></data>
+  <data name="I18n_UiReviewIssue" xml:space="preserve"><value>审查问题</value></data>
+  <data name="I18n_UiIssueParagraphNotFound" xml:space="preserve"><value>未能定位到该问题对应的段落。</value></data>
+  <data name="I18n_UiFocusFailed" xml:space="preserve"><value>定位失败：{0}</value></data>
+  <data name="I18n_UiAddCommentFailed" xml:space="preserve"><value>添加批注失败：{0}</value></data>
+  <data name="I18n_UiSuggestionLabel" xml:space="preserve"><value>建议：</value></data>
+  <data name="I18n_UiSourceLabel" xml:space="preserve"><value>来源：</value></data>
+  <data name="I18n_UiSilentReviewIssue" xml:space="preserve"><value>静默审查问题</value></data>
+  <data name="I18n_UiReviewSource" xml:space="preserve"><value>审查</value></data>
+  <data name="I18n_UiCategoryText" xml:space="preserve"><value>文本</value></data>
+  <data name="I18n_UiSeverityMedium" xml:space="preserve"><value>中</value></data>
+  <data name="I18n_UiParagraph" xml:space="preserve"><value>第 {0} 段</value></data>
+  <data name="I18n_UiUnlocated" xml:space="preserve"><value>未定位</value></data>
+  <data name="I18n_UiNoSuggestion" xml:space="preserve"><value>暂无建议</value></data>
+  <data name="I18n_UiSeverityHigh" xml:space="preserve"><value>高</value></data>
+  <data name="I18n_UiSeverityLow" xml:space="preserve"><value>低</value></data>
+  <data name="I18n_UiCategoryTypo" xml:space="preserve"><value>错别字</value></data>
+  <data name="I18n_UiCategoryGrammar" xml:space="preserve"><value>语法</value></data>
+  <data name="I18n_UiCategoryFormat" xml:space="preserve"><value>格式</value></data>
+  <data name="I18n_UiCategoryReference" xml:space="preserve"><value>引用</value></data>
+  <data name="I18n_UiCategoryTerminology" xml:space="preserve"><value>术语</value></data>
+  <data name="I18n_UiCategoryLegal" xml:space="preserve"><value>法律风险</value></data>
+  <data name="I18n_UiCategoryClarity" xml:space="preserve"><value>表达</value></data>
+  <data name="I18n_ServiceProviderQwen" xml:space="preserve"><value>通义千问</value></data>
+  <data name="I18n_ServiceProviderDoubao" xml:space="preserve"><value>豆包</value></data>
+  <data name="I18n_ServiceProviderZhipuGlm" xml:space="preserve"><value>智谱 GLM</value></data>
+  <data name="I18n_CustomPromptInsert" xml:space="preserve"><value>插入</value></data>
+  <data name="I18n_CustomPromptInsertWithDiff" xml:space="preserve"><value>插入并对比</value></data>
+  <data name="I18n_CustomPromptComment" xml:space="preserve"><value>批注</value></data>
+  <data name="I18n_CustomPromptLength" xml:space="preserve"><value>提示词长度：{0}</value></data>
+  <data name="I18n_UiAgentStep" xml:space="preserve"><value>步骤 {0}</value></data>
+  <data name="I18n_UiAgentChangeSource" xml:space="preserve"><value>Agent 变更</value></data>
+  <data name="I18n_UiDocumentChangeCategory" xml:space="preserve"><value>文档变更</value></data>
+  <data name="I18n_UiChangeTitle" xml:space="preserve"><value>{0}：第 {1} 段</value></data>
+  <data name="I18n_UiChangeBefore" xml:space="preserve"><value>修改前：{0}</value></data>
+  <data name="I18n_UiChangeAfter" xml:space="preserve"><value>修改后：{0}</value></data>
+  <data name="I18n_UiChangeReviewHint" xml:space="preserve"><value>可在文档更改审查窗口中接受或拒绝该变更。</value></data>
+  <data name="I18n_RevisionInsertText" xml:space="preserve"><value>插入文本</value></data>
+  <data name="I18n_RevisionDeleteText" xml:space="preserve"><value>删除文本</value></data>
+  <data name="I18n_RevisionPropertyChanged" xml:space="preserve"><value>属性变更</value></data>
+  <data name="I18n_RevisionStyleChanged" xml:space="preserve"><value>样式变更</value></data>
+  <data name="I18n_RevisionReplaceText" xml:space="preserve"><value>替换文本</value></data>
+  <data name="I18n_RevisionParagraphPropertyChanged" xml:space="preserve"><value>段落属性变更</value></data>
+  <data name="I18n_RevisionTablePropertyChanged" xml:space="preserve"><value>表格属性变更</value></data>
+  <data name="I18n_RevisionSectionPropertyChanged" xml:space="preserve"><value>节属性变更</value></data>
+  <data name="I18n_RevisionMovedFrom" xml:space="preserve"><value>移动源</value></data>
+  <data name="I18n_RevisionMovedTo" xml:space="preserve"><value>移动目标</value></data>
+  <data name="I18n_RevisionOther" xml:space="preserve"><value>其他修订类型</value></data>
+  <data name="I18n_RevisionUnknown" xml:space="preserve"><value>未知修订类型</value></data>
+  <data name="I18n_AgentToolDesc_ask_human" xml:space="preserve"><value>ask_human(question) — 当信息缺失、存在歧义或需要用户决策时，向用户提出具体问题并等待回答。</value></data>
+  <data name="I18n_AgentToolDesc_read_skill" xml:space="preserve"><value>read_skill(skill_name) — 读取匹配任务的本地 Skill 操作说明，再按其中工作流执行。</value></data>
+  <data name="I18n_AgentToolDesc_insert_image" xml:space="preserve"><value>insert_image(file_path, base64_data, paragraph_index, width) — 从本地路径或 Base64 数据插入图片；未指定位置时追加到文档末尾。</value></data>
+  <data name="I18n_AgentToolDesc_search_text" xml:space="preserve"><value>search_text(keyword) — 搜索文档文本，返回命中段落编号和上下文预览。</value></data>
+  <data name="I18n_AgentToolDesc_get_doc_overview" xml:space="preserve"><value>get_doc_overview() — 获取文档字数、段落数和开头预览。</value></data>
+  <data name="I18n_AgentToolDesc_get_selection" xml:space="preserve"><value>get_selection() — 读取用户当前在 Word 中选中的文本。</value></data>
+  <data name="I18n_AgentToolDesc_read_comments" xml:space="preserve"><value>read_comments() — 读取批注及其作者、内容和关联文本预览。</value></data>
+  <data name="I18n_AgentToolDesc_read_bookmarks" xml:space="preserve"><value>read_bookmarks() — 读取书签名称、范围文本和位置。</value></data>
+  <data name="I18n_AgentToolDesc_read_paragraphs" xml:space="preserve"><value>read_paragraphs(start, end) — 精确读取一段连续的段落；大范围阅读优先使用 read_large_chunk。</value></data>
+  <data name="I18n_AgentToolDesc_read_large_chunk" xml:space="preserve"><value>read_large_chunk(start_paragraph) — 从指定段落开始尽可能大块读取正文，用于快速理解长文档。</value></data>
+  <data name="I18n_AgentToolDesc_build_semantic_map" xml:space="preserve"><value>build_semantic_map() — 按段落摘要建立长文档语义地图，帮助定位需要精读的区域。</value></data>
+  <data name="I18n_AgentToolDesc_insert_text_at_end" xml:space="preserve"><value>insert_text_at_end(text) — 仅在文档末尾写入用户要求的最终成稿，不得写入分析或中间推理。</value></data>
+  <data name="I18n_AgentToolDesc_apply_style" xml:space="preserve"><value>apply_style(paragraph_index, style_name) — 为指定段落应用 Word 样式。</value></data>
+  <data name="I18n_AgentToolDesc_replace_paragraph" xml:space="preserve"><value>replace_paragraph(paragraph_index, new_text) — 替换指定段落的完整内容，改动会进入修订。</value></data>
+  <data name="I18n_AgentToolDesc_add_comment" xml:space="preserve"><value>add_comment(paragraph_index, text_to_comment, comment) — 为段落中的指定原文添加批注。</value></data>
+  <data name="I18n_AgentToolDesc_find_replace" xml:space="preserve"><value>find_replace(find_text, replace_text, match_case) — 在全文中批量查找并替换文本。</value></data>
+  <data name="I18n_AgentToolDesc_insert_at_cursor" xml:space="preserve"><value>insert_at_cursor(text, new_paragraph) — 在当前光标或选区处插入文本。</value></data>
+  <data name="I18n_AgentToolDesc_execute_command" xml:space="preserve"><value>execute_command(command, args, timeout_seconds) — 运行经授权的本地命令或脚本并返回输出。</value></data>
+  <data name="I18n_AgentToolDesc_http_request" xml:space="preserve"><value>http_request(url, method, headers, body) — 向经授权的外部 REST API 发送 HTTP 请求。</value></data>
+  <data name="I18n_AgentToolDesc_run_python_script" xml:space="preserve"><value>run_python_script(skill_name, script_args) — 运行本地 Skill 目录中的 Python 脚本。</value></data>
+  <data name="I18n_AgentToolDesc_grep" xml:space="preserve"><value>grep(pattern, path, options) — 递归搜索文件或目录中的文本或正则模式。</value></data>
+  <data name="I18n_AgentToolDesc_format_paragraph" xml:space="preserve"><value>format_paragraph(paragraph_index, alignment, first_line_indent_chars, line_spacing, space_before, space_after) — 设置段落的对齐、缩进、行距和段前后间距。</value></data>
+  <data name="I18n_AgentToolDesc_format_text" xml:space="preserve"><value>format_text(paragraph_index, text_to_format, font_name, font_size, bold, italic, underline, color) — 设置整段或指定文字的字体格式。</value></data>
+  <data name="I18n_AgentToolDesc_format_list" xml:space="preserve"><value>format_list(paragraph_index, list_type) — 为一个或多个段落应用项目符号或编号。</value></data>
+  <data name="I18n_AgentToolDesc_get_document_outline" xml:space="preserve"><value>get_document_outline() — 获取标题及层级结构，便于理解文档框架。</value></data>
+  <data name="I18n_AgentToolDesc_read_clause" xml:space="preserve"><value>read_clause(heading_title) — 按标题读取完整条款，支持部分匹配。</value></data>
+  <data name="I18n_AgentToolDesc_extract_definitions" xml:space="preserve"><value>extract_definitions() — 提取文档中的术语定义，便于检查术语一致性。</value></data>
+  <data name="I18n_AgentToolDesc_check_cross_references" xml:space="preserve"><value>check_cross_references() — 检查条款交叉引用是否指向实际存在的条款。</value></data>
+  <data name="I18n_AgentToolDesc_replace_exact_text" xml:space="preserve"><value>replace_exact_text(paragraph_index, old_text, new_text) — 在指定段落中精准替换原文，适合小范围修订。</value></data>
+  <data name="I18n_AgentToolDesc_insert_clause_after" xml:space="preserve"><value>insert_clause_after(target_heading, new_clause_text) — 在指定条款之后插入完整新条款。</value></data>
+  <data name="I18n_AgentToolDesc_highlight_risk" xml:space="preserve"><value>highlight_risk(keyword, color, reason) — 高亮关键词并添加说明原因的批注。</value></data>
+  <data name="I18n_AgentToolDesc_apply_legal_format" xml:space="preserve"><value>apply_legal_format(style) — 应用预设法律文书排版，包括字体、字号、行距、页边距和标题样式。</value></data>
+  <data name="I18n_AgentToolDesc_validate_citation" xml:space="preserve"><value>validate_citation(law_name, article_number) — 校验中国法律法规条款引用是否有效。</value></data>
+  <data name="I18n_AgentToolDesc_page_setup" xml:space="preserve"><value>page_setup(margin_top, margin_bottom, margin_left, margin_right, orientation) — 设置页面边距和方向。</value></data>
+  <data name="I18n_AgentToolDesc_insert_page_break" xml:space="preserve"><value>insert_page_break() — 在光标位置插入分页符。</value></data>
+  <data name="I18n_AgentToolDesc_header_footer" xml:space="preserve"><value>header_footer(element, text, alignment) — 设置页眉、页脚或页码。</value></data>
+  <data name="I18n_AgentToolDesc_read_table" xml:space="preserve"><value>read_table(table_index) — 读取指定表格并以 Markdown 返回内容。</value></data>
+  <data name="I18n_AgentToolDesc_insert_table" xml:space="preserve"><value>insert_table(rows, columns, header_row) — 在文档末尾创建带表头的表格。</value></data>
+  <data name="I18n_AgentToolDesc_table_insert_row" xml:space="preserve"><value>table_insert_row(table_index, after_row) — 在表格指定行后插入一行。</value></data>
+  <data name="I18n_AgentToolDesc_table_set_cell" xml:space="preserve"><value>table_set_cell(table_index, row, column, text) — 设置指定表格单元格的文本。</value></data>
+  <data name="I18n_AgentToolDesc_update_toc" xml:space="preserve"><value>update_toc(action) — 更新现有目录或在文档开头插入目录。</value></data>
+  <data name="I18n_AgentToolParameterFallback" xml:space="preserve"><value>参数：{0}</value></data>
+  <data name="I18n_AgentEffectNone" xml:space="preserve"><value>无副作用</value></data>
+  <data name="I18n_AgentEffectDocumentRead" xml:space="preserve"><value>读取 Word 文档</value></data>
+  <data name="I18n_AgentEffectDocumentWrite" xml:space="preserve"><value>编辑 Word 文档</value></data>
+  <data name="I18n_AgentEffectExternalNetwork" xml:space="preserve"><value>访问外部网络</value></data>
+  <data name="I18n_AgentEffectLocalProcess" xml:space="preserve"><value>启动本地程序</value></data>
+  <data name="I18n_AgentEffectExternalMcp" xml:space="preserve"><value>调用 MCP 服务器</value></data>
+  <data name="I18n_AgentCatalogTitle" xml:space="preserve"><value># WordOllama Agent 接口</value></data>
+  <data name="I18n_AgentCatalogIntro" xml:space="preserve"><value>这些接口是 Word 操作的安全 Agent 封装。模型只能获得工具名称和 JSON 参数，不会直接接触 Word COM 对象。</value></data>
+  <data name="I18n_AgentCatalogContractTitle" xml:space="preserve"><value>## 调用约定</value></data>
+  <data name="I18n_AgentCatalogContract" xml:space="preserve"><value>请使用精确的工具名称调用，并且只传递 Schema 中声明的 JSON 参数。文档写入受 Agent 执行模式控制，并且可能需要用户确认。</value></data>
+  <data name="I18n_AgentCatalogSafetyTitle" xml:space="preserve"><value>## 安全副作用</value></data>
+  <data name="I18n_AgentCatalogSafety" xml:space="preserve"><value>副作用标签是执行边界。Word 读写仍在 Word UI 线程执行，网络、本地进程和 MCP 调用分别受权限控制。</value></data>
+  <data name="I18n_AgentCatalogToolsTitle" xml:space="preserve"><value>## 可用接口（{0} 个）</value></data>
+  <data name="I18n_AgentCatalogDescription" xml:space="preserve"><value>- 说明：{0}</value></data>
+  <data name="I18n_AgentCatalogEffects" xml:space="preserve"><value>- 副作用：{0}</value></data>
+  <data name="I18n_AgentCatalogWordCom" xml:space="preserve"><value>- Word COM 封装：{0}</value></data>
+  <data name="I18n_AgentCatalogWrite" xml:space="preserve"><value>- 写操作：{0}</value></data>
+  <data name="I18n_AgentCatalogConcurrency" xml:space="preserve"><value>- 并发：{0}</value></data>
+  <data name="I18n_AgentCatalogYes" xml:space="preserve"><value>是</value></data>
+  <data name="I18n_AgentCatalogNo" xml:space="preserve"><value>否</value></data>
+  <data name="I18n_AgentCatalogParallelRead" xml:space="preserve"><value>可并行读取</value></data>
+  <data name="I18n_AgentCatalogSerialized" xml:space="preserve"><value>串行执行</value></data>
+  <data name="I18n_AgentCatalogResultLimit" xml:space="preserve"><value>- 结果上限：{0} 个字符</value></data>
+  <data name="I18n_AgentCatalogSkillRulesTitle" xml:space="preserve"><value>## Skill 编写规则</value></data>
+  <data name="I18n_AgentCatalogSkillRules" xml:space="preserve"><value>本地 Skill 应使用上面列出的接口描述可重复的工作流。不得要求原始 COM、任意脚本、Shell 命令、隐藏网络调用或直接文件操作。Agent 运行时仍会执行权限和修订模式规则。</value></data>
+  <data name="I18n_OpenWordDocument" xml:space="preserve"><value>请先打开一个 Word 文档。</value></data>
+  <data name="I18n_AgentResultKeywordRequired" xml:space="preserve"><value>[错误] 关键词不能为空。</value></data>
+  <data name="I18n_AgentResultKeywordNotFound" xml:space="preserve"><value>未找到关键词：{0}</value></data>
+  <data name="I18n_AgentResultKeywordMatches" xml:space="preserve"><value>关键词“{0}”出现在：&#10;{1}</value></data>
+  <data name="I18n_AgentResultDocumentOverview" xml:space="preserve"><value>文档共 {0} 段，约 {1} 词。前两段预览：&#10;{2}</value></data>
+  <data name="I18n_AgentResultNoSelection" xml:space="preserve"><value>当前没有选中任何文本，光标仅处于插入点状态。</value></data>
+  <data name="I18n_AgentResultSelection" xml:space="preserve"><value>当前选中的文本是：&#10;{0}</value></data>
+  <data name="I18n_AgentResultNoComments" xml:space="preserve"><value>当前文档没有批注。</value></data>
+  <data name="I18n_AgentResultReadCommentsFailed" xml:space="preserve"><value>[错误] 读取批注失败：{0}</value></data>
+  <data name="I18n_AgentResultNoBookmarks" xml:space="preserve"><value>当前文档没有书签。</value></data>
+  <data name="I18n_AgentResultReadBookmarksFailed" xml:space="preserve"><value>[错误] 读取书签失败：{0}</value></data>
+  <data name="I18n_AgentResultStartParagraphOutOfRange" xml:space="preserve"><value>[错误] 起始段落 {0} 超过了文档总段落数 {1}。</value></data>
+  <data name="I18n_AgentResultDocumentEndReached" xml:space="preserve"><value>[错误] 已读到文档末尾。</value></data>
+  <data name="I18n_AgentResultInsertTextRequired" xml:space="preserve"><value>[错误] 插入文本不能为空。</value></data>
+  <data name="I18n_AgentResultInsertedAtEnd" xml:space="preserve"><value>成功在文档末尾插入文本。</value></data>
+  <data name="I18n_AgentResultParagraphOutOfRange" xml:space="preserve"><value>[错误] 段落索引越界。</value></data>
+  <data name="I18n_AgentResultStyleApplied" xml:space="preserve"><value>已将段落 {0} 设为 {1} 样式。</value></data>
+  <data name="I18n_AgentResultApplyStyleFailed" xml:space="preserve"><value>[错误] 无法应用样式“{0}”，请确保该样式在当前 Word 中存在。</value></data>
+  <data name="I18n_AgentResultParagraphIndexOutOfRange" xml:space="preserve"><value>[错误] 段落索引 {0} 越界（文档共 {1} 段）。</value></data>
+  <data name="I18n_AgentResultParagraphReplaced" xml:space="preserve"><value>成功替换段落 {0} 的内容。</value></data>
+  <data name="I18n_AgentResultCommentTextRequired" xml:space="preserve"><value>[错误] text_to_comment 不能为空。</value></data>
+  <data name="I18n_AgentResultCommentTextNotFound" xml:space="preserve"><value>[错误] 在段落 {0} 中未找到原文“{1}”。请确保 text_to_comment 与原文完全一致。</value></data>
+  <data name="I18n_AgentResultCommentAdded" xml:space="preserve"><value>批注添加成功：段落 {0} 的“{1}”已添加批注。</value></data>
+  <data name="I18n_AgentResultFindTextRequired" xml:space="preserve"><value>[错误] 查找文本不能为空。</value></data>
+  <data name="I18n_AgentResultFindReplaceCompleted" xml:space="preserve"><value>全文替换完成：将“{0}”替换为“{1}”，共替换 {2} 处。</value></data>
+  <data name="I18n_AgentResultFindReplaceFailed" xml:space="preserve"><value>[错误] 查找替换失败：{0}</value></data>
+  <data name="I18n_AgentResultInsertedAtCursor" xml:space="preserve"><value>已在光标位置插入文本。&#10;{0}</value></data>
+  <data name="I18n_AgentResultInsertTextFailed" xml:space="preserve"><value>[错误] 插入文本失败：{0}</value></data>
+  <data name="I18n_AgentResultParagraphFormatUpdated" xml:space="preserve"><value>段落 {0} 格式已更新：{1}。</value></data>
+  <data name="I18n_AgentResultFormatParagraphFailed" xml:space="preserve"><value>[错误] 格式设置失败：{0}</value></data>
+  <data name="I18n_AgentResultTextNotFoundInParagraph" xml:space="preserve"><value>[错误] 在段落 {0} 中未找到“{1}”。</value></data>
+  <data name="I18n_AgentResultTextFormatUpdated" xml:space="preserve"><value>段落 {0} 的 {1} 格式已更新：{2}。</value></data>
+  <data name="I18n_AgentResultFormatTextFailed" xml:space="preserve"><value>[错误] 字体设置失败：{0}</value></data>
+  <data name="I18n_AgentResultParagraphIndexOutOfRangeSimple" xml:space="preserve"><value>[错误] 段落索引 {0} 越界。</value></data>
+  <data name="I18n_AgentResultListRemoved" xml:space="preserve"><value>已移除段落 {0}-{1} 的编号。</value></data>
+  <data name="I18n_AgentResultUnsupportedListType" xml:space="preserve"><value>[错误] 不支持的列表类型：{0}。支持：bullet/number/legal/none</value></data>
+  <data name="I18n_AgentResultListApplied" xml:space="preserve"><value>已为段落 {0}-{1} 应用 {2}。</value></data>
+  <data name="I18n_AgentResultFormatListFailed" xml:space="preserve"><value>[错误] 设置列表失败：{0}</value></data>
+  <data name="I18n_AgentResultTableIndexOutOfRange" xml:space="preserve"><value>[错误] 表格索引 {0} 越界（文档共 {1} 个表格）。</value></data>
+  <data name="I18n_AgentResultReadTableFailed" xml:space="preserve"><value>[错误] 读取表格失败：{0}</value></data>
+  <data name="I18n_AgentResultTableDimensionsRequired" xml:space="preserve"><value>[错误] 行数和列数必须大于 0。</value></data>
+  <data name="I18n_AgentResultTableInserted" xml:space="preserve"><value>已在文档末尾创建 {0} 行 × {1} 列的表格。</value></data>
+  <data name="I18n_AgentResultInsertTableFailed" xml:space="preserve"><value>[错误] 插入表格失败：{0}</value></data>
+  <data name="I18n_AgentResultTableIndexOutOfRangeSimple" xml:space="preserve"><value>[错误] 表格索引 {0} 越界。</value></data>
+  <data name="I18n_AgentResultTableRowInserted" xml:space="preserve"><value>已在表格 {0} 中插入新行（现有 {1} 行）。</value></data>
+  <data name="I18n_AgentResultInsertRowFailed" xml:space="preserve"><value>[错误] 插入行失败：{0}</value></data>
+  <data name="I18n_AgentResultCellOutOfRange" xml:space="preserve"><value>[错误] 单元格位置 ({0}, {1}) 越界（表格共 {2} 行 {3} 列）。</value></data>
+  <data name="I18n_AgentResultTableCellSet" xml:space="preserve"><value>已设置表格 {0} 第 {1} 行第 {2} 列内容。</value></data>
+  <data name="I18n_AgentResultSetCellFailed" xml:space="preserve"><value>[错误] 设置单元格失败：{0}</value></data>
+  <data name="I18n_AgentResultTocInserted" xml:space="preserve"><value>已在文档开头插入目录。请手动更新目录以生成最新内容（选中目录后按 F9）。</value></data>
+  <data name="I18n_AgentResultUnsupportedTocAction" xml:space="preserve"><value>[错误] 不支持的操作：{0}。支持：update / insert</value></data>
+  <data name="I18n_AgentResultTocFailed" xml:space="preserve"><value>[错误] 目录操作失败：{0}</value></data>
+  <data name="I18n_AgentResultMarginTop" xml:space="preserve"><value>上边距 {0}cm</value></data>
+  <data name="I18n_AgentResultMarginBottom" xml:space="preserve"><value>下边距 {0}cm</value></data>
+  <data name="I18n_AgentResultMarginLeft" xml:space="preserve"><value>左边距 {0}cm</value></data>
+  <data name="I18n_AgentResultMarginRight" xml:space="preserve"><value>右边距 {0}cm</value></data>
+  <data name="I18n_AgentResultLandscape" xml:space="preserve"><value>横向</value></data>
+  <data name="I18n_AgentResultPortrait" xml:space="preserve"><value>纵向</value></data>
+  <data name="I18n_AgentResultPageSetupUpdated" xml:space="preserve"><value>页面设置已更新：{0}。</value></data>
+  <data name="I18n_AgentResultNoPageSetupParameters" xml:space="preserve"><value>[提示] 未指定任何页面设置参数。</value></data>
+  <data name="I18n_AgentResultPageSetupFailed" xml:space="preserve"><value>[错误] 页面设置失败：{0}</value></data>
+  <data name="I18n_AgentResultPageBreakInserted" xml:space="preserve"><value>已在光标位置插入分页符。</value></data>
+  <data name="I18n_AgentResultInsertPageBreakFailed" xml:space="preserve"><value>[错误] 插入分页符失败：{0}</value></data>
+  <data name="I18n_AgentResultNoSections" xml:space="preserve"><value>[错误] 文档没有节。</value></data>
+  <data name="I18n_AgentResultUnsupportedHeaderFooterElement" xml:space="preserve"><value>[错误] 不支持的元素：{0}。支持：header/footer/page_number</value></data>
+  <data name="I18n_AgentResultPageNumberInserted" xml:space="preserve"><value>已插入页码（格式：当前页 / 总页数）。</value></data>
+  <data name="I18n_AgentResultHeader" xml:space="preserve"><value>页眉</value></data>
+  <data name="I18n_AgentResultFooter" xml:space="preserve"><value>页脚</value></data>
+  <data name="I18n_AgentResultHeaderFooterSet" xml:space="preserve"><value>已设置{0}：{1}。</value></data>
+  <data name="I18n_AgentResultHeaderFooterFailed" xml:space="preserve"><value>[错误] 设置 {0} 失败：{1}</value></data>
+  <data name="I18n_AgentResultImageSourceRequired" xml:space="preserve"><value>[错误] 必须提供 file_path 或 base64_data 参数。</value></data>
+  <data name="I18n_AgentResultImageFileNotFound" xml:space="preserve"><value>[错误] 图片文件不存在：{0}</value></data>
+  <data name="I18n_AgentResultParagraphLocation" xml:space="preserve"><value>段落 {0}</value></data>
+  <data name="I18n_AgentResultDocumentEnd" xml:space="preserve"><value>文档末尾</value></data>
+  <data name="I18n_AgentResultImageWidth" xml:space="preserve"><value>，宽度 {0}pt</value></data>
+  <data name="I18n_AgentResultOriginalSize" xml:space="preserve"><value>，原始尺寸</value></data>
+  <data name="I18n_AgentResultImageInserted" xml:space="preserve"><value>图片已插入到 {0}{1}。</value></data>
+  <data name="I18n_AgentResultInsertImageFailed" xml:space="preserve"><value>[执行异常] 插入图片失败：{0}</value></data>
+  <data name="I18n_AgentResultQuestionRequired" xml:space="preserve"><value>[错误] 问题不能为空。</value></data>
+  <data name="I18n_AgentResultSubmitQuestion" xml:space="preserve"><value>[提示] 请将此问题提交给用户并等待回答：{0}</value></data>
+  <data name="I18n_AgentResultSkillNameRequired" xml:space="preserve"><value>[错误] skill_name 不能为空。</value></data>
+  <data name="I18n_AgentResultCommandRequired" xml:space="preserve"><value>[错误] 命令不能为空。</value></data>
+  <data name="I18n_AgentResultCommandCancelled" xml:space="preserve"><value>[已取消] 外部命令已终止。</value></data>
+  <data name="I18n_AgentResultCommandLabel" xml:space="preserve"><value>[命令] {0} {1}</value></data>
+  <data name="I18n_AgentResultExitCodeLabel" xml:space="preserve"><value>[退出码] {0}</value></data>
+  <data name="I18n_AgentResultOutputLabel" xml:space="preserve"><value>[输出]&#10;{0}</value></data>
+  <data name="I18n_AgentResultErrorLabel" xml:space="preserve"><value>[错误]&#10;{0}</value></data>
+  <data name="I18n_AgentResultCommandTimedOut" xml:space="preserve"><value>[超时] 命令“{0}”执行超过 {1} 秒，已被终止。&#10;[部分输出]&#10;{2}&#10;[部分错误]&#10;{3}</value></data>
+  <data name="I18n_AgentResultCommandFailed" xml:space="preserve"><value>[错误] 执行命令失败：{0}</value></data>
+  <data name="I18n_AgentResultUrlRequired" xml:space="preserve"><value>[错误] URL 不能为空。</value></data>
+  <data name="I18n_AgentResultInvalidHeaders" xml:space="preserve"><value>[错误] headers 格式无效，请提供有效的 JSON 对象。&#10;当前值：{0}</value></data>
+  <data name="I18n_AgentResultUnsupportedHttpMethod" xml:space="preserve"><value>[错误] 不支持的请求方法：{0}。支持：GET/POST/PUT/DELETE/PATCH</value></data>
+  <data name="I18n_AgentResultResponseTruncated" xml:space="preserve"><value>&#10;&#10;...(截断，总长度 {0} 字符)</value></data>
+  <data name="I18n_AgentResultHttpResponse" xml:space="preserve"><value>[状态码] {0} {1}&#10;[URL] {2}&#10;[响应]&#10;{3}</value></data>
+  <data name="I18n_AgentResultHttpCancelled" xml:space="preserve"><value>[已取消] HTTP 请求已终止。</value></data>
+  <data name="I18n_AgentResultHttpErrorResponse" xml:space="preserve"><value>[状态码] {0} {1}&#10;[URL] {2}&#10;[错误]&#10;{3}</value></data>
+  <data name="I18n_AgentResultHttpFailed" xml:space="preserve"><value>[错误] HTTP 请求失败：{0}</value></data>
+  <data name="I18n_AgentResultSkillDirectoryNotFound" xml:space="preserve"><value>[错误] 技能目录不存在。请确认“{0}”已放在 WordAgentSkills 目录下。</value></data>
+  <data name="I18n_AgentResultPythonScriptNotFound" xml:space="preserve"><value>[错误] 技能“{0}”目录下未找到 Python 脚本。</value></data>
+  <data name="I18n_AgentResultPythonCancelled" xml:space="preserve"><value>[已取消] Python 脚本已终止。</value></data>
+  <data name="I18n_AgentResultPythonTimedOut" xml:space="preserve"><value>[错误] 脚本执行超时（60秒）。&#10;[部分输出]&#10;{0}&#10;[部分错误]&#10;{1}</value></data>
+  <data name="I18n_AgentResultNoErrorOutput" xml:space="preserve"><value>无错误输出</value></data>
+  <data name="I18n_AgentResultEnvFilePresent" xml:space="preserve"><value>[提示] .env 文件已存在（{0}），请检查其中是否包含正确的 YUANDIAN_API_KEY。</value></data>
+  <data name="I18n_AgentResultEnvFileMissing" xml:space="preserve"><value>[提示] 未检测到 .env 文件。请创建 {0}，并配置 YUANDIAN_API_KEY。</value></data>
+  <data name="I18n_AgentResultScriptFailedWithHint" xml:space="preserve"><value>[脚本错误] 退出码 {0}：{1}&#10;{2}</value></data>
+  <data name="I18n_AgentResultScriptFailed" xml:space="preserve"><value>[脚本错误] 退出码 {0}：{1}</value></data>
+  <data name="I18n_AgentResultStdErrLabel" xml:space="preserve"><value>&#10;[stderr]&#10;{0}</value></data>
+  <data name="I18n_AgentResultScriptSucceededNoOutput" xml:space="preserve"><value>[完成] 脚本执行成功，无输出。</value></data>
+  <data name="I18n_AgentResultExecutionException" xml:space="preserve"><value>[执行异常] {0}</value></data>
+  <data name="I18n_AgentResultPatternRequired" xml:space="preserve"><value>[错误] pattern 不能为空。</value></data>
+  <data name="I18n_AgentResultPathNotFound" xml:space="preserve"><value>[错误] 路径不存在：{0}</value></data>
+  <data name="I18n_AgentResultNoMatchingFiles" xml:space="preserve"><value>[结果] 未找到匹配的文件。</value></data>
+  <data name="I18n_AgentResultNoGrepMatches" xml:space="preserve"><value>[结果] 未找到匹配“{0}”的内容。</value></data>
+  <data name="I18n_AgentResultSkippedLargeFiles" xml:space="preserve"><value>&#10;[提示] {0} 个文件因超过大小限制被跳过。</value></data>
+  <data name="I18n_AgentResultSkippedBinaryFiles" xml:space="preserve"><value>&#10;[提示] {0} 个二进制文件被跳过。</value></data>
+  <data name="I18n_AgentResultGrepPattern" xml:space="preserve"><value>[grep] 模式：{0}</value></data>
+  <data name="I18n_AgentResultGrepPath" xml:space="preserve"><value>[路径] {0} ({1})</value></data>
+  <data name="I18n_AgentResultGrepMatches" xml:space="preserve"><value>[匹配] 共 {0} 处匹配，显示 {1} 条</value></data>
+  <data name="I18n_AgentResultGrepSkippedLarge" xml:space="preserve"><value>[跳过] {0} 个超大文件</value></data>
+  <data name="I18n_AgentResultGrepSkippedBinary" xml:space="preserve"><value>[跳过] {0} 个二进制文件</value></data>
+  <data name="I18n_AgentResultGrepFailed" xml:space="preserve"><value>[错误] grep 搜索失败：{0}</value></data>
+  <data name="I18n_AgentResultNoDocumentOutline" xml:space="preserve"><value>文档中未检测到任何标题（大纲级别），可能未使用标题样式。请检查文档格式。</value></data>
+  <data name="I18n_AgentResultDocumentOutline" xml:space="preserve"><value>文档大纲（共 {0} 个标题）：&#10;{1}</value></data>
+  <data name="I18n_AgentResultHeadingRequired" xml:space="preserve"><value>[错误] 标题不能为空。</value></data>
+  <data name="I18n_AgentResultHeadingNotFound" xml:space="preserve"><value>[错误] 未找到包含“{0}”的标题。请使用 get_document_outline() 查看可用标题。</value></data>
+  <data name="I18n_AgentResultClauseExtractionFailed" xml:space="preserve"><value>[错误] 定位到标题但未能提取内容。</value></data>
+  <data name="I18n_AgentResultNoDefinitions" xml:space="preserve"><value>未检测到术语定义。文档可能未包含“以下简称”或定义条款。</value></data>
+  <data name="I18n_AgentResultDefinitionsExtracted" xml:space="preserve"><value>提取到 {0} 个术语定义：&#10;{1}&#10;&#10;请将此术语表加入短期记忆，后续审查时检查术语是否统一使用。</value></data>
+  <data name="I18n_AgentResultBrokenReference" xml:space="preserve"><value>段落 {0} 引用了“第{1}条/款”，但文档中未找到该编号（原文：{2}）</value></data>
+  <data name="I18n_AgentResultCrossReferencesValid" xml:space="preserve"><value>交叉引用检查通过。共检测到 {0} 个有效条款编号，所有引用均有效。&#10;已识别的条款编号：{1}</value></data>
+  <data name="I18n_AgentResultCrossReferenceErrors" xml:space="preserve"><value>发现 {0} 个引用错误：&#10;{1}&#10;&#10;建议：请在以上位置添加批注，提示对方律师检查引用是否正确。</value></data>
+  <data name="I18n_AgentResultOldTextRequired" xml:space="preserve"><value>[错误] old_text 不能为空。</value></data>
+  <data name="I18n_AgentResultExactTextNotFound" xml:space="preserve"><value>[错误] 在段落 {0} 中未找到“{1}”。&#10;段落内容：{2}</value></data>
+  <data name="I18n_AgentResultExactTextReplaced" xml:space="preserve"><value>精准替换完成：段落 {0} 中的“{1}”已替换为“{2}”。</value></data>
+  <data name="I18n_AgentResultTargetHeadingRequired" xml:space="preserve"><value>[错误] target_heading 不能为空。</value></data>
+  <data name="I18n_AgentResultNewClauseTextRequired" xml:space="preserve"><value>[错误] new_clause_text 不能为空。</value></data>
+  <data name="I18n_AgentResultClauseInserted" xml:space="preserve"><value>已在“{0}”条款之后插入新条款。</value></data>
+  <data name="I18n_AgentResultAiRiskComment" xml:space="preserve"><value>[AI 风险提示] {0}</value></data>
+  <data name="I18n_AgentResultRiskHighlightNotFound" xml:space="preserve"><value>[提示] 未在文档中找到“{0}”。</value></data>
+  <data name="I18n_AgentResultRiskColorYellow" xml:space="preserve"><value>黄色（注意）</value></data>
+  <data name="I18n_AgentResultRiskColorRed" xml:space="preserve"><value>红色（高危）</value></data>
+  <data name="I18n_AgentResultRiskColorGreen" xml:space="preserve"><value>绿色（已确认）</value></data>
+  <data name="I18n_AgentResultRiskColorLightBlue" xml:space="preserve"><value>青色（参考）</value></data>
+  <data name="I18n_AgentResultRiskHighlighted" xml:space="preserve"><value>已对文档中 {0} 处“{1}”进行{2}高亮。</value></data>
+  <data name="I18n_AgentResultRiskHighlightedWithComment" xml:space="preserve"><value>已对文档中 {0} 处“{1}”进行{2}高亮，并添加批注：“{3}”。</value></data>
+  <data name="I18n_AgentResultUnsupportedLegalFormat" xml:space="preserve"><value>[错误] 不支持的格式风格“{0}”。可选：{1}</value></data>
+  <data name="I18n_AgentResultLegalFormatApplied" xml:space="preserve"><value>法律文书格式“{0}”已应用：&#10;- 正文字体：{1}，字号：{2}pt&#10;- 行距：{3}pt&#10;- 已格式化 {4}/{5} 个段落&#10;- 页边距已按标准设置</value></data>
+  <data name="I18n_AgentResultCitationFieldsRequired" xml:space="preserve"><value>[错误] law_name 和 article_number 均不能为空。</value></data>
+  <data name="I18n_AgentResultCitationArticleUnparsable" xml:space="preserve"><value>无法解析条款编号“{0}”。请使用如“第584条”、“第12条”或“Article 15”的格式。</value></data>
+  <data name="I18n_AgentResultCitationLawUnknown" xml:space="preserve"><value>内置数据库中未找到“{0}”的条款范围信息。请自行核实该法条是否存在。</value></data>
+  <data name="I18n_AgentResultCitationArticleOutOfRange" xml:space="preserve"><value>“{0}”中不存在“{1}”。&#10;- 条款编号范围：第{2}条至第{3}条&#10;- 建议：请检查条款编号或引用的修订版本。</value></data>
+  <data name="I18n_AgentResultCitationValid" xml:space="preserve"><value>“{0}”中“{1}”引用有效。&#10;- 法律：{0}（{2}）&#10;- 条款：{1}（有效范围：第{3}条至第{4}条）&#10;- 提示：本校验基于内置条款范围表，不保证法条具体内容与引用目的匹配。</value></data>
+  <data name="I18n_AgentResultTaskCompleted" xml:space="preserve"><value>任务完成。</value></data>
+  <data name="I18n_AgentResultUnspecifiedQuestion" xml:space="preserve"><value>（未指定问题）</value></data>
+  <data name="I18n_AgentResultUserAnswer" xml:space="preserve"><value>用户回答：{0}</value></data>
+  <data name="I18n_AgentResultTrackedChanges" xml:space="preserve"><value>（已使用修订模式标记所有更改）</value></data>
+  <data name="I18n_AgentResultFinishHandled" xml:space="preserve"><value>[系统] 任务将由调用方处理完成。</value></data>
+  <data name="I18n_AgentResultUnknownTool" xml:space="preserve"><value>[错误] 不存在的工具：{0}。请检查可用工具列表。</value></data>
+  <data name="I18n_AgentResultToolExecutionFailed" xml:space="preserve"><value>[执行异常] 工具 {0} 报错：{1}。请调整参数后重试或换用其他工具。</value></data>
+  <data name="I18n_AgentResultModeViewOnly" xml:space="preserve"><value>仅查看</value></data>
+  <data name="I18n_AgentResultModeProposeChanges" xml:space="preserve"><value>仅提出建议</value></data>
+  <data name="I18n_AgentResultModeBlocked" xml:space="preserve"><value>[已拦截] {0} 模式不允许工具 {1} 修改 Word 文档。</value></data>
+  <data name="I18n_AgentResultSearchMatch" xml:space="preserve"><value>段落 {0}：{1}</value></data>
+  <data name="I18n_AgentResultOverviewParagraph" xml:space="preserve"><value>段落 {0}：{1}</value></data>
+  <data name="I18n_AgentResultUnknownAuthor" xml:space="preserve"><value>未知作者</value></data>
+  <data name="I18n_AgentResultCommentItem" xml:space="preserve"><value>[{0}] {1}：{2}&#10;关联文本：{3}</value></data>
+  <data name="I18n_AgentResultCommentsTruncated" xml:space="preserve"><value>--- 仅返回前 50 条，文档共有 {0} 条批注。---</value></data>
+  <data name="I18n_AgentResultBookmarkItem" xml:space="preserve"><value>[{0}] {1}：起始={2}，结束={3}，文本={4}</value></data>
+  <data name="I18n_AgentResultBookmarksTruncated" xml:space="preserve"><value>--- 仅返回前 100 个，文档共有 {0} 个书签。---</value></data>
+  <data name="I18n_AgentResultParagraphItem" xml:space="preserve"><value>[段落 {0}] {1}</value></data>
+  <data name="I18n_AgentResultLargeChunkMore" xml:space="preserve"><value>--- 已读取第 {0}-{1} 段，后面还有 {2} 段。下次调用 read_large_chunk(start_paragraph: {3}) 继续阅读。---</value></data>
+  <data name="I18n_AgentResultSemanticMapHeader" xml:space="preserve"><value>=== 文档语义地图（共 {0} 段）===</value></data>
+  <data name="I18n_AgentResultEmptyParagraph" xml:space="preserve"><value>（空段落）</value></data>
+  <data name="I18n_AgentResultSemanticMapEntry" xml:space="preserve"><value>[{0}-{1} 段] {2}</value></data>
+  <data name="I18n_AgentResultSemanticMapHint" xml:space="preserve"><value>提示：使用 read_large_chunk(start_paragraph: N) 精读感兴趣的段落区域。</value></data>
+  <data name="I18n_AgentResultAlignLeft" xml:space="preserve"><value>左对齐</value></data>
+  <data name="I18n_AgentResultAlignCenter" xml:space="preserve"><value>居中对齐</value></data>
+  <data name="I18n_AgentResultAlignRight" xml:space="preserve"><value>右对齐</value></data>
+  <data name="I18n_AgentResultAlignJustify" xml:space="preserve"><value>两端对齐</value></data>
+  <data name="I18n_AgentResultFirstLineIndent" xml:space="preserve"><value>首行缩进 {0} 字符</value></data>
+  <data name="I18n_AgentResultFirstLineIndentCleared" xml:space="preserve"><value>取消首行缩进</value></data>
+  <data name="I18n_AgentResultLineSpacing" xml:space="preserve"><value>行距 {0} 磅</value></data>
+  <data name="I18n_AgentResultSingleLineSpacing" xml:space="preserve"><value>单倍行距</value></data>
+  <data name="I18n_AgentResultSpaceBefore" xml:space="preserve"><value>段前 {0} 磅</value></data>
+  <data name="I18n_AgentResultSpaceAfter" xml:space="preserve"><value>段后 {0} 磅</value></data>
+  <data name="I18n_AgentResultFontName" xml:space="preserve"><value>字体 {0}</value></data>
+  <data name="I18n_AgentResultFontSize" xml:space="preserve"><value>字号 {0}pt</value></data>
+  <data name="I18n_AgentResultBold" xml:space="preserve"><value>加粗</value></data>
+  <data name="I18n_AgentResultBoldCleared" xml:space="preserve"><value>取消加粗</value></data>
+  <data name="I18n_AgentResultItalic" xml:space="preserve"><value>斜体</value></data>
+  <data name="I18n_AgentResultItalicCleared" xml:space="preserve"><value>取消斜体</value></data>
+  <data name="I18n_AgentResultUnderline" xml:space="preserve"><value>下划线</value></data>
+  <data name="I18n_AgentResultUnderlineCleared" xml:space="preserve"><value>取消下划线</value></data>
+  <data name="I18n_AgentResultFontColor" xml:space="preserve"><value>颜色 {0}</value></data>
+  <data name="I18n_AgentResultWholeParagraph" xml:space="preserve"><value>整段</value></data>
+  <data name="I18n_AgentResultQuotedText" xml:space="preserve"><value>“{0}”</value></data>
+  <data name="I18n_AgentResultTableHeader" xml:space="preserve"><value>表格 {0}（{1} 行 × {2} 列）</value></data>
+  <data name="I18n_AgentResultMcpToolServerDisconnected" xml:space="preserve"><value>[错误] MCP 工具 {0} 对应的服务器未连接。</value></data>
+  <data name="I18n_AgentResultMcpReconnectFailed" xml:space="preserve"><value>[错误] MCP 服务器 {0} 已断开连接，自动重连失败。</value></data>
+  <data name="I18n_AgentResultMcpServerDisconnected" xml:space="preserve"><value>[错误] MCP 服务器 {0} 未连接。</value></data>
+  <data name="I18n_AgentResultMcpError" xml:space="preserve"><value>[MCP 错误] {0}</value></data>
+  <data name="I18n_AgentResultMcpEmptyResponse" xml:space="preserve"><value>[MCP] 空响应</value></data>
+  <data name="I18n_AgentResultMcpException" xml:space="preserve"><value>[MCP 异常] {0}/{1}：{2}</value></data>
+  <data name="I18n_AgentResultApiError" xml:space="preserve"><value>[API 错误] {0}</value></data>
+  <data name="I18n_AgentResultOllamaConnectionFailed" xml:space="preserve"><value>[API 错误] 连接 Ollama 服务失败：{0}</value></data>
+  <data name="I18n_AgentResultTocUpdated" xml:space="preserve"><value>已更新 {0} 个目录域。</value></data>
+  <data name="I18n_AgentResultTocNotFound" xml:space="preserve"><value>[提示] 文档中未找到目录域（TOC）。请先使用 insert 操作插入目录。</value></data>
+  <data name="I18n_AgentResultTocHeading" xml:space="preserve"><value>目  录</value></data>
+  <data name="I18n_AgentResultDefaultBodyStyle" xml:space="preserve"><value>正文</value></data>
+  <data name="I18n_AgentResultListBullet" xml:space="preserve"><value>项目符号</value></data>
+  <data name="I18n_AgentResultListNumber" xml:space="preserve"><value>数字编号</value></data>
+  <data name="I18n_AgentResultListLegal" xml:space="preserve"><value>法律编号</value></data>
+  <data name="I18n_AgentLogSnapshotLoaded" xml:space="preserve"><value>文档快照已加载（{0} 字符）</value></data>
+  <data name="I18n_AgentLogDiffSnapshotSaved" xml:space="preserve"><value>文档对比快照已保存（{0} 段）</value></data>
+  <data name="I18n_AgentLogSelectionDetected" xml:space="preserve"><value>检测到用户选中区域（段落 {0}）</value></data>
+  <data name="I18n_AgentLogResumed" xml:space="preserve"><value>从断点恢复执行（已进行 {0} 个里程碑）</value></data>
+  <data name="I18n_AgentLogConsecutiveFailures" xml:space="preserve"><value>已连续失败 {0} 次，正在询问用户是否继续。</value></data>
+  <data name="I18n_AgentQuestionRetryAfterFailures" xml:space="preserve"><value>Agent 已连续 {0} 次执行失败。是否继续尝试？请描述调整建议，或输入“stop”终止任务。</value></data>
+  <data name="I18n_AgentResultUserStoppedTask" xml:space="preserve"><value>用户选择终止任务。</value></data>
+  <data name="I18n_AgentLogUserStopped" xml:space="preserve"><value>用户终止：{0}</value></data>
+  <data name="I18n_AgentLogToolCallingFallback" xml:space="preserve"><value>当前模型不支持原生 Tool Calling，已降级到 JSON ReAct 模式。</value></data>
+  <data name="I18n_AgentLogInvalidModelOutput" xml:space="preserve"><value>AI 输出格式错误，正在请求重试。</value></data>
+  <data name="I18n_AgentLogThought" xml:space="preserve"><value>思考：{0}</value></data>
+  <data name="I18n_AgentLogRepeatedActionBlocked" xml:space="preserve"><value>已拦截重复操作：{0}</value></data>
+  <data name="I18n_AgentLogTaskFinished" xml:space="preserve"><value>任务结束：{0}</value></data>
+  <data name="I18n_AgentLogAction" xml:space="preserve"><value>行动：{0}</value></data>
+  <data name="I18n_AgentLogQuestion" xml:space="preserve"><value>AI 提问：{0}</value></data>
+  <data name="I18n_AgentLogAnswer" xml:space="preserve"><value>用户回答：{0}</value></data>
+  <data name="I18n_AgentResultExternalPermissionDenied" xml:space="preserve"><value>[用户拒绝] 工具所需的外部权限未获批准。请改用不需要该权限的工具。</value></data>
+  <data name="I18n_AgentQuestionDangerousCommand" xml:space="preserve"><value>Agent 尝试执行危险命令：&#10;&#10;`{0}`&#10;&#10;输入 **y** 允许执行，输入 **n** 拒绝。</value></data>
+  <data name="I18n_AgentLogDangerousCommandPending" xml:space="preserve"><value>危险命令待确认：{0}</value></data>
+  <data name="I18n_AgentResultDangerousCommandDenied" xml:space="preserve"><value>[用户拒绝] 危险命令已被用户拒绝：{0}</value></data>
+  <data name="I18n_AgentLogDangerousCommandDenied" xml:space="preserve"><value>用户拒绝了危险命令：{0}</value></data>
+  <data name="I18n_AgentLogObservation" xml:space="preserve"><value>观察：{0}</value></data>
+  <data name="I18n_AgentLogJsonParseFailed" xml:space="preserve"><value>JSON 解析异常：{0}</value></data>
+  <data name="I18n_AgentLogContextCompressed" xml:space="preserve"><value>上下文压缩：{0} 条 → ActionLog（{1}→{2} tok），保留最近 {3} 轮完整记录</value></data>
+  <data name="I18n_AgentStatusAwaitingInput" xml:space="preserve"><value>AI 需要您的输入...</value></data>
+  <data name="I18n_AgentResultNoUserAnswer" xml:space="preserve"><value>（用户未回答）</value></data>
+  <data name="I18n_AgentLogEvaluatingPlan" xml:space="preserve"><value>AI 正在判断是否需要执行计划...</value></data>
+  <data name="I18n_AgentStatusEvaluatingRequirement" xml:space="preserve"><value>正在评估需求...</value></data>
+  <data name="I18n_AgentLogPlanSkipped" xml:space="preserve"><value>AI 判定为简单需求，跳过计划。</value></data>
+  <data name="I18n_AgentResultPlanGenerationFailed" xml:space="preserve"><value>（无法生成计划）</value></data>
+  <data name="I18n_AgentLogPlan" xml:space="preserve"><value>执行计划：&#10;{0}</value></data>
+  <data name="I18n_AgentLogPlanConfirmed" xml:space="preserve"><value>用户已确认计划，开始执行。</value></data>
+  <data name="I18n_AgentLogPlanNotConfirmed" xml:space="preserve"><value>用户暂未确认计划，等待修改需求...</value></data>
+  <data name="I18n_AgentQuestionReviseRequirement" xml:space="preserve"><value>请修改您的需求，或输入“go”直接执行：</value></data>
+  <data name="I18n_AgentLogDirectExecutionConfirmed" xml:space="preserve"><value>用户确认直接执行。</value></data>
+  <data name="I18n_AgentPlanEffectsTitle" xml:space="preserve"><value>副作用摘要：</value></data>
+  <data name="I18n_AgentPlanEffectsLine" xml:space="preserve"><value>- {0}：{1}</value></data>
+  <data name="I18n_AgentLogDocumentChanges" xml:space="preserve"><value>文档变更统计：{0} 处新增、{1} 处修改、{2} 处删除</value></data>
+  <data name="I18n_AgentQuestionExternalPermission" xml:space="preserve"><value>需要外部权限：Agent 想使用 {0}。具体操作：{1}。该操作会{2}。是否仅允许这一次操作？输入 y 允许，输入 n 拒绝。</value></data>
+  <data name="I18n_AgentExternalOperationCommand" xml:space="preserve"><value>命令：{0} {1}</value></data>
+  <data name="I18n_AgentExternalOperationHttp" xml:space="preserve"><value>HTTP {0} {1}</value></data>
+  <data name="I18n_AgentExternalOperationPython" xml:space="preserve"><value>Skill：{0}；参数：{1}</value></data>
+  <data name="I18n_AgentExternalOperationMcp" xml:space="preserve"><value>MCP {0}/{1}；参数：{2}</value></data>
+  <data name="I18n_AgentExternalOperationGeneric" xml:space="preserve"><value>{0}；参数：{1}</value></data>
+  <data name="I18n_UiAgentExternalToolsTitle" xml:space="preserve"><value>外部工具授权</value></data>
+  <data name="I18n_UiAgentExternalToolsPrompt" xml:space="preserve"><value>当前 Agent 任务可能需要调用命令、Python、网络或 MCP 工具。默认情况下这些能力不会注册，也不会连接 MCP 服务器。是否仅为本次任务启用？&#10;&#10;启用后，每次外部操作仍会单独询问。</value></data>
+  <data name="I18n_RibbonMarkdownScreenTip" xml:space="preserve"><value>将 Markdown 文本转换为 Word 样式后插入文档</value></data>
+  <data name="I18n_AgentToolDescMcp" xml:space="preserve"><value>[外部] {0}（MCP：{1}）</value></data>
+  <data name="I18n_SettingsValidationFailed" xml:space="preserve"><value>请先修正以下设置：{0}</value></data>
+  <data name="I18n_SettingsInvalidNumber" xml:space="preserve"><value>{0} 必须是 {1} 到 {2} 之间的数字。</value></data>
+  <data name="I18n_SettingsInvalidEndpoint" xml:space="preserve"><value>{0} 必须是 http 或 https 服务地址。</value></data>
+  <data name="I18n_SettingsUnsavedPrompt" xml:space="preserve"><value>设置尚未保存。是否保存后关闭？</value></data>
+  <data name="I18n_SettingsUnsavedTitle" xml:space="preserve"><value>未保存的设置</value></data>
+  <data name="I18n_UiAgentEmptyTitle" xml:space="preserve"><value>Agent</value></data>
+  <data name="I18n_UiAgentEmptyState" xml:space="preserve"><value>等待你的指令</value></data>
+  <data name="I18n_UiAgentExecutionDetails" xml:space="preserve"><value>执行过程</value></data>
+  <data name="I18n_UiAgentResultTitle" xml:space="preserve"><value>任务完成</value></data>
+</root>

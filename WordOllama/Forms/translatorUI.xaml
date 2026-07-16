@@ -1,0 +1,99 @@
+<UserControl x:Class="WordOllama.Forms.translatorUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:WordOllama.Forms"
+             xmlns:properties="clr-namespace:WordOllama.Properties"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             FontSize="14"
+             FontFamily="Segoe UI, Microsoft YaHei UI"
+             d:DesignHeight="450" d:DesignWidth="800" MinWidth="400" MinHeight="300"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextOptions.TextFormattingMode="Ideal"
+             Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" ColorAdjustment="{materialDesign:ColorAdjustment}"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/WordOllama;component/NewUI/ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left: Input -->
+        <Border Grid.Row="0" Grid.Column="0" Margin="0,0,12,0"
+                BorderThickness="0" CornerRadius="12"
+                Background="{DynamicResource MaterialDesignCardBackground}"
+                Effect="{DynamicResource MaterialDesignShadowDepth1}">
+            <TextBox Name="InputText"
+                     materialDesign:HintAssist.Hint="{x:Static properties:Resources.请输入原文}"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     AcceptsReturn="True" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     BorderThickness="0" Padding="16,12"
+                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"/>
+        </Border>
+
+        <!-- Right: Language select + Output -->
+        <Grid Grid.Row="0" Grid.Column="1" Margin="12,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ComboBox Name="LangComboBox" Grid.Row="0"
+                      materialDesign:HintAssist.Hint="{x:Static properties:Resources.选择目标语言}"
+                      IsEditable="True"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                      Margin="0,0,0,12">
+                <ComboBoxItem Content="{x:Static properties:Resources.英语}"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.汉语}"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.日语}"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.法语}"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.德语}"/>
+            </ComboBox>
+
+            <Border Grid.Row="1" BorderThickness="0" CornerRadius="12"
+                    Background="{DynamicResource MaterialDesignCardBackground}"
+                    Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                <TextBox Name="OutputText"
+                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.翻译结果}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"
+                         VerticalScrollBarVisibility="Auto"
+                         BorderThickness="0" Padding="16,12"
+                         materialDesign:TextFieldAssist.DecorationVisibility="Hidden"/>
+            </Border>
+        </Grid>
+
+        <!-- Bottom controls -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2"
+                    Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Content="{x:Static properties:Resources.开始翻译}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Height="40" Padding="20,0"
+                    Margin="0,0,20,0"
+                    Click="TranslateBegin" Cursor="Hand"/>
+            <ToggleButton x:Name="ComparisonModeToggle"
+                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                          ToolTip="{x:Static properties:Resources.以上下方式对照显示原文与翻译结果}"/>
+            <TextBlock Text="{x:Static properties:Resources.对照模式}"
+                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

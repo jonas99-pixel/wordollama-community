@@ -1,0 +1,2841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Setting_AIMode" xml:space="preserve">
+    <value>AI Mode</value>
+  </data>
+  <data name="Setting_BaseSetting" xml:space="preserve">
+    <value>Base Setting</value>
+  </data>
+  <data name="Setting_OnlineModelMode" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Setting_O_MS" xml:space="preserve">
+    <value>Model Select</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Setting_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="CreatHTML_Title" xml:space="preserve">
+    <value>Creating HTML Application</value>
+  </data>
+  <data name="CreatHTML_TabAI" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Common_Begin" xml:space="preserve">
+    <value>Begin</value>
+  </data>
+  <data name="CreatHTML_TabHTML" xml:space="preserve">
+    <value>Manager</value>
+  </data>
+  <data name="Common_Run" xml:space="preserve">
+    <value>Run</value>
+  </data>
+  <data name="SaveDialogTitle" xml:space="preserve">
+    <value>Save HTML</value>
+  </data>
+  <data name="EnterCodeName" xml:space="preserve">
+    <value>Please enter the application name</value>
+  </data>
+  <data name="TaskPane_Title" xml:space="preserve">
+    <value>MyAPP</value>
+  </data>
+  <data name="Error_NoAIResponse" xml:space="preserve">
+    <value>Error: Failure to receive reply from AI</value>
+  </data>
+  <data name="WebViewWindow_Title" xml:space="preserve">
+    <value>New APP</value>
+  </data>
+  <data name="Common_Creating" xml:space="preserve">
+    <value>Creating</value>
+  </data>
+  <data name="请输入原文" xml:space="preserve">
+    <value>Please enter the original text</value>
+  </data>
+  <data name="选择目标语言" xml:space="preserve">
+    <value>Select Target Language</value>
+  </data>
+  <data name="英语" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="汉语" xml:space="preserve">
+    <value>Chinese</value>
+  </data>
+  <data name="日语" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="法语" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="德语" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="翻译结果" xml:space="preserve">
+    <value>Translation results</value>
+  </data>
+  <data name="开始翻译" xml:space="preserve">
+    <value>Start translation</value>
+  </data>
+  <data name="以上下方式对照显示原文与翻译结果" xml:space="preserve">
+    <value>Show the original text against the translation results in the above and below ways</value>
+  </data>
+  <data name="对照模式" xml:space="preserve">
+    <value>Comparison</value>
+  </data>
+  <data name="未能返回结果请检查" xml:space="preserve">
+    <value>Failed to return a result</value>
+  </data>
+  <data name="请确认已经输入文本以及已选择翻译语言" xml:space="preserve">
+    <value>Please make sure that the text has been entered and that the translation language has been selected.</value>
+  </data>
+  <data name="提示" xml:space="preserve">
+    <value>Tips</value>
+  </data>
+  <data name="请输入提示词" xml:space="preserve">
+    <value>Please enter a prompt</value>
+  </data>
+  <data name="错误AI没有返回结果请检查" xml:space="preserve">
+    <value>Error: AI did not return a result, please check</value>
+  </data>
+  <data name="优化提示词出错" xml:space="preserve">
+    <value>Optimise Prompt error</value>
+  </data>
+  <data name="错误" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="AI分析" xml:space="preserve">
+    <value>AI Analysis:</value>
+  </data>
+  <data name="AI工作中" xml:space="preserve">
+    <value>AI Working...</value>
+  </data>
+  <data name="AI开始工作了请稍等" xml:space="preserve">
+    <value>AI has started working, please wait</value>
+  </data>
+  <data name="AI空闲中" xml:space="preserve">
+    <value>AI Idle</value>
+  </data>
+  <data name="AI输出结果不稳定会导致生成失败可多次重试" xml:space="preserve">
+    <value>AI output may be unstable, causing generation failure. You can retry multiple times.</value>
+  </data>
+  <data name="Agent任务" xml:space="preserve">
+    <value>Agent Task</value>
+  </data>
+  <data name="Agent任务完成" xml:space="preserve">
+    <value>Agent Task Completed!</value>
+  </data>
+  <data name="Agent执行出错" xml:space="preserve">
+    <value>Agent Execution Error:</value>
+  </data>
+  <data name="Agent正在分析需求" xml:space="preserve">
+    <value>Agent is analyzing requirements and planning tasks...</value>
+  </data>
+  <data name="Agent规划完成" xml:space="preserve">
+    <value>Agent Planning Complete</value>
+  </data>
+  <data name="BUTTON_COPY_RESULT" xml:space="preserve">
+    <value>Copy Result</value>
+  </data>
+  <data name="BUTTON_OPTIMIZE" xml:space="preserve">
+    <value>Optimize Prompt</value>
+  </data>
+  <data name="BUTTON_SELECT_IMAGE" xml:space="preserve">
+    <value>Select Image</value>
+  </data>
+  <data name="HELPER_TEXT_PROMPT" xml:space="preserve">
+    <value>Note: Not all models support image understanding. Please select a suitable model (Local: MiniCPM-V / Online: GPT-4o series, etc.), otherwise AI may produce nonsensical output.</value>
+  </data>
+  <data name="HINT_IMAGE_PATH" xml:space="preserve">
+    <value>Selected image path</value>
+  </data>
+  <data name="HINT_PROMPT" xml:space="preserve">
+    <value>Enter prompt...</value>
+  </data>
+  <data name="HTML应用" xml:space="preserve">
+    <value>HTML App</value>
+  </data>
+  <data name="HTML文件名称" xml:space="preserve">
+    <value>HTML File Name</value>
+  </data>
+  <data name="LABEL_CURRENT_MODEL" xml:space="preserve">
+    <value>Current Model</value>
+  </data>
+  <data name="Ollama最大同时载入模型数OLLAMA_MAX_LOADED_MODELS" xml:space="preserve">
+    <value>Ollama Max Concurrent Loaded Models (OLLAMA_MAX_LOADED_MODELS)</value>
+  </data>
+  <data name="Ollama模型" xml:space="preserve">
+    <value>Ollama Model:</value>
+  </data>
+  <data name="Ollama模型保存位置OLLAMA_MODELS" xml:space="preserve">
+    <value>Ollama Model Storage Path (OLLAMA_MODELS)</value>
+  </data>
+  <data name="Ollama模型存活时间OLLAMA_KEEP_ALIVE" xml:space="preserve">
+    <value>Ollama Model Keep Alive (OLLAMA_KEEP_ALIVE)</value>
+  </data>
+  <data name="Ollama模型管理" xml:space="preserve">
+    <value>Ollama Model Management</value>
+  </data>
+  <data name="Ollama相关" xml:space="preserve">
+    <value>Ollama Related</value>
+  </data>
+  <data name="Ollama端口OLLAMA_PORT" xml:space="preserve">
+    <value>Ollama Port (OLLAMA_PORT)</value>
+  </data>
+  <data name="Ollama网络模式OLLAMA_HOST" xml:space="preserve">
+    <value>Ollama Network Mode (OLLAMA_HOST)</value>
+  </data>
+  <data name="Ollama设置" xml:space="preserve">
+    <value>Ollama Settings</value>
+  </data>
+  <data name="TAB_ANALYSIS" xml:space="preserve">
+    <value>Analysis</value>
+  </data>
+  <data name="TAB_MODEL_MANAGEMENT" xml:space="preserve">
+    <value>Model Management</value>
+  </data>
+  <data name="Tokens上限" xml:space="preserve">
+    <value>Max Tokens</value>
+  </data>
+  <data name="WINDOW_TITLE_IMAGE_UNDERSTANDING" xml:space="preserve">
+    <value>Image Understanding</value>
+  </data>
+  <data name="X0aX0a本插件ICONS来源" xml:space="preserve">
+    <value>Toolbar icons are original WordOllama project assets.</value>
+  </data>
+  <data name="X0aX0a查看使用说明文档" xml:space="preserve">
+    <value>
+View User Guide:</value>
+  </data>
+  <data name="_0写入错误1" xml:space="preserve">
+    <value>{0} Write Error: {1}</value>
+  </data>
+  <data name="_0重置错误1" xml:space="preserve">
+    <value>{0} Reset Error: {1}</value>
+  </data>
+  <data name="wordollama-custom-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-custom-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-search-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-search-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-search-25" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-search-25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-about-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-about-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-new-document-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-new-document-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-legal-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-legal-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-assistant-48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-assistant-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-translate-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-translate-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-settings-50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-settings-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wordollama-chat-64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wordollama-chat-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="下拉选择模型" xml:space="preserve">
+    <value>Select model from dropdown</value>
+  </data>
+  <data name="下载" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="下载完成" xml:space="preserve">
+    <value>Download Complete!</value>
+  </data>
+  <data name="下载完成前请勿关闭本设置窗口可最小化" xml:space="preserve">
+    <value>Do not close this settings window before download completes (you can minimize it)</value>
+  </data>
+  <data name="下载成功" xml:space="preserve">
+    <value>Download Successful</value>
+  </data>
+  <data name="下载新模型" xml:space="preserve">
+    <value>Download New Model</value>
+  </data>
+  <data name="下载错误" xml:space="preserve">
+    <value>Download Error</value>
+  </data>
+  <data name="不强制由AI自行判断" xml:space="preserve">
+    <value>No enforcement (let AI decide)</value>
+  </data>
+  <data name="任务进度" xml:space="preserve">
+    <value>Task Progress</value>
+  </data>
+  <data name="优化需求" xml:space="preserve">
+    <value>Optimization Requirements</value>
+  </data>
+  <data name="俄罗斯语" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="保存HTML文件失败" xml:space="preserve">
+    <value>Failed to save HTML file:</value>
+  </data>
+  <data name="保存当前设置" xml:space="preserve">
+    <value>Save Current Settings</value>
+  </data>
+  <data name="保存成功" xml:space="preserve">
+    <value>Saved Successfully</value>
+  </data>
+  <data name="保存文件失败" xml:space="preserve">
+    <value>Failed to save file:</value>
+  </data>
+  <data name="保存模型信息时出错" xml:space="preserve">
+    <value>Error saving model info:</value>
+  </data>
+  <data name="修改" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="修改后请更改OllamaEndPoint的端口为上述端口" xml:space="preserve">
+    <value>After modification, please change the Ollama EndPoint port to the above port.</value>
+  </data>
+  <data name="修改文段错别字与病句" xml:space="preserve">
+    <value>Fix typos and grammatical errors</value>
+  </data>
+  <data name="全局模型" xml:space="preserve">
+    <value>Global Model</value>
+  </data>
+  <data name="公平性改写" xml:space="preserve">
+    <value>Fairness Rewrite</value>
+  </data>
+  <data name="共享模式" xml:space="preserve">
+    <value>Shared Mode</value>
+  </data>
+  <data name="具体创作需求" xml:space="preserve">
+    <value>Specific Writing Requirements</value>
+  </data>
+  <data name="内容生成区" xml:space="preserve">
+    <value>Content Generation Area</value>
+  </data>
+  <data name="分析中" xml:space="preserve">
+    <value>Analyzing...</value>
+  </data>
+  <data name="切换主题" xml:space="preserve">
+    <value>Switch Theme</value>
+  </data>
+  <data name="创作" xml:space="preserve">
+    <value>Write</value>
+  </data>
+  <data name="创建ChatGPT模型文件错误" xml:space="preserve">
+    <value>Error creating ChatGPT model file:</value>
+  </data>
+  <data name="创建对比文档" xml:space="preserve">
+    <value>Creating comparison document...</value>
+  </data>
+  <data name="删除所选模型" xml:space="preserve">
+    <value>Delete Selected Model</value>
+  </data>
+  <data name="删除文件失败" xml:space="preserve">
+    <value>Failed to delete file:</value>
+  </data>
+  <data name="删除时遇到错误" xml:space="preserve">
+    <value>Error during deletion:</value>
+  </data>
+  <data name="删除模型" xml:space="preserve">
+    <value>Delete Model</value>
+  </data>
+  <data name="删除此模板" xml:space="preserve">
+    <value>Delete This Template</value>
+  </data>
+  <data name="删除此行" xml:space="preserve">
+    <value>Delete This Row</value>
+  </data>
+  <data name="功能名称" xml:space="preserve">
+    <value>Function Name</value>
+  </data>
+  <data name="加载ChatGPT模型时出错" xml:space="preserve">
+    <value>Error loading ChatGPT model:</value>
+  </data>
+  <data name="加载HTML文件失败" xml:space="preserve">
+    <value>Failed to load HTML file:</value>
+  </data>
+  <data name="加载图片失败" xml:space="preserve">
+    <value>Failed to load image</value>
+  </data>
+  <data name="原文与插入文本的区别" xml:space="preserve">
+    <value>Difference between original and inserted text:</value>
+  </data>
+  <data name="原文本" xml:space="preserve">
+    <value>Original Text:</value>
+  </data>
+  <data name="参数量" xml:space="preserve">
+    <value>Parameter Count</value>
+  </data>
+  <data name="发生错误" xml:space="preserve">
+    <value>Error occurred:</value>
+  </data>
+  <data name="发送提示词失败" xml:space="preserve">
+    <value>Failed to send prompt:</value>
+  </data>
+  <data name="取消任务" xml:space="preserve">
+    <value>Cancel Task</value>
+  </data>
+  <data name="可自行填写或下拉选择常见服务商" xml:space="preserve">
+    <value>Enter manually or select common provider from dropdown</value>
+  </data>
+  <data name="合同修订评估" xml:space="preserve">
+    <value>Contract Revision Assessment</value>
+  </data>
+  <data name="同原文语言实验性" xml:space="preserve">
+    <value>Same as source language (Experimental)</value>
+  </data>
+  <data name="图片理解" xml:space="preserve">
+    <value>Image Understanding</value>
+  </data>
+  <data name="在此输入格式内容等需求可选" xml:space="preserve">
+    <value>Enter format, content and other requirements here (optional)</value>
+  </data>
+  <data name="在此输入需要转换的文本" xml:space="preserve">
+    <value>Enter text to convert here...</value>
+  </data>
+  <data name="在线模型" xml:space="preserve">
+    <value>Online Model:</value>
+  </data>
+  <data name="在线模型设置" xml:space="preserve">
+    <value>Online Model Settings</value>
+  </data>
+  <data name="处修订" xml:space="preserve">
+    <value> revision(s)</value>
+  </data>
+  <data name="处有效修订" xml:space="preserve">
+    <value> valid revision(s).</value>
+  </data>
+  <data name="处理失败" xml:space="preserve">
+    <value>Processing Failed:</value>
+  </data>
+  <data name="大内存显存设备专享减少重新载入模型时间请设置不超过3GPU数量" xml:space="preserve">
+    <value>For devices with large memory/VRAM, reduces model reload time. Set no more than 3 × GPU count.</value>
+  </data>
+  <data name="大小GB" xml:space="preserve">
+    <value>Size (GB)</value>
+  </data>
+  <data name="失败" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="如果输出有思维链将会显示在这里" xml:space="preserve">
+    <value>If the output contains chain of thought, it will be displayed here</value>
+  </data>
+  <data name="对两份合同文件的修订内容进行风险评估" xml:space="preserve">
+    <value>Perform risk assessment on revisions between two contract documents.</value>
+  </data>
+  <data name="对文本内容进行归纳" xml:space="preserve">
+    <value>Summarize text content</value>
+  </data>
+  <data name="对文本进行扩写" xml:space="preserve">
+    <value>Expand text</value>
+  </data>
+  <data name="对文本进行简化" xml:space="preserve">
+    <value>Simplify text</value>
+  </data>
+  <data name="对文本进行续写" xml:space="preserve">
+    <value>Continue writing text</value>
+  </data>
+  <data name="对方删除了这条文本" xml:space="preserve">
+    <value>The other party deleted this text.</value>
+  </data>
+  <data name="对本文进行润色" xml:space="preserve">
+    <value>Polish this text</value>
+  </data>
+  <data name="对比文档中" xml:space="preserve">
+    <value>Comparing documents...</value>
+  </data>
+  <data name="对比结果" xml:space="preserve">
+    <value>Comparison Result</value>
+  </data>
+  <data name="对话" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="对话模式" xml:space="preserve">
+    <value>Chat Mode</value>
+  </data>
+  <data name="已为0的值修改成1" xml:space="preserve">
+    <value>Changed value of {0} to {1}</value>
+  </data>
+  <data name="已分析" xml:space="preserve">
+    <value>Analyzed</value>
+  </data>
+  <data name="已存在是否覆盖保存" xml:space="preserve">
+    <value>Already exists, overwrite?</value>
+  </data>
+  <data name="已完成步骤" xml:space="preserve">
+    <value>Steps Completed</value>
+  </data>
+  <data name="已恢复0的默认值" xml:space="preserve">
+    <value>Restored default value of {0}</value>
+  </data>
+  <data name="已恢复默认路径请重启Ollama" xml:space="preserve">
+    <value>Default path restored, please restart Ollama</value>
+  </data>
+  <data name="已选功能" xml:space="preserve">
+    <value>Selected Function</value>
+  </data>
+  <data name="希望生成的文本主题" xml:space="preserve">
+    <value>Desired text topic</value>
+  </data>
+  <data name="开始执行" xml:space="preserve">
+    <value>Start Execution</value>
+  </data>
+  <data name="开始生成" xml:space="preserve">
+    <value>Start Generation</value>
+  </data>
+  <data name="强制中文输出" xml:space="preserve">
+    <value>Force Chinese Output</value>
+  </data>
+  <data name="强制英文输出" xml:space="preserve">
+    <value>Force English Output</value>
+  </data>
+  <data name="强制规范输出语言实验性" xml:space="preserve">
+    <value>Force Output Language (Experimental)</value>
+  </data>
+  <data name="归纳" xml:space="preserve">
+    <value>Summarize</value>
+  </data>
+  <data name="当前模型" xml:space="preserve">
+    <value>Current Model:</value>
+  </data>
+  <data name="当前模型全局模式" xml:space="preserve">
+    <value>Current Model: Global Mode</value>
+  </data>
+  <data name="当前模式" xml:space="preserve">
+    <value>Current Mode</value>
+  </data>
+  <data name="当前模式模型" xml:space="preserve">
+    <value>Current Mode/Model</value>
+  </data>
+  <data name="当前状态" xml:space="preserve">
+    <value>Current Status</value>
+  </data>
+  <data name="影响AI回复内容的长度数值越大回复越长占用内存显存越多" xml:space="preserve">
+    <value>Controls AI response length. Higher values produce longer responses and use more memory/VRAM.</value>
+  </data>
+  <data name="影响AI回复内容的长度数值越大回复越长花费API费用越多" xml:space="preserve">
+    <value>Controls AI response length. Higher values produce longer responses and cost more API credits.</value>
+  </data>
+  <data name="必填" xml:space="preserve">
+    <value>(Required)</value>
+  </data>
+  <data name="必须包含以下列" xml:space="preserve">
+    <value>Must contain the following columns:</value>
+  </data>
+  <data name="思维链浏览" xml:space="preserve">
+    <value>Chain of Thought Viewer</value>
+  </data>
+  <data name="总步骤数" xml:space="preserve">
+    <value>Total Steps</value>
+  </data>
+  <data name="恢复成功需要移动原有模型文件吗" xml:space="preserve">
+    <value>Restore successful. Move existing model files?</value>
+  </data>
+  <data name="恢复遇到错误" xml:space="preserve">
+    <value>Restore Error:</value>
+  </data>
+  <data name="恢复默认" xml:space="preserve">
+    <value>Restore Default</value>
+  </data>
+  <data name="意大利语" xml:space="preserve">
+    <value>Italian</value>
+  </data>
+  <data name="成功" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="打开设置文件目录" xml:space="preserve">
+    <value>Open Settings Directory</value>
+  </data>
+  <data name="打开设置文件目录时出错" xml:space="preserve">
+    <value>Error opening settings directory:</value>
+  </data>
+  <data name="扩写" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="批注" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="批注风险" xml:space="preserve">
+    <value>Risk Comment</value>
+  </data>
+  <data name="把文本修改得更公平" xml:space="preserve">
+    <value>Rewrite text to be more fair</value>
+  </data>
+  <data name="拉取日期" xml:space="preserve">
+    <value>Pull Date</value>
+  </data>
+  <data name="按需修改" xml:space="preserve">
+    <value>Modify as Needed</value>
+  </data>
+  <data name="推荐4096" xml:space="preserve">
+    <value>Recommended: 4096</value>
+  </data>
+  <data name="提示词需要点击格子三次" xml:space="preserve">
+    <value>Prompt (click cell 3 times)</value>
+  </data>
+  <data name="插入" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="插入到文档" xml:space="preserve">
+    <value>Insert to Document</value>
+  </data>
+  <data name="插入并对比" xml:space="preserve">
+    <value>Insert &amp; Compare</value>
+  </data>
+  <data name="插入成功" xml:space="preserve">
+    <value>Inserted Successfully</value>
+  </data>
+  <data name="插入表格失败" xml:space="preserve">
+    <value>Failed to insert table</value>
+  </data>
+  <data name="改错" xml:space="preserve">
+    <value>Error Correction</value>
+  </data>
+  <data name="数据格式要求" xml:space="preserve">
+    <value>Data Format Requirements:</value>
+  </data>
+  <data name="文件删除成功" xml:space="preserve">
+    <value>File deleted successfully</value>
+  </data>
+  <data name="文件和文件夹已成功移动" xml:space="preserve">
+    <value>Files and folders moved successfully!</value>
+  </data>
+  <data name="文本转表格" xml:space="preserve">
+    <value>Text to Table</value>
+  </data>
+  <data name="新增" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="新增模型" xml:space="preserve">
+    <value>Add Model</value>
+  </data>
+  <data name="新增模型错误" xml:space="preserve">
+    <value>Add Model Error:</value>
+  </data>
+  <data name="新文本" xml:space="preserve">
+    <value>New Text:</value>
+  </data>
+  <data name="新模板" xml:space="preserve">
+    <value>New Template</value>
+  </data>
+  <data name="无原文为对方新增文本" xml:space="preserve">
+    <value>No original text, new text added by the other party.</value>
+  </data>
+  <data name="无法打开网页" xml:space="preserve">
+    <value>Cannot open webpage:</value>
+  </data>
+  <data name="更多" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="更新说明" xml:space="preserve">
+    <value>Update Notes</value>
+  </data>
+  <data name="未找到匹配的模型信息" xml:space="preserve">
+    <value>No matching model information found.</value>
+  </data>
+  <data name="未找到活动的Word文档" xml:space="preserve">
+    <value>No active Word document found</value>
+  </data>
+  <data name="本地模式" xml:space="preserve">
+    <value>Local Mode</value>
+  </data>
+  <data name="本插件名称WordOllamaX0aX0a制作者李伯阳北京市隆安广州律师事务所X0aX0a声明X0a1本插件不会收集您的任何数据和个人信息X0a2AI人工智能所生成的内容仅供参考可能存在错误对于任何AI生成的文本本制作者不承担任何责任X0a3本插件完全免费如您在其他地方付费后获取本插件请进行举报X0aX0a如您对本插件有任何建议或疑惑请联系微信LegalLby" xml:space="preserve">
+    <value>Plugin Name: WordOllama\nAuthor: Li Boyang - Beijing Longan (Guangzhou) Law Firm\n\nDisclaimer:\n1. The WordOllama project does not operate telemetry or collect or retain user documents.\n2. When you actively use AI or MCP, relevant content is sent to the service you configured and handled under that provider's policies.\n3. AI-generated content is for reference only and may contain errors. The author assumes no liability for any AI-generated text.\n4. This plugin is completely free. If you paid for it elsewhere, please report it.\n\nFor suggestions or questions, contact WeChat: legal-lby</value>
+  </data>
+  <data name="查看思维链" xml:space="preserve">
+    <value>View Chain of Thought</value>
+  </data>
+  <data name="模型" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="模型删除失败" xml:space="preserve">
+    <value>Model deletion failed.</value>
+  </data>
+  <data name="模型名称" xml:space="preserve">
+    <value>Model Name</value>
+  </data>
+  <data name="模型已删除" xml:space="preserve">
+    <value>Model deleted.</value>
+  </data>
+  <data name="模型成功删除" xml:space="preserve">
+    <value>Model successfully deleted.</value>
+  </data>
+  <data name="模拟法庭调查" xml:space="preserve">
+    <value>Mock Court Investigation</value>
+  </data>
+  <data name="模板名称" xml:space="preserve">
+    <value>Template Name</value>
+  </data>
+  <data name="模板已保存" xml:space="preserve">
+    <value>Template saved</value>
+  </data>
+  <data name="模板管理" xml:space="preserve">
+    <value>Template Management</value>
+  </data>
+  <data name="正在打开文档" xml:space="preserve">
+    <value>Opening document...</value>
+  </data>
+  <data name="正在执行步骤" xml:space="preserve">
+    <value>Executing step</value>
+  </data>
+  <data name="正在汇总结果" xml:space="preserve">
+    <value>Aggregating all step results...</value>
+  </data>
+  <data name="步骤执行失败" xml:space="preserve">
+    <value>Step execution failed:</value>
+  </data>
+  <data name="步骤详情" xml:space="preserve">
+    <value>Step Details</value>
+  </data>
+  <data name="没有可运行的HTML内容" xml:space="preserve">
+    <value>No runnable HTML content</value>
+  </data>
+  <data name="法务" xml:space="preserve">
+    <value>Legal</value>
+  </data>
+  <data name="润色文本" xml:space="preserve">
+    <value>Polish Text</value>
+  </data>
+  <data name="温度设置" xml:space="preserve">
+    <value>Temperature Setting</value>
+  </data>
+  <data name="温度越低AI输出越严谨反之越具有创造性" xml:space="preserve">
+    <value>Lower temperature produces more precise AI output; higher values increase creativity</value>
+  </data>
+  <data name="源目录不存在或无法找到" xml:space="preserve">
+    <value>Source directory not found:</value>
+  </data>
+  <data name="特定模型" xml:space="preserve">
+    <value>Specific Model</value>
+  </data>
+  <data name="状态" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="生成中" xml:space="preserve">
+    <value>Generating...</value>
+  </data>
+  <data name="生成中请耐心等待" xml:space="preserve">
+    <value>Generating, please wait...</value>
+  </data>
+  <data name="生成表格" xml:space="preserve">
+    <value>Generate Table</value>
+  </data>
+  <data name="生成表格失败" xml:space="preserve">
+    <value>Failed to generate table</value>
+  </data>
+  <data name="生成需求需要点击格子三次" xml:space="preserve">
+    <value>Generation requirements (click cell 3 times)</value>
+  </data>
+  <data name="确定" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="确定删除" xml:space="preserve">
+    <value>Confirm Delete</value>
+  </data>
+  <data name="确定要删除模型" xml:space="preserve">
+    <value>Confirm delete model</value>
+  </data>
+  <data name="确定要删除这一行吗" xml:space="preserve">
+    <value>Delete this row?</value>
+  </data>
+  <data name="确定要删除这个模板吗" xml:space="preserve">
+    <value>Delete this template?</value>
+  </data>
+  <data name="确认删除" xml:space="preserve">
+    <value>Confirm Deletion</value>
+  </data>
+  <data name="确认覆盖" xml:space="preserve">
+    <value>Confirm Overwrite</value>
+  </data>
+  <data name="示例5m5分钟24h24小时1永远0生成完就立即释放模型" xml:space="preserve">
+    <value>Example: 5m (5 min) / 24h (24 hours) / -1 (forever) / 0 (release immediately after generation).</value>
+  </data>
+  <data name="移动文件和文件夹时出错" xml:space="preserve">
+    <value>Error moving files and folders:</value>
+  </data>
+  <data name="移动模型文件" xml:space="preserve">
+    <value>Move Model Files</value>
+  </data>
+  <data name="移动模型耗时较久请勿随意关闭程序" xml:space="preserve">
+    <value>Moving model files takes time. Please do not close the program.</value>
+  </data>
+  <data name="简化" xml:space="preserve">
+    <value>Simplify</value>
+  </data>
+  <data name="结果将在这里显示" xml:space="preserve">
+    <value>Results will be displayed here...</value>
+  </data>
+  <data name="续写" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="编辑" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="翻译" xml:space="preserve">
+    <value>Translate</value>
+  </data>
+  <data name="翻译到" xml:space="preserve">
+    <value>Translate to</value>
+  </data>
+  <data name="翻译到中文" xml:space="preserve">
+    <value>Translate to Chinese</value>
+  </data>
+  <data name="翻译到英文" xml:space="preserve">
+    <value>Translate to English</value>
+  </data>
+  <data name="自定义功能" xml:space="preserve">
+    <value>Custom Function</value>
+  </data>
+  <data name="自定义名称" xml:space="preserve">
+    <value>Custom Name</value>
+  </data>
+  <data name="自定义提示词设置" xml:space="preserve">
+    <value>Custom Prompt Settings</value>
+  </data>
+  <data name="自由创作" xml:space="preserve">
+    <value>Free Writing</value>
+  </data>
+  <data name="自由翻译" xml:space="preserve">
+    <value>Free Translation</value>
+  </data>
+  <data name="获取模型信息错误请检查Ollama程序状态" xml:space="preserve">
+    <value>Error getting model info, please check Ollama status</value>
+  </data>
+  <data name="表格已成功插入到Word文档中" xml:space="preserve">
+    <value>Table inserted into Word document successfully</value>
+  </data>
+  <data name="表格预览" xml:space="preserve">
+    <value>Table Preview</value>
+  </data>
+  <data name="西班牙语" xml:space="preserve">
+    <value>Spanish</value>
+  </data>
+  <data name="要删除" xml:space="preserve">
+    <value>To Delete</value>
+  </data>
+  <data name="要求" xml:space="preserve">
+    <value>Requirements:</value>
+  </data>
+  <data name="设置" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="设置共享模式后请更换OllamaEndPoint为本机IP地址" xml:space="preserve">
+    <value>After enabling shared mode, change Ollama EndPoint to this machine's IP address.</value>
+  </data>
+  <data name="设置成功请重启Ollama" xml:space="preserve">
+    <value>Settings saved, please restart Ollama</value>
+  </data>
+  <data name="设置成功需要移动原有模型文件吗" xml:space="preserve">
+    <value>Settings saved. Move existing model files?</value>
+  </data>
+  <data name="设置文件目录不存在已为您创建" xml:space="preserve">
+    <value>Settings directory not found, created for you.</value>
+  </data>
+  <data name="设置遇到错误" xml:space="preserve">
+    <value>Settings Error:</value>
+  </data>
+  <data name="评估结束共处理" xml:space="preserve">
+    <value>Assessment complete! Processed</value>
+  </data>
+  <data name="请充分了解各项内容后再进行修改修改完成后需要重启Ollama程序才能成功应用" xml:space="preserve">
+    <value>Please review all settings before making changes. After modification, restart Ollama to apply.</value>
+  </data>
+  <data name="请先填写完当前行再添加新行" xml:space="preserve">
+    <value>Please complete the current row before adding a new one.</value>
+  </data>
+  <data name="请先填写模型名字" xml:space="preserve">
+    <value>Please enter model name first</value>
+  </data>
+  <data name="请先选择一个模型" xml:space="preserve">
+    <value>Please select a model first.</value>
+  </data>
+  <data name="请先选择图片" xml:space="preserve">
+    <value>Please select an image first</value>
+  </data>
+  <data name="请先选择文本" xml:space="preserve">
+    <value>Please select text first</value>
+  </data>
+  <data name="请先选择要删除的模型" xml:space="preserve">
+    <value>Please select a model to delete first.</value>
+  </data>
+  <data name="请填入有效的文件名" xml:space="preserve">
+    <value>Please enter a valid file name</value>
+  </data>
+  <data name="请输入需要转换的文本" xml:space="preserve">
+    <value>Please enter text to convert</value>
+  </data>
+  <data name="请选择有效的文本进行批注" xml:space="preserve">
+    <value>Please select valid text to comment.</value>
+  </data>
+  <data name="请选择要保存的文件" xml:space="preserve">
+    <value>Please select a file to save</value>
+  </data>
+  <data name="请选择要删除的文件" xml:space="preserve">
+    <value>Please select a file to delete</value>
+  </data>
+  <data name="读取ChatGPT列表错误" xml:space="preserve">
+    <value>Error reading ChatGPT list:</value>
+  </data>
+  <data name="读取HTML文件失败" xml:space="preserve">
+    <value>Failed to read HTML file:</value>
+  </data>
+  <data name="读取Ollama环境变量错误" xml:space="preserve">
+    <value>Error reading Ollama environment variables:</value>
+  </data>
+  <data name="路径为默认状态无需恢复" xml:space="preserve">
+    <value>Path is at default state, no need to restore.</value>
+  </data>
+  <data name="路径格式错误请检查" xml:space="preserve">
+    <value>Path format error, please check</value>
+  </data>
+  <data name="载入模型" xml:space="preserve">
+    <value>Load Model</value>
+  </data>
+  <data name="输入你的需求" xml:space="preserve">
+    <value>Enter your requirements. Agent will automatically plan and execute multiple steps.</value>
+  </data>
+  <data name="输入模型名称" xml:space="preserve">
+    <value>Enter Model Name</value>
+  </data>
+  <data name="运行HTML失败" xml:space="preserve">
+    <value>Failed to run HTML:</value>
+  </data>
+  <data name="进阶设置" xml:space="preserve">
+    <value>Advanced Settings</value>
+  </data>
+  <data name="选择功能" xml:space="preserve">
+    <value>Select Function</value>
+  </data>
+  <data name="选择模板" xml:space="preserve">
+    <value>Select Template</value>
+  </data>
+  <data name="遇到错误" xml:space="preserve">
+    <value>Error Encountered:</value>
+  </data>
+  <data name="配置" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="配置已保存" xml:space="preserve">
+    <value>Configuration Saved</value>
+  </data>
+  <data name="量钱包而行" xml:space="preserve">
+    <value>Spend within your budget</value>
+  </data>
+  <data name="错误请确认图片和提示词不为空" xml:space="preserve">
+    <value>Error: Please ensure image and prompt are not empty</value>
+  </data>
+  <data name="随意填写提示词小心过长" xml:space="preserve">
+    <value>Write prompts freely, but beware of length</value>
+  </data>
+  <data name="韩语" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="默认11434" xml:space="preserve">
+    <value>Default: 11434</value>
+  </data>
+  <data name="默认3GPU数量3CPU推理" xml:space="preserve">
+    <value>Default: 3 × GPU count / 3 (CPU inference)</value>
+  </data>
+  <data name="默认5m" xml:space="preserve">
+    <value>Default: 5m</value>
+  </data>
+  <data name="默认CUsersUsernameOllamaModels" xml:space="preserve">
+    <value>Default: C:\Users\username\.ollama\models</value>
+  </data>
+  <data name="默认HttpLocalhost11434" xml:space="preserve">
+    <value>Default: http://localhost:11434</value>
+  </data>
+  <!-- Agent Panel UI Strings -->
+  <data name="Agent_Title" xml:space="preserve">
+    <value>AI Agent Assistant</value>
+  </data>
+  <data name="Agent_CancelTask" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Agent_CancelTaskTip" xml:space="preserve">
+    <value>Cancel the current Agent task</value>
+  </data>
+  <data name="Agent_SilentLinter" xml:space="preserve">
+    <value>Silent Linter</value>
+  </data>
+  <data name="Agent_SilentLinterTip" xml:space="preserve">
+    <value>Auto-review changed paragraphs on save</value>
+  </data>
+  <data name="Agent_QuickPolish" xml:space="preserve">
+    <value>✨ Polish Selection</value>
+  </data>
+  <data name="Agent_QuickTable" xml:space="preserve">
+    <value>📊 Extract Table</value>
+  </data>
+  <data name="Agent_QuickReview" xml:space="preserve">
+    <value>⚖️ Review Document</value>
+  </data>
+  <data name="Agent_InputHint" xml:space="preserve">
+    <value>Enter command (Enter for newline, Ctrl+Enter to send)...</value>
+  </data>
+  <data name="Agent_AnswerReceived" xml:space="preserve">
+    <value>👤 Answer received, Agent resuming...</value>
+  </data>
+  <data name="Agent_Interrupted" xml:space="preserve">
+    <value>⚠️ Task interrupted by user</value>
+  </data>
+  <data name="Agent_Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Agent_Error" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="Agent_AskLog" xml:space="preserve">
+    <value>❓ AI Question: {0}</value>
+  </data>
+  <data name="Agent_AskPrompt" xml:space="preserve">
+    <value>💬 Please type your answer below and send...</value>
+  </data>
+  <data name="Agent_StatusThinking" xml:space="preserve">
+    <value>Agent thinking...</value>
+  </data>
+  <data name="Agent_StatusActing" xml:space="preserve">
+    <value>Agent executing...</value>
+  </data>
+  <data name="Agent_StatusObserving" xml:space="preserve">
+    <value>Agent observing results...</value>
+  </data>
+  <data name="Agent_StatusStarting" xml:space="preserve">
+    <value>Agent starting...</value>
+  </data>
+  <data name="Agent_StatusDone" xml:space="preserve">
+    <value>Task completed</value>
+  </data>
+  <data name="Agent_StatusWaiting" xml:space="preserve">
+    <value>Waiting for user response...</value>
+  </data>
+  <data name="Agent_Iteration" xml:space="preserve">
+    <value>Round {0}</value>
+  </data>
+  <!-- AgentWindow UI Strings -->
+  <data name="Agent_WindowTitle" xml:space="preserve">
+    <value>AI Assistant (Agent)</value>
+  </data>
+  <data name="Agent_WindowSubtitle" xml:space="preserve">
+    <value>Let AI operate documents autonomously</value>
+  </data>
+  <data name="Agent_WindowLoading" xml:space="preserve">
+    <value>Getting document info...</value>
+  </data>
+  <data name="Agent_WindowHint" xml:space="preserve">
+    <value>What would you like AI to help with? (e.g., Make the first paragraph a heading, then summarize the document)...</value>
+  </data>
+  <data name="Agent_WindowLog" xml:space="preserve">
+    <value>Agent Live Log</value>
+  </data>
+  <data name="Agent_WindowIdle" xml:space="preserve">
+    <value>Idle...</value>
+  </data>
+  <data name="Agent_WindowStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Agent_WindowStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Agent_WindowRespond" xml:space="preserve">
+    <value>Respond</value>
+  </data>
+  <data name="Agent_WindowCancelled" xml:space="preserve">
+    <value>Manually cancelled</value>
+  </data>
+  <data name="Agent_WindowError" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="Agent_WindowAsk" xml:space="preserve">
+    <value>AI Question:
+{0}
+
+Please type your answer in the input box above, then click the "Respond" button.</value>
+  </data>
+  <data name="Agent_DocInfo" xml:space="preserve">
+    <value>📄 Current document: {0} | {1} paragraphs</value>
+  </data>
+  <data name="Agent_NoDoc" xml:space="preserve">
+    <value>⚠️ No document open</value>
+  </data>
+  <data name="Agent_PresetWrite" xml:space="preserve">
+    <value>Continue Writing</value>
+  </data>
+  <data name="Agent_PresetPolish" xml:space="preserve">
+    <value>Polish Selection</value>
+  </data>
+  <data name="Agent_PresetFormat" xml:space="preserve">
+    <value>Auto Format</value>
+  </data>
+  <data name="Agent_PresetReview" xml:space="preserve">
+    <value>Review Risks</value>
+  </data>
+  <data name="Agent_PresetWriteText" xml:space="preserve">
+    <value>1. Get the text I currently selected.
+2. Based on the meaning of this text, help me continue writing two paragraphs at the end of the document.
+3. Let me know when done.</value>
+  </data>
+  <data name="Agent_PresetPolishText" xml:space="preserve">
+    <value>1. Find my currently selected text and its paragraph.
+2. Polish the paragraph using professional expression.
+3. Replace the original paragraph with the polished version directly.</value>
+  </data>
+  <data name="Agent_PresetFormatText" xml:space="preserve">
+    <value>Please help me format the document:
+1. Read the first 5 paragraphs.
+2. Determine which paragraph looks like a heading.
+3. Apply 'Heading 1' style to paragraphs identified as headings.
+4. Apply 'Normal' style to other paragraphs.</value>
+  </data>
+  <data name="Agent_PresetReviewText" xml:space="preserve">
+    <value>Please review the entire document for risks:
+1. Read the full text paragraph by paragraph.
+2. If you find date errors, amount errors, or biased clauses, add comments to the relevant text.
+3. Output a brief review summary at the end.</value>
+  </data>
+  <data name="Agent_NotifStart" xml:space="preserve">
+    <value>🤖 Agent started executing task...</value>
+  </data>
+  <data name="Agent_NotifDone" xml:space="preserve">
+    <value>✅ Agent task completed!</value>
+  </data>
+  <data name="Agent_NotifCancelled" xml:space="preserve">
+    <value>⏹ Agent task cancelled</value>
+  </data>
+  <!-- DocumentAgent Internal Log/Status -->
+  <data name="Agent_LogStarting" xml:space="preserve">
+    <value>Starting task</value>
+  </data>
+  <data name="Agent_StatusRound" xml:space="preserve">
+    <value>Agent thinking... (Round {0}{1})</value>
+  </data>
+  <data name="Agent_MaxIterReached" xml:space="preserve">
+    <value>Maximum iterations reached. Task terminated. Some work may be incomplete.</value>
+  </data>
+  <!-- AgentWindow Image Paste -->
+  <data name="Agent_ImagePastedHint" xml:space="preserve">
+    <value>Image pasted, will be sent to AI for analysis</value>
+  </data>
+  <data name="Agent_ClearImage" xml:space="preserve">
+    <value>Remove image</value>
+  </data>
+  <data name="Agent_ImageInfo" xml:space="preserve">
+    <value>Image pasted ({0}×{1})</value>
+  </data>
+  <!-- AgentWindow Execution Status -->
+  <data name="Agent_BtnResponding" xml:space="preserve">
+    <value>Execute 🚀</value>
+  </data>
+  <data name="Agent_Stopping" xml:space="preserve">
+    <value>Stopping...</value>
+  </data>
+  <data name="Agent_ResultPrefix" xml:space="preserve">
+    <value>🎉 </value>
+  </data>
+  <!-- AgentWindow Checkpoint -->
+  <data name="Agent_CheckpointTitle" xml:space="preserve">
+    <value>Resume Checkpoint</value>
+  </data>
+  <data name="Agent_CheckpointPrompt" xml:space="preserve">
+    <value>Detected incomplete Agent task. Resume execution?
+
+'Yes' to resume.
+'No' to clear checkpoint and start fresh.</value>
+  </data>
+  <data name="Agent_CheckpointResumeLog" xml:space="preserve">
+    <value>♻️ Checkpoint detected, resuming task...</value>
+  </data>
+  <!-- AgentWindow Plan Confirmation -->
+  <data name="Agent_PlanTitle" xml:space="preserve">
+    <value>Confirm Execution Plan</value>
+  </data>
+  <data name="Agent_PlanPrompt" xml:space="preserve">
+    <value>AI suggests executing the following plan:
+
+{0}
+
+Confirm execution?</value>
+  </data>
+  <!-- AgentWindow Diff Review -->
+  <data name="Agent_DiffTitle" xml:space="preserve">
+    <value>Document Change Review</value>
+  </data>
+  <data name="Agent_DiffPrompt" xml:space="preserve">
+    <value>Agent completed. {0} document changes detected.
+Review changes now?</value>
+  </data>
+  <!-- AgentWindow Cancel Response -->
+  <data name="Agent_CancelResponse" xml:space="preserve">
+    <value>[User cancelled the task]</value>
+  </data>
+  <data name="Markdown转换" xml:space="preserve">
+    <value>Markdown Convert</value>
+  </data>
+  <data name="刷新样式列表" xml:space="preserve">
+    <value>Refresh Styles</value>
+  </data>
+  <data name="选择服务商" xml:space="preserve">
+    <value>Select Provider</value>
+  </data>
+  <data name="API类型" xml:space="preserve">
+    <value>API Type</value>
+  </data>
+  <data name="获取模型列表" xml:space="preserve">
+    <value>Fetch Models</value>
+  </data>
+  <data name="端点Endpoint" xml:space="preserve">
+    <value>Endpoint</value>
+  </data>
+  <data name="新建Word样式" xml:space="preserve">
+    <value>New Word Style</value>
+  </data>
+  <data name="创建样式" xml:space="preserve">
+    <value>Create Style</value>
+  </data>
+  <data name="Markdown转换样式设置" xml:space="preserve">
+    <value>Markdown Style Settings</value>
+  </data>
+  <data name="I18n_SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="I18n_DisableTaskNotifications" xml:space="preserve">
+    <value>Disable task notifications</value>
+  </data>
+  <data name="I18n_DisableTaskNotificationsDesc" xml:space="preserve">
+    <value>Disable system tray notifications when LLM calls start and finish</value>
+  </data>
+  <data name="I18n_SkipPlanConfirm" xml:space="preserve">
+    <value>Skip plan confirmation</value>
+  </data>
+  <data name="I18n_SkipPlanConfirmDesc" xml:space="preserve">
+    <value>Run Agent plans automatically without showing a confirmation dialog</value>
+  </data>
+  <data name="I18n_SkipDiffReview" xml:space="preserve">
+    <value>Skip change review popup</value>
+  </data>
+  <data name="I18n_SkipDiffReviewDesc" xml:space="preserve">
+    <value>Skip the document change review popup after Agent tasks finish</value>
+  </data>
+  <data name="I18n_OnlineMaxTokens" xml:space="preserve">
+    <value>Output limit (max_tokens)</value>
+  </data>
+  <data name="I18n_OnlineMaxTokensDesc" xml:space="preserve">
+    <value>Controls the maximum tokens for one AI response. Larger values produce longer replies and cost more API usage.</value>
+  </data>
+  <data name="I18n_ContextWindow" xml:space="preserve">
+    <value>Context Window</value>
+  </data>
+  <data name="I18n_ContextWindowDesc" xml:space="preserve">
+    <value>The supported model context length (input + output). Ollama uses num_ctx; online models default to 256K.</value>
+  </data>
+  <data name="I18n_Thinking" xml:space="preserve">
+    <value>Thinking</value>
+  </data>
+  <data name="I18n_EnableThinking" xml:space="preserve">
+    <value>Enable thinking</value>
+  </data>
+  <data name="I18n_ThinkingDesc" xml:space="preserve">
+    <value>When thinking is enabled, the API returns reasoning content and shows it in the side pane. Turning it off can reduce latency and token usage.</value>
+  </data>
+  <data name="I18n_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="I18n_Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="I18n_SkillMcpServers" xml:space="preserve">
+    <value>Skill &amp; MCP Servers</value>
+  </data>
+  <data name="I18n_InstalledSkills" xml:space="preserve">
+    <value>Installed Skills</value>
+  </data>
+  <data name="I18n_SkillsDesc" xml:space="preserve">
+    <value>Skills are stored under Documents/WordAgentSkills/. Each Skill is a folder containing SKILL.md.</value>
+  </data>
+  <data name="I18n_OpenSkillFolder" xml:space="preserve">
+    <value>Open Skill folder</value>
+  </data>
+  <data name="I18n_ImportSkillZip" xml:space="preserve">
+    <value>Import Skill (ZIP)</value>
+  </data>
+  <data name="I18n_RefreshList" xml:space="preserve">
+    <value>Refresh list</value>
+  </data>
+  <data name="I18n_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="I18n_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="I18n_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="I18n_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="I18n_McpServers" xml:space="preserve">
+    <value>MCP Servers</value>
+  </data>
+  <data name="I18n_McpServersDesc" xml:space="preserve">
+    <value>MCP servers can connect over stdio, Streamable HTTP, or SSE so the Agent can call external tools.</value>
+  </data>
+  <data name="I18n_AddServer" xml:space="preserve">
+    <value>Add server</value>
+  </data>
+  <data name="I18n_Transport" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="I18n_Command" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="I18n_Args" xml:space="preserve">
+    <value>Arguments</value>
+  </data>
+  <data name="I18n_WorkingDirectory" xml:space="preserve">
+    <value>Working directory</value>
+  </data>
+  <data name="I18n_Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="I18n_Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="I18n_TestMcpTooltip" xml:space="preserve">
+    <value>Test connection and discover tools</value>
+  </data>
+  <data name="I18n_EditTooltip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="I18n_DeleteTooltip" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="I18n_AddMcpServer" xml:space="preserve">
+    <value>Add MCP Server</value>
+  </data>
+  <data name="I18n_EditMcpServer" xml:space="preserve">
+    <value>Edit MCP Server</value>
+  </data>
+  <data name="I18n_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="I18n_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="I18n_AgentSettings" xml:space="preserve">
+    <value>Agent Settings</value>
+  </data>
+  <data name="I18n_MaxTaskIterations" xml:space="preserve">
+    <value>Maximum task rounds</value>
+  </data>
+  <data name="I18n_MaxTaskIterationsDesc" xml:space="preserve">
+    <value>Maximum rounds the Agent can run for one task. Set to 0 for unlimited rounds (manual stop required).</value>
+  </data>
+  <data name="I18n_Unlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="I18n_MaxRounds" xml:space="preserve">
+    <value>Max rounds:</value>
+  </data>
+  <data name="I18n_SilentReview" xml:space="preserve">
+    <value>Silent Review</value>
+  </data>
+  <data name="I18n_SilentReviewDesc" xml:space="preserve">
+    <value>Periodically checks recently typed content and also runs on save</value>
+  </data>
+  <data name="I18n_SilentReviewModel" xml:space="preserve">
+    <value>Silent Review model</value>
+  </data>
+  <data name="I18n_SilentReviewModelDesc" xml:space="preserve">
+    <value>Silent Review uses an independent small model to periodically check the document. Leave blank to use the main model.</value>
+  </data>
+  <data name="I18n_OllamaModel" xml:space="preserve">
+    <value>Ollama model:</value>
+  </data>
+  <data name="I18n_OnlineModel" xml:space="preserve">
+    <value>Online model:</value>
+  </data>
+  <data name="I18n_ModelName" xml:space="preserve">
+    <value>Model name:</value>
+  </data>
+  <data name="I18n_ReviewIntervalSeconds" xml:space="preserve">
+    <value>Review interval (seconds):</value>
+  </data>
+  <data name="I18n_SaveReviewSettings" xml:space="preserve">
+    <value>Save review settings</value>
+  </data>
+  <data name="I18n_SaveReviewSettingsSaved" xml:space="preserve">
+    <value>Silent Review settings saved</value>
+  </data>
+  <data name="I18n_SelectSkillZipTitle" xml:space="preserve">
+    <value>Select Skill ZIP File</value>
+  </data>
+  <data name="I18n_ZipFileFilter" xml:space="preserve">
+    <value>ZIP files|*.zip</value>
+  </data>
+  <data name="I18n_SkillZipNoSkillMd" xml:space="preserve">
+    <value>SKILL.md was not found in the ZIP file. Import failed.</value>
+  </data>
+  <data name="I18n_ImportFailedTitle" xml:space="preserve">
+    <value>Import failed</value>
+  </data>
+  <data name="I18n_SkillImportSucceeded" xml:space="preserve">
+    <value>Skill "{0}" imported successfully!</value>
+  </data>
+  <data name="I18n_ImportFailed" xml:space="preserve">
+    <value>Import failed: {0}</value>
+  </data>
+  <data name="I18n_DeleteSkillConfirm" xml:space="preserve">
+    <value>Delete this Skill folder?
+{0}
+
+This action cannot be undone.</value>
+  </data>
+  <data name="I18n_DeleteConfirmTitle" xml:space="preserve">
+    <value>Confirm delete</value>
+  </data>
+  <data name="I18n_SkillDeleted" xml:space="preserve">
+    <value>Skill deleted</value>
+  </data>
+  <data name="I18n_DeleteFailed" xml:space="preserve">
+    <value>Delete failed: {0}</value>
+  </data>
+  <data name="I18n_DeleteMcpConfirm" xml:space="preserve">
+    <value>Delete MCP server "{0}"?</value>
+  </data>
+  <data name="I18n_McpTestSuccess" xml:space="preserve">
+    <value>Connection succeeded. Found {0} tools.</value>
+  </data>
+  <data name="I18n_McpTestFailed" xml:space="preserve">
+    <value>Connection failed. Check the startup command, arguments, runtime environment, and server logs.</value>
+  </data>
+  <data name="I18n_McpTestError" xml:space="preserve">
+    <value>Connection failed: {0}</value>
+  </data>
+  <data name="I18n_McpTestTitle" xml:space="preserve">
+    <value>MCP Test</value>
+  </data>
+  <data name="I18n_NameRequired" xml:space="preserve">
+    <value>Name is required.</value>
+  </data>
+  <data name="I18n_StdioCommandRequired" xml:space="preserve">
+    <value>stdio transport requires a startup command.</value>
+  </data>
+  <data name="I18n_RemoteMcpUrlRequired" xml:space="preserve">
+    <value>Remote MCP transport requires a URL.</value>
+  </data>
+  <data name="I18n_McpNameExists" xml:space="preserve">
+    <value>A server named "{0}" already exists.</value>
+  </data>
+  <data name="I18n_WordOllamaTitle" xml:space="preserve">
+    <value>WordOllama</value>
+  </data>
+  <data name="I18n_OAuthCancelled" xml:space="preserve">
+    <value>OAuth2 cancelled</value>
+  </data>
+  <data name="I18n_Authenticating" xml:space="preserve">
+    <value>Authenticating...</value>
+  </data>
+  <data name="I18n_OAuthSucceeded" xml:space="preserve">
+    <value>OAuth2 authentication succeeded</value>
+  </data>
+  <data name="I18n_OAuthFailed" xml:space="preserve">
+    <value>OAuth2 authentication failed or was cancelled</value>
+  </data>
+  <data name="I18n_OAuthError" xml:space="preserve">
+    <value>OAuth2 error: {0}</value>
+  </data>
+  <data name="I18n_ApiKeyRequired" xml:space="preserve">
+    <value>Please enter an API key first</value>
+  </data>
+  <data name="I18n_Fetching" xml:space="preserve">
+    <value>Fetching...</value>
+  </data>
+  <data name="I18n_FetchedModels" xml:space="preserve">
+    <value>Fetched {0} available models</value>
+  </data>
+  <data name="I18n_NoModelsFetched" xml:space="preserve">
+    <value>No model list was returned. You can enter the model name manually.</value>
+  </data>
+  <data name="I18n_FetchModelsFailed" xml:space="preserve">
+    <value>Failed to fetch model list: {0}</value>
+  </data>
+  <data name="I18n_EditModel" xml:space="preserve">
+    <value>Edit model</value>
+  </data>
+  <data name="I18n_ModelLoaded" xml:space="preserve">
+    <value>Loaded model: {0}</value>
+  </data>
+  <data name="I18n_StyleListRefreshed" xml:space="preserve">
+    <value>Style list refreshed</value>
+  </data>
+  <data name="I18n_StyleNameRequired" xml:space="preserve">
+    <value>Please enter a style name</value>
+  </data>
+  <data name="I18n_StyleCreated" xml:space="preserve">
+    <value>Style "{0}" created</value>
+  </data>
+  <data name="I18n_StyleExists" xml:space="preserve">
+    <value>Style "{0}" already exists</value>
+  </data>
+  <data name="I18n_CreateStyleFailed" xml:space="preserve">
+    <value>Failed to create style: {0}</value>
+  </data>
+  <data name="I18n_NoClipboardText" xml:space="preserve">
+    <value>The clipboard does not contain text. Copy Markdown text to the clipboard first.</value>
+  </data>
+  <data name="I18n_MarkdownConverted" xml:space="preserve">
+    <value>Markdown converted to Word styles</value>
+  </data>
+  <data name="I18n_ConversionFailed" xml:space="preserve">
+    <value>Conversion failed: {0}</value>
+  </data>
+  <data name="I18n_RestoreFailed" xml:space="preserve">
+    <value>Restore failed: {0}</value>
+  </data>
+  <data name="I18n_CustomNotConfigured" xml:space="preserve">
+    <value>This custom function is not configured. Check whether the prompt has been filled in.</value>
+  </data>
+  <data name="I18n_CustomPromptNotFound" xml:space="preserve">
+    <value>The matching prompt configuration was not found</value>
+  </data>
+  <data name="I18n_CustomPromptEmpty" xml:space="preserve">
+    <value>This custom function has empty configuration values. Check whether the prompt is complete.</value>
+  </data>
+  <data name="I18n_StartExecuting" xml:space="preserve">
+    <value>Starting {0}</value>
+  </data>
+  <data name="I18n_ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="I18n_SilentReviewChanged" xml:space="preserve">
+    <value>Silent Review checked {0} changed paragraphs...</value>
+  </data>
+  <data name="I18n_SilentReviewRunning" xml:space="preserve"><value>Silent Review is running</value></data>
+  <data name="I18n_SilentReviewFound" xml:space="preserve">
+    <value>Silent Review found {0} issues and added them to the Issues panel.</value>
+  </data>
+  <data name="I18n_SilentReviewCompletedFound" xml:space="preserve">
+    <value>Silent Review completed with {0} issues</value>
+  </data>
+  <data name="I18n_SilentReviewPassed" xml:space="preserve">
+    <value>Silent Review passed. No issues found.</value>
+  </data>
+  <data name="I18n_SilentReviewPassedShort" xml:space="preserve">
+    <value>Silent Review passed</value>
+  </data>
+  <data name="I18n_SilentReviewException" xml:space="preserve">
+    <value>Silent Review exception: {0}</value>
+  </data>
+  <data name="I18n_SilentReviewExceptionShort" xml:space="preserve">
+    <value>Silent Review exception</value>
+  </data>
+  <data name="I18n_SilentReviewSource" xml:space="preserve">
+    <value>Silent Review</value>
+  </data>
+  <data name="I18n_AgentIssuesTitle" xml:space="preserve">
+    <value>Issues found by Agent</value>
+  </data>
+  <data name="I18n_GenericErrorPrefix" xml:space="preserve">
+    <value>Error: </value>
+  </data>
+  <data name="I18n_UiReviewTab" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="I18n_UiChatTab" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="I18n_UiIssuesTab" xml:space="preserve">
+    <value>Issues</value>
+  </data>
+  <data name="I18n_UiAgentTitle" xml:space="preserve">
+    <value>Agent</value>
+  </data>
+  <data name="I18n_UiStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="I18n_UiThinking" xml:space="preserve">
+    <value>Thinking...</value>
+  </data>
+  <data name="I18n_UiConfirmPlan" xml:space="preserve">
+    <value>Run</value>
+  </data>
+  <data name="I18n_UiRevisePlan" xml:space="preserve">
+    <value>Revise</value>
+  </data>
+  <data name="I18n_UiNoIssues" xml:space="preserve">
+    <value>No issues</value>
+  </data>
+  <data name="I18n_UiClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="I18n_UiReviewSelection" xml:space="preserve">
+    <value>Review selection</value>
+  </data>
+  <data name="I18n_UiReviewDocument" xml:space="preserve">
+    <value>Review document</value>
+  </data>
+  <data name="I18n_UiIssuesEmpty" xml:space="preserve">
+    <value>Review results will appear here</value>
+  </data>
+  <data name="I18n_UiJump" xml:space="preserve">
+    <value>Go to</value>
+  </data>
+  <data name="I18n_UiComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="I18n_UiIgnore" xml:space="preserve">
+    <value>Ignore</value>
+  </data>
+  <data name="I18n_UiInputHint" xml:space="preserve">
+    <value>Type an instruction...</value>
+  </data>
+  <data name="I18n_UiRemoveImage" xml:space="preserve">
+    <value>Remove image</value>
+  </data>
+  <data name="I18n_UiReviewWorkspaceTitle" xml:space="preserve">
+    <value>Non-destructive review</value>
+  </data>
+  <data name="I18n_UiReviewPaneTitle" xml:space="preserve">
+    <value>Review Workspace</value>
+  </data>
+  <data name="I18n_UiReviewWorkspaceSubtitle" xml:space="preserve">
+    <value>Choose a review scope, then generate suggestions. The document stays unchanged until you apply one.</value>
+  </data>
+  <data name="I18n_UiLoadSelection" xml:space="preserve">
+    <value>Load selection</value>
+  </data>
+  <data name="I18n_UiLoadParagraphs" xml:space="preserve">
+    <value>Current paragraph</value>
+  </data>
+  <data name="I18n_UiLoadDocument" xml:space="preserve">
+    <value>Whole document</value>
+  </data>
+  <data name="I18n_UiReviewScopeLabel" xml:space="preserve">
+    <value>Review scope</value>
+  </data>
+  <data name="I18n_UiReviewScopeHint" xml:space="preserve">
+    <value>Use selection for precision, current paragraph for a quick pass, or the whole document for paragraph-by-paragraph suggestions.</value>
+  </data>
+  <data name="I18n_UiReviewScopeNone" xml:space="preserve">
+    <value>No scope loaded. Choose a review scope to begin.</value>
+  </data>
+  <data name="I18n_UiReviewGenerationLabel" xml:space="preserve">
+    <value>Generate suggestions</value>
+  </data>
+  <data name="I18n_UiReviewBatchActions" xml:space="preserve">
+    <value>Batch actions</value>
+  </data>
+  <data name="I18n_UiReviewLoadedCount" xml:space="preserve">
+    <value>Loaded {0} review unit(s).</value>
+  </data>
+  <data name="I18n_UiGenerateAll" xml:space="preserve">
+    <value>Generate all</value>
+  </data>
+  <data name="I18n_UiProfileLabel" xml:space="preserve">
+    <value>Writing Profile / Story Bible</value>
+  </data>
+  <data name="I18n_UiProfileHint" xml:space="preserve">
+    <value>Character names, terms, unusual spellings, grammar preferences, and style rules. Saved beside the current document when possible and sent with review prompts.</value>
+  </data>
+  <data name="I18n_UiSaveProfile" xml:space="preserve">
+    <value>Save profile</value>
+  </data>
+  <data name="I18n_UiAcceptAll" xml:space="preserve"><value>Accept all</value></data>
+  <data name="I18n_UiInsertAll" xml:space="preserve"><value>Insert all</value></data>
+  <data name="I18n_UiCommentAll" xml:space="preserve"><value>Comment all</value></data>
+  <data name="I18n_UiSkipAll" xml:space="preserve"><value>Skip all</value></data>
+  <data name="I18n_UiEmptySuggestions" xml:space="preserve">
+    <value>Load a review scope to see paragraph suggestions here</value>
+  </data>
+  <data name="I18n_UiGenerate" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="I18n_UiFocus" xml:space="preserve">
+    <value>Focus</value>
+  </data>
+  <data name="I18n_UiAcceptReplace" xml:space="preserve">
+    <value>Accept replace</value>
+  </data>
+  <data name="I18n_UiInsertBelow" xml:space="preserve">
+    <value>Insert below</value>
+  </data>
+  <data name="I18n_UiCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="I18n_UiSkip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="I18n_UiOriginal" xml:space="preserve">
+    <value>Original</value>
+  </data>
+  <data name="I18n_UiSuggestion" xml:space="preserve">
+    <value>Suggestion</value>
+  </data>
+  <data name="I18n_UiCustomInstruction" xml:space="preserve">
+    <value>Review instruction</value>
+  </data>
+  <data name="I18n_UiCustomInstructionHint" xml:space="preserve">
+    <value>For example: preserve the author's voice, fix grammar and pacing, and do not change character voice.</value>
+  </data>
+  <data name="I18n_UiDefaultReviewInstruction" xml:space="preserve">
+    <value>Polish and review the text while preserving meaning, voice, and paragraph format. Return only the revised text.</value>
+  </data>
+  <data name="I18n_AboutTitle" xml:space="preserve">
+    <value>About WordOllama</value>
+  </data>
+  <data name="I18n_AboutDescription" xml:space="preserve">
+    <value>An AI assistant add-in for Word
+Multi-model chat, document review, translation, formatting
+ReAct autonomous Agent mode</value>
+  </data>
+  <data name="I18n_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="I18n_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="I18n_ConfirmationSessionSkip" xml:space="preserve">
+    <value>Do not ask again this session</value>
+  </data>
+  <data name="I18n_ConfirmationPermanentSkip" xml:space="preserve">
+    <value>Do not ask again permanently (can be re-enabled in Settings)</value>
+  </data>
+  <data name="I18n_ChatModelNotSelected" xml:space="preserve">
+    <value>Model: not selected</value>
+  </data>
+  <data name="I18n_ChatInputHint" xml:space="preserve">
+    <value>Type a message...</value>
+  </data>
+  <data name="I18n_ChatGreetingInitial" xml:space="preserve">
+    <value>Hello, what can I help with today?</value>
+  </data>
+  <data name="I18n_ChatGreetingAgain" xml:space="preserve">
+    <value>Hello, good to see you again.</value>
+  </data>
+  <data name="I18n_ChatSystemGreeting" xml:space="preserve">
+    <value>Hello! What can I help with?</value>
+  </data>
+  <data name="I18n_ChatIdle" xml:space="preserve">
+    <value>{0}: idle</value>
+  </data>
+  <data name="I18n_ChatTyping" xml:space="preserve">
+    <value>{0}: typing...</value>
+  </data>
+  <data name="I18n_ChatEmptyInput" xml:space="preserve">
+    <value>Please enter a message before sending.</value>
+  </data>
+  <data name="I18n_ChatClearConfirm" xml:space="preserve">
+    <value>Clear all chat history?</value>
+  </data>
+  <data name="I18n_ChatClearTitle" xml:space="preserve">
+    <value>Clear history</value>
+  </data>
+  <data name="I18n_DiffReviewTitle" xml:space="preserve">
+    <value>Document Change Review</value>
+  </data>
+  <data name="I18n_DiffLoadingStats" xml:space="preserve">
+    <value>Loading change statistics...</value>
+  </data>
+  <data name="I18n_DiffBefore" xml:space="preserve">
+    <value>Before</value>
+  </data>
+  <data name="I18n_DiffAfter" xml:space="preserve">
+    <value>After</value>
+  </data>
+  <data name="I18n_DiffAccept" xml:space="preserve">
+    <value>✔ Accept</value>
+  </data>
+  <data name="I18n_DiffReject" xml:space="preserve">
+    <value>✖ Reject</value>
+  </data>
+  <data name="I18n_DiffApplyEdit" xml:space="preserve">
+    <value>✏ Apply edit</value>
+  </data>
+  <data name="I18n_DiffAcceptAll" xml:space="preserve">
+    <value>✔ Accept all</value>
+  </data>
+  <data name="I18n_DiffRejectAll" xml:space="preserve">
+    <value>✖ Reject all</value>
+  </data>
+  <data name="I18n_DiffNoChangesAccept" xml:space="preserve">
+    <value>✔ No changes</value>
+  </data>
+  <data name="I18n_DiffNoChangesReject" xml:space="preserve">
+    <value>✖ No changes</value>
+  </data>
+  <data name="I18n_DiffSummary" xml:space="preserve">
+    <value>Document change summary: {0} added, {1} modified, {2} deleted ({3} changes total)</value>
+  </data>
+  <data name="I18n_DiffAcceptedAll" xml:space="preserve">
+    <value>All revisions accepted.</value>
+  </data>
+  <data name="I18n_DiffRejectedAll" xml:space="preserve">
+    <value>All revisions rejected.</value>
+  </data>
+  <data name="I18n_DiffAcceptError" xml:space="preserve">
+    <value>Error accepting revisions: {0}</value>
+  </data>
+  <data name="I18n_DiffRejectError" xml:space="preserve">
+    <value>Error rejecting revisions: {0}</value>
+  </data>
+  <data name="I18n_DiffRejectConfirm" xml:space="preserve">
+    <value>Reject all revisions? The document will be restored to its pre-run state.</value>
+  </data>
+  <data name="I18n_DiffRejectConfirmTitle" xml:space="preserve">
+    <value>Confirm rejection</value>
+  </data>
+  <data name="I18n_DiffEmptyEditedContent" xml:space="preserve">
+    <value>The edited content cannot be empty.</value>
+  </data>
+  <data name="I18n_Completed" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="I18n_Info" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="I18n_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="I18n_DocxDiffTitle" xml:space="preserve">
+    <value>Document Analysis</value>
+  </data>
+  <data name="I18n_Document1" xml:space="preserve">
+    <value>Document 1</value>
+  </data>
+  <data name="I18n_Document2" xml:space="preserve">
+    <value>Document 2</value>
+  </data>
+  <data name="I18n_SelectOriginalDocument" xml:space="preserve">
+    <value>Select the original document</value>
+  </data>
+  <data name="I18n_SelectNewDocument" xml:space="preserve">
+    <value>Select the revised document</value>
+  </data>
+  <data name="I18n_OurRole" xml:space="preserve">
+    <value>Our role</value>
+  </data>
+  <data name="I18n_PartyA" xml:space="preserve">
+    <value>Party A</value>
+  </data>
+  <data name="I18n_PartyB" xml:space="preserve">
+    <value>Party B</value>
+  </data>
+  <data name="I18n_PartyC" xml:space="preserve">
+    <value>Party C</value>
+  </data>
+  <data name="I18n_PartyD" xml:space="preserve">
+    <value>Party D</value>
+  </data>
+  <data name="I18n_StartCompareAnalyze" xml:space="preserve">
+    <value>Start comparison analysis</value>
+  </data>
+  <data name="I18n_DocxDiffWarning" xml:space="preserve">
+    <value>* This feature can take a while. Please wait. If Windows preview is enabled, the document may fail to read.</value>
+  </data>
+  <data name="I18n_SelectDocumentTitle" xml:space="preserve">
+    <value>Select document</value>
+  </data>
+  <data name="I18n_WordDocumentsFilter" xml:space="preserve">
+    <value>Word Documents|*.docx</value>
+  </data>
+  <data name="I18n_DocxDiffSelectDocsError" xml:space="preserve">
+    <value>Please select the documents to compare first.</value>
+  </data>
+  <data name="I18n_DocxDiffSelectRoleError" xml:space="preserve">
+    <value>Please select or enter your role first.</value>
+  </data>
+  <data name="I18n_DocxDiffRunning" xml:space="preserve">
+    <value>Running comparison analysis...</value>
+  </data>
+  <data name="I18n_DocxDiffComplete" xml:space="preserve">
+    <value>Comparison analysis complete</value>
+  </data>
+  <data name="I18n_LawSearchTitle" xml:space="preserve">
+    <value>Legal Provision Search</value>
+  </data>
+  <data name="I18n_LawNameHint" xml:space="preserve">
+    <value>Full official law name (e.g. Civil Code)</value>
+  </data>
+  <data name="I18n_ArticleNumberHint" xml:space="preserve">
+    <value>Article number (e.g. 14)</value>
+  </data>
+  <data name="I18n_ArticlePrefix" xml:space="preserve">
+    <value> Article</value>
+  </data>
+  <data name="I18n_ArticleSuffix" xml:space="preserve">
+    <value>
+    </value>
+  </data>
+  <data name="I18n_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="I18n_CopyAll" xml:space="preserve">
+    <value>Copy all</value>
+  </data>
+  <data name="I18n_CopyThisArticle" xml:space="preserve">
+    <value>Copy this provision</value>
+  </data>
+  <data name="I18n_LoadingPleaseWait" xml:space="preserve">
+    <value>Loading, please wait...</value>
+  </data>
+  <data name="I18n_ModWritingTitle" xml:space="preserve">
+    <value>Rewrite on Request</value>
+  </data>
+  <data name="I18n_ModifyTab" xml:space="preserve">
+    <value>Rewrite</value>
+  </data>
+  <data name="I18n_SourceTextArea" xml:space="preserve">
+    <value>Source text</value>
+  </data>
+  <data name="I18n_SelectTemplate" xml:space="preserve">
+    <value>Select template</value>
+  </data>
+  <data name="I18n_ModRequestHint" xml:space="preserve">
+    <value>Enter requirements (watch token count)</value>
+  </data>
+  <data name="I18n_OptimizePrompt" xml:space="preserve">
+    <value>Optimize prompt</value>
+  </data>
+  <data name="I18n_StartModify" xml:space="preserve">
+    <value>Start rewrite</value>
+  </data>
+  <data name="I18n_ModifyResult" xml:space="preserve">
+    <value>Rewrite result</value>
+  </data>
+  <data name="I18n_CopyResult" xml:space="preserve">
+    <value>Copy result</value>
+  </data>
+  <data name="I18n_Compare" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="I18n_BeforeAfterCompare" xml:space="preserve">
+    <value>Before/after comparison</value>
+  </data>
+  <data name="I18n_TemplateManagement" xml:space="preserve">
+    <value>Template management</value>
+  </data>
+  <data name="I18n_TemplateName" xml:space="preserve">
+    <value>Template name</value>
+  </data>
+  <data name="I18n_PromptClickThreeTimes" xml:space="preserve">
+    <value>Prompt (click the cell three times)</value>
+  </data>
+  <data name="I18n_DeleteTemplate" xml:space="preserve">
+    <value>Delete this template</value>
+  </data>
+  <data name="I18n_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="I18n_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="I18n_TemplateSaved" xml:space="preserve">
+    <value>Template saved</value>
+  </data>
+  <data name="I18n_DeleteTemplateConfirm" xml:space="preserve">
+    <value>Delete this template?</value>
+  </data>
+  <data name="I18n_ModifyError" xml:space="preserve">
+    <value>An error occurred: {0}</value>
+  </data>
+  <data name="I18n_RowIncomplete" xml:space="preserve">
+    <value>Please complete the current row before adding a new one.</value>
+  </data>
+  <data name="I18n_MootCourtTitle" xml:space="preserve">
+    <value>Moot Court Review</value>
+  </data>
+  <data name="I18n_PleadingType" xml:space="preserve">
+    <value>Pleading type</value>
+  </data>
+  <data name="I18n_Indictment" xml:space="preserve">
+    <value>Claim</value>
+  </data>
+  <data name="I18n_Defense" xml:space="preserve">
+    <value>Defense</value>
+  </data>
+  <data name="I18n_PleadingToReview" xml:space="preserve">
+    <value>Pleading to question</value>
+  </data>
+  <data name="I18n_InputTextHere" xml:space="preserve">
+    <value>Enter text here (remove unimportant parts if needed)</value>
+  </data>
+  <data name="I18n_ReviewResult" xml:space="preserve">
+    <value>Review result</value>
+  </data>
+  <data name="I18n_ReviewResultHere" xml:space="preserve">
+    <value>Review result will appear here</value>
+  </data>
+  <data name="I18n_StartReview" xml:space="preserve">
+    <value>Start review</value>
+  </data>
+  <data name="I18n_MootCourtResultPrefix" xml:space="preserve">
+    <value>Moot court review questions:</value>
+  </data>
+  <data name="I18n_ModelReturnedEmpty" xml:space="preserve">
+    <value>The model returned an empty result. Please check the input.</value>
+  </data>
+  <data name="I18n_TranslatorTitle" xml:space="preserve">
+    <value>Free Translation</value>
+  </data>
+  <data name="I18n_UpdateLogTitle" xml:space="preserve">
+    <value>Update Log</value>
+  </data>
+  <data name="I18n_UpdateLogRuntimePlaceholder" xml:space="preserve">
+    <value>Update log content will be loaded at runtime.</value>
+  </data>
+  <data name="I18n_OnlineMaxTokensHint" xml:space="preserve">
+    <value>Spend tokens wisely</value>
+  </data>
+  <data name="I18n_DefaultContextWindowHint" xml:space="preserve">
+    <value>Default 256000</value>
+  </data>
+  <data name="I18n_AutoEndpointHint" xml:space="preserve">
+    <value>Auto-fill endpoint</value>
+  </data>
+  <data name="I18n_SelectModelHint" xml:space="preserve">
+    <value>Select model</value>
+  </data>
+  <data name="I18n_McpNameHint" xml:space="preserve">
+    <value>Server name (unique identifier)</value>
+  </data>
+  <data name="I18n_McpTransportHint" xml:space="preserve">
+    <value>Transport type</value>
+  </data>
+  <data name="I18n_McpUrlHint" xml:space="preserve">
+    <value>Remote MCP URL (streamable-http / sse)</value>
+  </data>
+  <data name="I18n_McpCommandHint" xml:space="preserve">
+    <value>Launch command (e.g. npx, node, python)</value>
+  </data>
+  <data name="I18n_McpArgsHint" xml:space="preserve">
+    <value>Command arguments (optional)</value>
+  </data>
+  <data name="I18n_McpWorkingDirectoryHint" xml:space="preserve">
+    <value>Working directory cwd (optional)</value>
+  </data>
+  <data name="I18n_McpEnvHint" xml:space="preserve">
+    <value>Environment variables (optional, one KEY=VALUE per line)</value>
+  </data>
+  <data name="I18n_McpHeadersHint" xml:space="preserve">
+    <value>HTTP headers (optional, one Header=Value per line)</value>
+  </data>
+  <data name="I18n_PositiveIntegerHint" xml:space="preserve">
+    <value>Positive integer</value>
+  </data>
+  <data name="I18n_SelectOptionalModelHint" xml:space="preserve">
+    <value>Select model (blank = main model)</value>
+  </data>
+  <data name="I18n_ManualOrDropdownHint" xml:space="preserve">
+    <value>Enter manually or select from the list</value>
+  </data>
+  <data name="I18n_UseMainEndpointHint" xml:space="preserve">
+    <value>Blank uses the main EndPoint</value>
+  </data>
+  <data name="I18n_MarkdownStyleDescription" xml:space="preserve">
+    <value>Set the Word style names used for Markdown elements. Click Save after editing to apply changes.</value>
+  </data>
+  <data name="I18n_MarkdownElement" xml:space="preserve">
+    <value>Markdown element</value>
+  </data>
+  <data name="I18n_WordStyleName" xml:space="preserve">
+    <value>Word style name</value>
+  </data>
+  <data name="I18n_Heading1Markdown" xml:space="preserve">
+    <value>Heading 1 (##)</value>
+  </data>
+  <data name="I18n_Heading2Markdown" xml:space="preserve">
+    <value>Heading 2 (###)</value>
+  </data>
+  <data name="I18n_Heading3Markdown" xml:space="preserve">
+    <value>Heading 3 (####)</value>
+  </data>
+  <data name="I18n_BodyText" xml:space="preserve">
+    <value>Body text</value>
+  </data>
+  <data name="I18n_CodeBlock" xml:space="preserve">
+    <value>Code block</value>
+  </data>
+  <data name="I18n_BlockQuoteMarkdown" xml:space="preserve">
+    <value>Block quote (&gt;)</value>
+  </data>
+  <data name="I18n_UnorderedList" xml:space="preserve">
+    <value>Bulleted list</value>
+  </data>
+  <data name="I18n_CreateStyleDescription" xml:space="preserve">
+    <value>Enter a style name and click "Create style" to create it in the current document. You can edit the formatting later in Word.</value>
+  </data>
+  <data name="I18n_NewStyleNameHint" xml:space="preserve">
+    <value>New style name</value>
+  </data>
+  <data name="I18n_MarkdownScreenTip" xml:space="preserve">
+    <value>Convert Markdown text to Word styles and insert it into the document</value>
+  </data>
+  <data name="I18n_TaskStatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="I18n_TaskStatusRunning" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="I18n_TaskStatusCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="I18n_TaskStatusFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="I18n_TaskStatusCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="I18n_NoActiveDocument" xml:space="preserve">
+    <value>No active document. Please open a document first.</value>
+  </data>
+  <data name="I18n_ClickOnceTooSoon" xml:space="preserve">
+    <value>The last update check was less than {0} minutes ago. Please try again later.</value>
+  </data>
+  <data name="I18n_TooSoonTitle" xml:space="preserve">
+    <value>Too soon</value>
+  </data>
+  <data name="I18n_UpdateDownloadFailed" xml:space="preserve">
+    <value>Could not download the new version.
+
+Check your network connection or try again later. Error: {0}</value>
+  </data>
+  <data name="I18n_UpdateCheckFailed" xml:space="preserve">
+    <value>Could not check for a new version. The ClickOnce deployment may be corrupted. Redeploy the application and try again. Error: {0}</value>
+  </data>
+  <data name="I18n_UpdateNotClickOnce" xml:space="preserve">
+    <value>Could not update this application. It may not be a ClickOnce application. Error: {0}</value>
+  </data>
+  <data name="I18n_UpdateAvailableQuestion" xml:space="preserve">
+    <value>A new version is available. Update now?</value>
+  </data>
+  <data name="I18n_UpdateAvailableTitle" xml:space="preserve">
+    <value>Update available</value>
+  </data>
+  <data name="I18n_UpdateRequired" xml:space="preserve">
+    <value>This application must be updated from the current version to version {0}. The update will now be installed and the application will restart.</value>
+  </data>
+  <data name="I18n_UpdateRestart" xml:space="preserve">
+    <value>The application has been updated and will restart.</value>
+  </data>
+  <data name="I18n_UpdateInstallFailed" xml:space="preserve">
+    <value>Could not install the latest version.
+
+Check your network connection or try again later. Error: {0}</value>
+  </data>
+  <data name="I18n_UpdateUnavailableOffline" xml:space="preserve">
+    <value>This application was not deployed through ClickOnce, so update checks are unavailable.</value>
+  </data>
+  <data name="I18n_UpdateUnavailableTitle" xml:space="preserve">
+    <value>Update unavailable</value>
+  </data>
+  <data name="I18n_OnlineModelLabel" xml:space="preserve">
+    <value>Online model</value>
+  </data>
+  <data name="I18n_ReviewPaneButton" xml:space="preserve">
+    <value>Review Pane</value>
+  </data>
+  <data name="I18n_ReviewPaneButtonTip" xml:space="preserve">
+    <value>Generate suggestions in the side pane and apply them only when confirmed.</value>
+  </data>
+  <data name="I18n_LawSearching" xml:space="preserve">
+    <value>Searching, please wait...</value>
+  </data>
+  <data name="I18n_LawLogText" xml:space="preserve">
+    <value>Provision: {0} {1}</value>
+  </data>
+  <data name="I18n_LawQueryFailed" xml:space="preserve">
+    <value>Query failed: {0}</value>
+  </data>
+  <data name="I18n_LawQuerySuccess" xml:space="preserve">
+    <value>Query succeeded ({0})</value>
+  </data>
+  <data name="I18n_LawNotFound" xml:space="preserve">
+    <value>No matching content found ({0})</value>
+  </data>
+  <data name="I18n_LawRequestFailed" xml:space="preserve">
+    <value>Request failed: {0}</value>
+  </data>
+  <data name="I18n_NoCopyableResult" xml:space="preserve">
+    <value>No result to copy</value>
+  </data>
+  <data name="I18n_CopiedLawArticles" xml:space="preserve">
+    <value>✅ Copied {0} provisions to the clipboard</value>
+  </data>
+  <data name="I18n_CopiedArticle" xml:space="preserve">
+    <value>✅ Copied: {0}</value>
+  </data>
+  <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>Cancel queued generation</value></data>
+  <data name="I18n_DefaultOutputMode" xml:space="preserve">
+    <value>Default output mode</value>
+  </data>
+  <data name="I18n_OutputModeAuto" xml:space="preserve">
+    <value>Auto (insert short text, use Review Workspace for long text)</value>
+  </data>
+  <data name="I18n_OutputModeInsertBelow" xml:space="preserve">
+    <value>Insert below selection</value>
+  </data>
+  <data name="I18n_OutputModeInsertWithDiff" xml:space="preserve">
+    <value>Insert with comparison comment</value>
+  </data>
+  <data name="I18n_OutputModeComment" xml:space="preserve">
+    <value>Add as comment</value>
+  </data>
+  <data name="I18n_OutputModeReviewPane" xml:space="preserve">
+    <value>Send to Review Workspace</value>
+  </data>
+  <data name="I18n_AgentExecutionMode" xml:space="preserve">
+    <value>Agent execution mode</value>
+  </data>
+  <data name="I18n_AgentExecutionModeDesc" xml:space="preserve">
+    <value>View only never changes the document. Propose changes blocks Agent writes. Tracked changes marks every Agent edit as a Word revision.</value>
+  </data>
+  <data name="I18n_AgentExternalToolsTitle" xml:space="preserve"><value>External tool permissions</value></data>
+  <data name="I18n_AgentExternalToolsDesc" xml:space="preserve"><value>Commands, Python, HTTP requests, and MCP may access resources outside the document. Disabled by default; when disabled, each Agent task asks whether to enable them for that task only.</value></data>
+  <data name="I18n_AgentExternalToolsToggle" xml:space="preserve"><value>Allow external tools by default (use caution)</value></data>
+  <data name="I18n_AgentModeViewOnly" xml:space="preserve">
+    <value>View only</value>
+  </data>
+  <data name="I18n_AgentModeProposeChanges" xml:space="preserve">
+    <value>Propose changes</value>
+  </data>
+  <data name="I18n_AgentModeTrackedChanges" xml:space="preserve">
+    <value>Edit with tracked changes</value>
+  </data>
+  <data name="I18n_Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="I18n_EnableDiagnosticLogging" xml:space="preserve">
+    <value>Enable diagnostics for this session</value>
+  </data>
+  <data name="I18n_EnableDiagnosticLoggingDesc" xml:space="preserve">
+    <value>Diagnostics are off by default. When enabled, only redacted metadata is recorded and document content is not saved. The setting resets when Word closes.</value>
+  </data>
+  <data name="I18n_ClearDiagnosticLog" xml:space="preserve">
+    <value>Clear diagnostic log</value>
+  </data>
+  <data name="I18n_DiagnosticLogCleared" xml:space="preserve">
+    <value>Diagnostic log cleared</value>
+  </data>
+  <data name="I18n_CopyDiagnostics" xml:space="preserve"><value>Copy diagnostics</value></data>
+  <data name="I18n_DiagnosticsCopied" xml:space="preserve"><value>Redacted diagnostics copied</value></data>
+  <data name="I18n_McpHealth" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="I18n_McpTools" xml:space="preserve">
+    <value>Tool permissions</value>
+  </data>
+  <data name="I18n_McpToolsTooltip" xml:space="preserve">
+    <value>Select the tools the Agent may call</value>
+  </data>
+  <data name="I18n_McpToolsDesc" xml:space="preserve">
+    <value>Only checked tools are exposed to the Agent. MCP tools can access networks, files, or other system resources, and each task still requires permission before a call.</value>
+  </data>
+  <data name="I18n_McpDiscoverToolsFirst" xml:space="preserve">
+    <value>Test the server first to discover its tools, then configure tool permissions.</value>
+  </data>
+  <data name="I18n_McpTrustServer" xml:space="preserve"><value>Trust this MCP server on this computer</value></data>
+  <data name="I18n_McpTrustServerTooltip" xml:space="preserve"><value>A trusted server skips repeated MCP call confirmations, but the tool allowlist still applies.</value></data>
+  <data name="I18n_ToolCallingMode" xml:space="preserve"><value>Tool calling mode</value></data>
+  <data name="I18n_ToolCallingAuto" xml:space="preserve"><value>Auto detect</value></data>
+  <data name="I18n_ToolCallingReAct" xml:space="preserve"><value>JSON / ReAct (compatibility first)</value></data>
+  <data name="I18n_ToolCallingNative" xml:space="preserve"><value>Native Tool Calling</value></data>
+  <data name="I18n_TestConnection" xml:space="preserve"><value>Test connection</value></data>
+  <data name="I18n_TestingConnection" xml:space="preserve"><value>Testing connection...</value></data>
+  <data name="I18n_ConnectionTestMissingSettings" xml:space="preserve"><value>Enter the endpoint and model name first.</value></data>
+  <data name="I18n_ConnectionTestSuccess" xml:space="preserve"><value>Connection succeeded at {0}</value></data>
+  <data name="I18n_ConnectionTestFailed" xml:space="preserve"><value>Connection failed: {0}</value></data>
+  <data name="I18n_ConnectionTestUnknownError" xml:space="preserve"><value>Unknown error</value></data>
+  <data name="I18n_UiApiTab" xml:space="preserve"><value>API &amp; Skills</value></data>
+  <data name="I18n_UiApiTitle" xml:space="preserve"><value>Agent API documentation</value></data>
+  <data name="I18n_UiApiDescription" xml:space="preserve"><value>This catalog is generated from the active Agent tools. It shows available Word capabilities, parameters, and effects without exposing raw COM objects.</value></data>
+  <data name="I18n_UiRefreshApi" xml:space="preserve"><value>Refresh API docs</value></data>
+  <data name="I18n_UiCopyApi" xml:space="preserve"><value>Copy documentation</value></data>
+  <data name="I18n_UiApiSafetyNote" xml:space="preserve"><value>Skills are saved as SKILL.md only. No scripts are generated or executed. Document writes, network, local-process, and MCP calls remain controlled by Agent permissions.</value></data>
+  <data name="I18n_UiSkillName" xml:space="preserve"><value>Skill name, for example: fiction-polish</value></data>
+  <data name="I18n_UiSkillDescription" xml:space="preserve"><value>Short Skill description (optional)</value></data>
+  <data name="I18n_UiSkillGoal" xml:space="preserve"><value>Tell the AI how you want this Skill to work</value></data>
+  <data name="I18n_UiGenerateSkill" xml:space="preserve"><value>AI create Skill</value></data>
+  <data name="I18n_UiSaveSkill" xml:space="preserve"><value>Save Skill</value></data>
+  <data name="I18n_UiSkillDraft" xml:space="preserve"><value>Skill draft (edit before saving)</value></data>
+  <data name="I18n_UiApiNameRequired" xml:space="preserve"><value>Enter a Skill name first.</value></data>
+  <data name="I18n_UiApiGoalRequired" xml:space="preserve"><value>Describe what you want the Skill to do.</value></data>
+  <data name="I18n_UiApiGenerating" xml:space="preserve"><value>Generating Skill...</value></data>
+  <data name="I18n_UiApiGenerationFailed" xml:space="preserve"><value>Skill generation failed: {0}</value></data>
+  <data name="I18n_UiApiSkillSaved" xml:space="preserve"><value>Skill saved to: {0}</value></data>
+  <data name="I18n_UiApiSkillExists" xml:space="preserve"><value>This Skill already exists. Overwrite it?</value></data>
+  <data name="I18n_UiApiInvalidSkillName" xml:space="preserve"><value>The Skill name cannot produce a safe folder name.</value></data>
+  <data name="I18n_UiApiBuildFailed" xml:space="preserve"><value>Could not build the API catalog: {0}</value></data>
+  <data name="I18n_UiApiCopied" xml:space="preserve"><value>API documentation copied.</value></data>
+  <data name="I18n_UiApiEmptyModel" xml:space="preserve"><value>The model returned an empty result.</value></data>
+  <data name="I18n_UiApiDraftRequired" xml:space="preserve"><value>Generate or edit a Skill draft first.</value></data>
+  <data name="I18n_ProfileVisionDisabled" xml:space="preserve"><value>Image input is disabled by the active model profile.</value></data>
+  <data name="I18n_ModelCapabilities" xml:space="preserve"><value>Model capabilities</value></data>
+  <data name="I18n_ModelCapabilitiesDesc" xml:space="preserve"><value>Declare this model's capabilities manually so unsupported parameters are not sent to compatible APIs.</value></data>
+  <data name="I18n_CapabilityStreaming" xml:space="preserve"><value>Streaming output</value></data>
+  <data name="I18n_CapabilityVision" xml:space="preserve"><value>Image input</value></data>
+  <data name="I18n_CapabilityJson" xml:space="preserve"><value>Native JSON output</value></data>
+  <data name="I18n_CapabilityContextWindow" xml:space="preserve"><value>Context window</value></data>
+  <data name="I18n_CapabilityContextWindowHint" xml:space="preserve"><value>For example, 128000</value></data>
+  <data name="I18n_UiClearPane" xml:space="preserve"><value>Clear pane</value></data>
+  <data name="I18n_UiNewChat" xml:space="preserve"><value>New chat</value></data>
+  <data name="I18n_UiRefreshSkills" xml:space="preserve"><value>Reload skills</value></data>
+  <data name="I18n_UiUseSkill" xml:space="preserve"><value>Use the "{0}" skill: </value></data>
+  <data name="I18n_UiSkillsReloaded" xml:space="preserve"><value>Skills reloaded ({0} available)</value></data>
+  <data name="I18n_UiUserInterrupted" xml:space="preserve"><value>[User interrupted and started a new task]</value></data>
+  <data name="I18n_UiUserCancelled" xml:space="preserve"><value>[User cancelled the task]</value></data>
+  <data name="I18n_UiResumeCheckpointPrompt" xml:space="preserve"><value>An unfinished Agent task was found. Resume it?&#10;&#10;Choose Yes to continue the previous task. Choose No to clear the checkpoint and start a new task.</value></data>
+  <data name="I18n_UiResumeCheckpointTitle" xml:space="preserve"><value>Resume checkpoint</value></data>
+  <data name="I18n_UiCheckpointResuming" xml:space="preserve"><value>Checkpoint found. Resuming the previous task...</value></data>
+  <data name="I18n_UiAgentChangesDetected" xml:space="preserve"><value>Agent finished and detected {0} document changes.&#10;Review the changes now?</value></data>
+  <data name="I18n_UiDocumentChangeReview" xml:space="preserve"><value>Document change review</value></data>
+  <data name="I18n_UiPlanConfirmPrompt" xml:space="preserve"><value>Run the plan above?</value></data>
+  <data name="I18n_UiPlanConfirmTitle" xml:space="preserve"><value>Plan confirmation</value></data>
+  <data name="I18n_UiWritingProfileSaved" xml:space="preserve"><value>Writing profile saved for the current document.</value></data>
+  <data name="I18n_UiOpenDocumentFirst" xml:space="preserve"><value>Please open a Word document first.</value></data>
+  <data name="I18n_UiSelectReviewTextFirst" xml:space="preserve"><value>Please select the text to review first.</value></data>
+  <data name="I18n_UiLoadSelectionFailed" xml:space="preserve"><value>Failed to load selection: {0}</value></data>
+  <data name="I18n_UiReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="I18n_UiReviewQueueCancelled" xml:space="preserve"><value>Queued review suggestions cancelled.</value></data>
+  <data name="I18n_UiGenerating" xml:space="preserve"><value>Generating...</value></data>
+  <data name="I18n_UiGeneratingReviewSuggestion" xml:space="preserve"><value>Generating review suggestion</value></data>
+  <data name="I18n_UiNoOutput" xml:space="preserve"><value>No output</value></data>
+  <data name="I18n_UiGenerated" xml:space="preserve"><value>Generated</value></data>
+  <data name="I18n_UiGenerationFailed" xml:space="preserve"><value>Failed</value></data>
+  <data name="I18n_UiGenerateSuggestionFailed" xml:space="preserve"><value>Failed to generate suggestion: {0}</value></data>
+  <data name="I18n_UiCopied" xml:space="preserve"><value>Copied</value></data>
+  <data name="I18n_UiSkipped" xml:space="preserve"><value>Skipped</value></data>
+  <data name="I18n_UiSuggestionRequired" xml:space="preserve"><value>Generate or enter a suggestion first.</value></data>
+  <data name="I18n_UiOriginalNotLocated" xml:space="preserve"><value>Could not locate the original text.</value></data>
+  <data name="I18n_UiReplaced" xml:space="preserve"><value>Replaced</value></data>
+  <data name="I18n_UiInserted" xml:space="preserve"><value>Inserted</value></data>
+  <data name="I18n_UiCommented" xml:space="preserve"><value>Commented</value></data>
+  <data name="I18n_UiApplySuggestionFailed" xml:space="preserve"><value>Failed to apply suggestion: {0}</value></data>
+  <data name="I18n_UiOriginalChangedPrompt" xml:space="preserve"><value>The original text appears to have changed. Apply the suggestion to the current location anyway?</value></data>
+  <data name="I18n_UiIssueCount" xml:space="preserve"><value>{0} issues</value></data>
+  <data name="I18n_UiAgentRunningReview" xml:space="preserve"><value>Agent is running. Please start review later.</value></data>
+  <data name="I18n_UiSelectTextFirst" xml:space="preserve"><value>Please select text to review first.</value></data>
+  <data name="I18n_UiNoReviewableText" xml:space="preserve"><value>The current document has no reviewable text.</value></data>
+  <data name="I18n_UiReviewingIssues" xml:space="preserve"><value>Reviewing issues</value></data>
+  <data name="I18n_UiReviewing" xml:space="preserve"><value>Reviewing...</value></data>
+  <data name="I18n_UiManualSelectionReview" xml:space="preserve"><value>Manual review: selection</value></data>
+  <data name="I18n_UiManualDocumentReview" xml:space="preserve"><value>Manual review: document</value></data>
+  <data name="I18n_UiReviewCompleteNoIssues" xml:space="preserve"><value>Review complete. No locatable issues found.</value></data>
+  <data name="I18n_UiReviewComplete" xml:space="preserve"><value>Review complete</value></data>
+  <data name="I18n_UiReviewAdded" xml:space="preserve"><value>Review complete. Added {0} issues.</value></data>
+  <data name="I18n_UiReviewAddedStatus" xml:space="preserve"><value>Review complete: {0} issues</value></data>
+  <data name="I18n_UiReviewFailed" xml:space="preserve"><value>Review failed: {0}</value></data>
+  <data name="I18n_UiReviewIssue" xml:space="preserve"><value>Review issue</value></data>
+  <data name="I18n_UiIssueParagraphNotFound" xml:space="preserve"><value>Could not locate the paragraph for this issue.</value></data>
+  <data name="I18n_UiFocusFailed" xml:space="preserve"><value>Focus failed: {0}</value></data>
+  <data name="I18n_UiAddCommentFailed" xml:space="preserve"><value>Failed to add comment: {0}</value></data>
+  <data name="I18n_UiSuggestionLabel" xml:space="preserve"><value>Suggestion: </value></data>
+  <data name="I18n_UiSourceLabel" xml:space="preserve"><value>Source: </value></data>
+  <data name="I18n_UiSilentReviewIssue" xml:space="preserve"><value>Silent review issue</value></data>
+  <data name="I18n_UiReviewSource" xml:space="preserve"><value>Review</value></data>
+  <data name="I18n_UiCategoryText" xml:space="preserve"><value>Text</value></data>
+  <data name="I18n_UiSeverityMedium" xml:space="preserve"><value>Medium</value></data>
+  <data name="I18n_UiParagraph" xml:space="preserve"><value>P{0}</value></data>
+  <data name="I18n_UiUnlocated" xml:space="preserve"><value>Unlocated</value></data>
+  <data name="I18n_UiNoSuggestion" xml:space="preserve"><value>No suggestion</value></data>
+  <data name="I18n_UiSeverityHigh" xml:space="preserve"><value>High</value></data>
+  <data name="I18n_UiSeverityLow" xml:space="preserve"><value>Low</value></data>
+  <data name="I18n_UiCategoryTypo" xml:space="preserve"><value>Typo</value></data>
+  <data name="I18n_UiCategoryGrammar" xml:space="preserve"><value>Grammar</value></data>
+  <data name="I18n_UiCategoryFormat" xml:space="preserve"><value>Format</value></data>
+  <data name="I18n_UiCategoryReference" xml:space="preserve"><value>Reference</value></data>
+  <data name="I18n_UiCategoryTerminology" xml:space="preserve"><value>Terminology</value></data>
+  <data name="I18n_UiCategoryLegal" xml:space="preserve"><value>Legal</value></data>
+  <data name="I18n_UiCategoryClarity" xml:space="preserve"><value>Clarity</value></data>
+  <data name="I18n_ServiceProviderQwen" xml:space="preserve"><value>Tongyi Qianwen</value></data>
+  <data name="I18n_ServiceProviderDoubao" xml:space="preserve"><value>Doubao</value></data>
+  <data name="I18n_ServiceProviderZhipuGlm" xml:space="preserve"><value>Zhipu GLM</value></data>
+  <data name="I18n_CustomPromptInsert" xml:space="preserve"><value>Insert</value></data>
+  <data name="I18n_CustomPromptInsertWithDiff" xml:space="preserve"><value>Insert &amp; Compare</value></data>
+  <data name="I18n_CustomPromptComment" xml:space="preserve"><value>Comment</value></data>
+  <data name="I18n_CustomPromptLength" xml:space="preserve"><value>Prompt length: {0}</value></data>
+  <data name="I18n_UiAgentStep" xml:space="preserve"><value>Step {0}</value></data>
+  <data name="I18n_UiAgentChangeSource" xml:space="preserve"><value>Agent changes</value></data>
+  <data name="I18n_UiDocumentChangeCategory" xml:space="preserve"><value>Document changes</value></data>
+  <data name="I18n_UiChangeTitle" xml:space="preserve"><value>{0}: paragraph {1}</value></data>
+  <data name="I18n_UiChangeBefore" xml:space="preserve"><value>Before: {0}</value></data>
+  <data name="I18n_UiChangeAfter" xml:space="preserve"><value>After: {0}</value></data>
+  <data name="I18n_UiChangeReviewHint" xml:space="preserve"><value>Accept or reject this change in the document change review window.</value></data>
+  <data name="I18n_RevisionInsertText" xml:space="preserve"><value>Insert text</value></data>
+  <data name="I18n_RevisionDeleteText" xml:space="preserve"><value>Delete text</value></data>
+  <data name="I18n_RevisionPropertyChanged" xml:space="preserve"><value>Property changed</value></data>
+  <data name="I18n_RevisionStyleChanged" xml:space="preserve"><value>Style changed</value></data>
+  <data name="I18n_RevisionReplaceText" xml:space="preserve"><value>Replace text</value></data>
+  <data name="I18n_RevisionParagraphPropertyChanged" xml:space="preserve"><value>Paragraph property changed</value></data>
+  <data name="I18n_RevisionTablePropertyChanged" xml:space="preserve"><value>Table property changed</value></data>
+  <data name="I18n_RevisionSectionPropertyChanged" xml:space="preserve"><value>Section property changed</value></data>
+  <data name="I18n_RevisionMovedFrom" xml:space="preserve"><value>Moved from</value></data>
+  <data name="I18n_RevisionMovedTo" xml:space="preserve"><value>Moved to</value></data>
+  <data name="I18n_RevisionOther" xml:space="preserve"><value>Other revision type</value></data>
+  <data name="I18n_RevisionUnknown" xml:space="preserve"><value>Unknown revision type</value></data>
+  <data name="I18n_AgentToolDesc_ask_human" xml:space="preserve"><value>ask_human(question) — Ask the user a specific question when information is missing, ambiguous, or needs a decision.</value></data>
+  <data name="I18n_AgentToolDesc_read_skill" xml:space="preserve"><value>read_skill(skill_name) — Load a matching local Skill workflow before following its instructions.</value></data>
+  <data name="I18n_AgentToolDesc_insert_image" xml:space="preserve"><value>insert_image(file_path, base64_data, paragraph_index, width) — Insert an image from a local path or Base64 data, defaulting to the document end.</value></data>
+  <data name="I18n_AgentToolDesc_search_text" xml:space="preserve"><value>search_text(keyword) — Search document text and return matching paragraph numbers with context.</value></data>
+  <data name="I18n_AgentToolDesc_get_doc_overview" xml:space="preserve"><value>get_doc_overview() — Read document word count, paragraph count, and an opening preview.</value></data>
+  <data name="I18n_AgentToolDesc_get_selection" xml:space="preserve"><value>get_selection() — Read the text currently selected by the user in Word.</value></data>
+  <data name="I18n_AgentToolDesc_read_comments" xml:space="preserve"><value>read_comments() — Read comments with their author, content, and linked text preview.</value></data>
+  <data name="I18n_AgentToolDesc_read_bookmarks" xml:space="preserve"><value>read_bookmarks() — Read bookmark names, text ranges, and locations.</value></data>
+  <data name="I18n_AgentToolDesc_read_paragraphs" xml:space="preserve"><value>read_paragraphs(start, end) — Read a precise paragraph range; use read_large_chunk for broad reading.</value></data>
+  <data name="I18n_AgentToolDesc_read_large_chunk" xml:space="preserve"><value>read_large_chunk(start_paragraph) — Read as much text as possible from a paragraph to understand long documents quickly.</value></data>
+  <data name="I18n_AgentToolDesc_build_semantic_map" xml:space="preserve"><value>build_semantic_map() — Build a paragraph-summary map to locate regions in a long document.</value></data>
+  <data name="I18n_AgentToolDesc_insert_text_at_end" xml:space="preserve"><value>insert_text_at_end(text) — Write only final requested prose at the document end, never analysis or intermediate reasoning.</value></data>
+  <data name="I18n_AgentToolDesc_apply_style" xml:space="preserve"><value>apply_style(paragraph_index, style_name) — Apply a Word style to a paragraph.</value></data>
+  <data name="I18n_AgentToolDesc_replace_paragraph" xml:space="preserve"><value>replace_paragraph(paragraph_index, new_text) — Replace a full paragraph; edits are tracked.</value></data>
+  <data name="I18n_AgentToolDesc_add_comment" xml:space="preserve"><value>add_comment(paragraph_index, text_to_comment, comment) — Add a comment to exact text in a paragraph.</value></data>
+  <data name="I18n_AgentToolDesc_find_replace" xml:space="preserve"><value>find_replace(find_text, replace_text, match_case) — Find and replace text throughout the document.</value></data>
+  <data name="I18n_AgentToolDesc_insert_at_cursor" xml:space="preserve"><value>insert_at_cursor(text, new_paragraph) — Insert text at the current cursor or selection.</value></data>
+  <data name="I18n_AgentToolDesc_execute_command" xml:space="preserve"><value>execute_command(command, args, timeout_seconds) — Run an approved local command or script and return its output.</value></data>
+  <data name="I18n_AgentToolDesc_http_request" xml:space="preserve"><value>http_request(url, method, headers, body) — Send an approved HTTP request to an external REST API.</value></data>
+  <data name="I18n_AgentToolDesc_run_python_script" xml:space="preserve"><value>run_python_script(skill_name, script_args) — Run a Python script in a local Skill directory.</value></data>
+  <data name="I18n_AgentToolDesc_grep" xml:space="preserve"><value>grep(pattern, path, options) — Recursively search files or directories using text or a regular expression.</value></data>
+  <data name="I18n_AgentToolDesc_format_paragraph" xml:space="preserve"><value>format_paragraph(paragraph_index, alignment, first_line_indent_chars, line_spacing, space_before, space_after) — Set paragraph alignment, indentation, line spacing, and spacing.</value></data>
+  <data name="I18n_AgentToolDesc_format_text" xml:space="preserve"><value>format_text(paragraph_index, text_to_format, font_name, font_size, bold, italic, underline, color) — Format a paragraph or exact text within it.</value></data>
+  <data name="I18n_AgentToolDesc_format_list" xml:space="preserve"><value>format_list(paragraph_index, list_type) — Apply bullets or numbering to one or more paragraphs.</value></data>
+  <data name="I18n_AgentToolDesc_get_document_outline" xml:space="preserve"><value>get_document_outline() — Read headings and hierarchy to understand a document structure.</value></data>
+  <data name="I18n_AgentToolDesc_read_clause" xml:space="preserve"><value>read_clause(heading_title) — Read the full clause matching a heading, including partial matches.</value></data>
+  <data name="I18n_AgentToolDesc_extract_definitions" xml:space="preserve"><value>extract_definitions() — Extract defined terms for consistency checking.</value></data>
+  <data name="I18n_AgentToolDesc_check_cross_references" xml:space="preserve"><value>check_cross_references() — Check whether clause cross-references point to actual clauses.</value></data>
+  <data name="I18n_AgentToolDesc_replace_exact_text" xml:space="preserve"><value>replace_exact_text(paragraph_index, old_text, new_text) — Replace exact text in a paragraph for a focused tracked edit.</value></data>
+  <data name="I18n_AgentToolDesc_insert_clause_after" xml:space="preserve"><value>insert_clause_after(target_heading, new_clause_text) — Insert a full new clause after a target heading.</value></data>
+  <data name="I18n_AgentToolDesc_highlight_risk" xml:space="preserve"><value>highlight_risk(keyword, color, reason) — Highlight a keyword and add a comment explaining the risk.</value></data>
+  <data name="I18n_AgentToolDesc_apply_legal_format" xml:space="preserve"><value>apply_legal_format(style) — Apply a legal-document layout preset for fonts, spacing, margins, and headings.</value></data>
+  <data name="I18n_AgentToolDesc_validate_citation" xml:space="preserve"><value>validate_citation(law_name, article_number) — Validate a citation to a Chinese law or regulation.</value></data>
+  <data name="I18n_AgentToolDesc_page_setup" xml:space="preserve"><value>page_setup(margin_top, margin_bottom, margin_left, margin_right, orientation) — Set page margins and orientation.</value></data>
+  <data name="I18n_AgentToolDesc_insert_page_break" xml:space="preserve"><value>insert_page_break() — Insert a page break at the cursor.</value></data>
+  <data name="I18n_AgentToolDesc_header_footer" xml:space="preserve"><value>header_footer(element, text, alignment) — Set a header, footer, or page number.</value></data>
+  <data name="I18n_AgentToolDesc_read_table" xml:space="preserve"><value>read_table(table_index) — Read a table and return its content as Markdown.</value></data>
+  <data name="I18n_AgentToolDesc_insert_table" xml:space="preserve"><value>insert_table(rows, columns, header_row) — Create a table with an optional header at the document end.</value></data>
+  <data name="I18n_AgentToolDesc_table_insert_row" xml:space="preserve"><value>table_insert_row(table_index, after_row) — Insert a row after a table row.</value></data>
+  <data name="I18n_AgentToolDesc_table_set_cell" xml:space="preserve"><value>table_set_cell(table_index, row, column, text) — Set the text of one table cell.</value></data>
+  <data name="I18n_AgentToolDesc_update_toc" xml:space="preserve"><value>update_toc(action) — Update an existing table of contents or insert one at the document start.</value></data>
+  <data name="I18n_AgentToolParameterFallback" xml:space="preserve"><value>Parameter: {0}</value></data>
+  <data name="I18n_AgentEffectNone" xml:space="preserve"><value>no side effects</value></data>
+  <data name="I18n_AgentEffectDocumentRead" xml:space="preserve"><value>read Word document</value></data>
+  <data name="I18n_AgentEffectDocumentWrite" xml:space="preserve"><value>edit Word document</value></data>
+  <data name="I18n_AgentEffectExternalNetwork" xml:space="preserve"><value>access external network</value></data>
+  <data name="I18n_AgentEffectLocalProcess" xml:space="preserve"><value>start a local program</value></data>
+  <data name="I18n_AgentEffectExternalMcp" xml:space="preserve"><value>call an MCP server</value></data>
+  <data name="I18n_AgentCatalogTitle" xml:space="preserve"><value># WordOllama Agent API</value></data>
+  <data name="I18n_AgentCatalogIntro" xml:space="preserve"><value>These interfaces are safe Agent wrappers around Word operations. The model receives tool names and JSON arguments, not raw Word COM objects.</value></data>
+  <data name="I18n_AgentCatalogContractTitle" xml:space="preserve"><value>## Invocation contract</value></data>
+  <data name="I18n_AgentCatalogContract" xml:space="preserve"><value>Call a tool by its exact name and provide only JSON properties declared in its schema. Document writes are governed by the Agent execution mode and may require confirmation.</value></data>
+  <data name="I18n_AgentCatalogSafetyTitle" xml:space="preserve"><value>## Safety effects</value></data>
+  <data name="I18n_AgentCatalogSafety" xml:space="preserve"><value>Effect labels are execution boundaries. Word reads and writes stay on Word's UI thread; network, local-process, and MCP calls are separately controlled.</value></data>
+  <data name="I18n_AgentCatalogToolsTitle" xml:space="preserve"><value>## Available tools ({0})</value></data>
+  <data name="I18n_AgentCatalogDescription" xml:space="preserve"><value>- Description: {0}</value></data>
+  <data name="I18n_AgentCatalogEffects" xml:space="preserve"><value>- Effects: {0}</value></data>
+  <data name="I18n_AgentCatalogWordCom" xml:space="preserve"><value>- Word COM wrapper: {0}</value></data>
+  <data name="I18n_AgentCatalogWrite" xml:space="preserve"><value>- Write operation: {0}</value></data>
+  <data name="I18n_AgentCatalogConcurrency" xml:space="preserve"><value>- Concurrency: {0}</value></data>
+  <data name="I18n_AgentCatalogYes" xml:space="preserve"><value>yes</value></data>
+  <data name="I18n_AgentCatalogNo" xml:space="preserve"><value>no</value></data>
+  <data name="I18n_AgentCatalogParallelRead" xml:space="preserve"><value>safe for parallel reads</value></data>
+  <data name="I18n_AgentCatalogSerialized" xml:space="preserve"><value>serialized</value></data>
+  <data name="I18n_AgentCatalogResultLimit" xml:space="preserve"><value>- Result limit: {0} characters</value></data>
+  <data name="I18n_AgentCatalogSkillRulesTitle" xml:space="preserve"><value>## Skill authoring rules</value></data>
+  <data name="I18n_AgentCatalogSkillRules" xml:space="preserve"><value>A local Skill should describe a repeatable workflow using only the tools above. It must not require raw COM, arbitrary scripts, shell commands, hidden network calls, or direct file manipulation. The Agent runtime still applies permissions and tracked-change rules.</value></data>
+  <data name="I18n_OpenWordDocument" xml:space="preserve"><value>Open a Word document first.</value></data>
+  <data name="I18n_AgentResultKeywordRequired" xml:space="preserve"><value>[Error] keyword is required.</value></data>
+  <data name="I18n_AgentResultKeywordNotFound" xml:space="preserve"><value>No matches for: {0}</value></data>
+  <data name="I18n_AgentResultKeywordMatches" xml:space="preserve"><value>Matches for “{0}”:&#10;{1}</value></data>
+  <data name="I18n_AgentResultDocumentOverview" xml:space="preserve"><value>Document has {0} paragraphs and about {1} words. First two paragraph preview:&#10;{2}</value></data>
+  <data name="I18n_AgentResultNoSelection" xml:space="preserve"><value>No text is selected; the cursor is only at an insertion point.</value></data>
+  <data name="I18n_AgentResultSelection" xml:space="preserve"><value>Currently selected text:&#10;{0}</value></data>
+  <data name="I18n_AgentResultNoComments" xml:space="preserve"><value>The document has no comments.</value></data>
+  <data name="I18n_AgentResultReadCommentsFailed" xml:space="preserve"><value>[Error] Could not read comments: {0}</value></data>
+  <data name="I18n_AgentResultNoBookmarks" xml:space="preserve"><value>The document has no bookmarks.</value></data>
+  <data name="I18n_AgentResultReadBookmarksFailed" xml:space="preserve"><value>[Error] Could not read bookmarks: {0}</value></data>
+  <data name="I18n_AgentResultStartParagraphOutOfRange" xml:space="preserve"><value>[Error] Start paragraph {0} exceeds the document total of {1}.</value></data>
+  <data name="I18n_AgentResultDocumentEndReached" xml:space="preserve"><value>[Error] The end of the document has been reached.</value></data>
+  <data name="I18n_AgentResultInsertTextRequired" xml:space="preserve"><value>[Error] Text to insert is required.</value></data>
+  <data name="I18n_AgentResultInsertedAtEnd" xml:space="preserve"><value>Text was inserted at the document end.</value></data>
+  <data name="I18n_AgentResultParagraphOutOfRange" xml:space="preserve"><value>[Error] Paragraph index is out of range.</value></data>
+  <data name="I18n_AgentResultStyleApplied" xml:space="preserve"><value>Applied style {1} to paragraph {0}.</value></data>
+  <data name="I18n_AgentResultApplyStyleFailed" xml:space="preserve"><value>[Error] Could not apply style “{0}”. Ensure it exists in the current Word document.</value></data>
+  <data name="I18n_AgentResultParagraphIndexOutOfRange" xml:space="preserve"><value>[Error] Paragraph {0} is out of range; the document has {1} paragraphs.</value></data>
+  <data name="I18n_AgentResultParagraphReplaced" xml:space="preserve"><value>Replaced paragraph {0}.</value></data>
+  <data name="I18n_AgentResultCommentTextRequired" xml:space="preserve"><value>[Error] text_to_comment is required.</value></data>
+  <data name="I18n_AgentResultCommentTextNotFound" xml:space="preserve"><value>[Error] Could not find “{1}” in paragraph {0}. Ensure text_to_comment exactly matches the original.</value></data>
+  <data name="I18n_AgentResultCommentAdded" xml:space="preserve"><value>Added a comment to “{1}” in paragraph {0}.</value></data>
+  <data name="I18n_AgentResultFindTextRequired" xml:space="preserve"><value>[Error] Text to find is required.</value></data>
+  <data name="I18n_AgentResultFindReplaceCompleted" xml:space="preserve"><value>Replaced “{0}” with “{1}” {2} time(s) in the document.</value></data>
+  <data name="I18n_AgentResultFindReplaceFailed" xml:space="preserve"><value>[Error] Find and replace failed: {0}</value></data>
+  <data name="I18n_AgentResultInsertedAtCursor" xml:space="preserve"><value>Inserted text at the cursor.&#10;{0}</value></data>
+  <data name="I18n_AgentResultInsertTextFailed" xml:space="preserve"><value>[Error] Could not insert text: {0}</value></data>
+  <data name="I18n_AgentResultParagraphFormatUpdated" xml:space="preserve"><value>Updated paragraph {0} formatting: {1}.</value></data>
+  <data name="I18n_AgentResultFormatParagraphFailed" xml:space="preserve"><value>[Error] Could not format paragraph: {0}</value></data>
+  <data name="I18n_AgentResultTextNotFoundInParagraph" xml:space="preserve"><value>[Error] Could not find “{1}” in paragraph {0}.</value></data>
+  <data name="I18n_AgentResultTextFormatUpdated" xml:space="preserve"><value>Updated formatting for {1} in paragraph {0}: {2}.</value></data>
+  <data name="I18n_AgentResultFormatTextFailed" xml:space="preserve"><value>[Error] Could not format text: {0}</value></data>
+  <data name="I18n_AgentResultParagraphIndexOutOfRangeSimple" xml:space="preserve"><value>[Error] Paragraph index {0} is out of range.</value></data>
+  <data name="I18n_AgentResultListRemoved" xml:space="preserve"><value>Removed list formatting from paragraphs {0}-{1}.</value></data>
+  <data name="I18n_AgentResultUnsupportedListType" xml:space="preserve"><value>[Error] Unsupported list type: {0}. Supported: bullet/number/legal/none</value></data>
+  <data name="I18n_AgentResultListApplied" xml:space="preserve"><value>Applied {2} to paragraphs {0}-{1}.</value></data>
+  <data name="I18n_AgentResultFormatListFailed" xml:space="preserve"><value>[Error] Could not format list: {0}</value></data>
+  <data name="I18n_AgentResultTableIndexOutOfRange" xml:space="preserve"><value>[Error] Table index {0} is out of range; the document has {1} table(s).</value></data>
+  <data name="I18n_AgentResultReadTableFailed" xml:space="preserve"><value>[Error] Could not read table: {0}</value></data>
+  <data name="I18n_AgentResultTableDimensionsRequired" xml:space="preserve"><value>[Error] Rows and columns must both be greater than 0.</value></data>
+  <data name="I18n_AgentResultTableInserted" xml:space="preserve"><value>Created a {0} by {1} table at the document end.</value></data>
+  <data name="I18n_AgentResultInsertTableFailed" xml:space="preserve"><value>[Error] Could not insert table: {0}</value></data>
+  <data name="I18n_AgentResultTableIndexOutOfRangeSimple" xml:space="preserve"><value>[Error] Table index {0} is out of range.</value></data>
+  <data name="I18n_AgentResultTableRowInserted" xml:space="preserve"><value>Inserted a row in table {0}; it now has {1} row(s).</value></data>
+  <data name="I18n_AgentResultInsertRowFailed" xml:space="preserve"><value>[Error] Could not insert row: {0}</value></data>
+  <data name="I18n_AgentResultCellOutOfRange" xml:space="preserve"><value>[Error] Cell ({0}, {1}) is out of range; the table has {2} row(s) and {3} column(s).</value></data>
+  <data name="I18n_AgentResultTableCellSet" xml:space="preserve"><value>Set the content of table {0}, row {1}, column {2}.</value></data>
+  <data name="I18n_AgentResultSetCellFailed" xml:space="preserve"><value>[Error] Could not set cell: {0}</value></data>
+  <data name="I18n_AgentResultTocInserted" xml:space="preserve"><value>Inserted a table of contents at the document start. Update it manually with F9 after selecting it.</value></data>
+  <data name="I18n_AgentResultUnsupportedTocAction" xml:space="preserve"><value>[Error] Unsupported action: {0}. Supported: update / insert</value></data>
+  <data name="I18n_AgentResultTocFailed" xml:space="preserve"><value>[Error] Table of contents operation failed: {0}</value></data>
+  <data name="I18n_AgentResultMarginTop" xml:space="preserve"><value>top margin {0}cm</value></data>
+  <data name="I18n_AgentResultMarginBottom" xml:space="preserve"><value>bottom margin {0}cm</value></data>
+  <data name="I18n_AgentResultMarginLeft" xml:space="preserve"><value>left margin {0}cm</value></data>
+  <data name="I18n_AgentResultMarginRight" xml:space="preserve"><value>right margin {0}cm</value></data>
+  <data name="I18n_AgentResultLandscape" xml:space="preserve"><value>landscape</value></data>
+  <data name="I18n_AgentResultPortrait" xml:space="preserve"><value>portrait</value></data>
+  <data name="I18n_AgentResultPageSetupUpdated" xml:space="preserve"><value>Updated page setup: {0}.</value></data>
+  <data name="I18n_AgentResultNoPageSetupParameters" xml:space="preserve"><value>[Info] No page setup parameters were provided.</value></data>
+  <data name="I18n_AgentResultPageSetupFailed" xml:space="preserve"><value>[Error] Page setup failed: {0}</value></data>
+  <data name="I18n_AgentResultPageBreakInserted" xml:space="preserve"><value>Inserted a page break at the cursor.</value></data>
+  <data name="I18n_AgentResultInsertPageBreakFailed" xml:space="preserve"><value>[Error] Could not insert page break: {0}</value></data>
+  <data name="I18n_AgentResultNoSections" xml:space="preserve"><value>[Error] The document has no sections.</value></data>
+  <data name="I18n_AgentResultUnsupportedHeaderFooterElement" xml:space="preserve"><value>[Error] Unsupported element: {0}. Supported: header/footer/page_number</value></data>
+  <data name="I18n_AgentResultPageNumberInserted" xml:space="preserve"><value>Inserted page numbers in current-page / total-pages format.</value></data>
+  <data name="I18n_AgentResultHeader" xml:space="preserve"><value>header</value></data>
+  <data name="I18n_AgentResultFooter" xml:space="preserve"><value>footer</value></data>
+  <data name="I18n_AgentResultHeaderFooterSet" xml:space="preserve"><value>Set {0}: {1}.</value></data>
+  <data name="I18n_AgentResultHeaderFooterFailed" xml:space="preserve"><value>[Error] Could not set {0}: {1}</value></data>
+  <data name="I18n_AgentResultImageSourceRequired" xml:space="preserve"><value>[Error] Provide file_path or base64_data.</value></data>
+  <data name="I18n_AgentResultImageFileNotFound" xml:space="preserve"><value>[Error] Image file does not exist: {0}</value></data>
+  <data name="I18n_AgentResultParagraphLocation" xml:space="preserve"><value>paragraph {0}</value></data>
+  <data name="I18n_AgentResultDocumentEnd" xml:space="preserve"><value>the document end</value></data>
+  <data name="I18n_AgentResultImageWidth" xml:space="preserve"><value>, width {0}pt</value></data>
+  <data name="I18n_AgentResultOriginalSize" xml:space="preserve"><value>, original size</value></data>
+  <data name="I18n_AgentResultImageInserted" xml:space="preserve"><value>Inserted image at {0}{1}.</value></data>
+  <data name="I18n_AgentResultInsertImageFailed" xml:space="preserve"><value>[Execution error] Could not insert image: {0}</value></data>
+  <data name="I18n_AgentResultQuestionRequired" xml:space="preserve"><value>[Error] A question is required.</value></data>
+  <data name="I18n_AgentResultSubmitQuestion" xml:space="preserve"><value>[Info] Submit this question to the user and wait for an answer: {0}</value></data>
+  <data name="I18n_AgentResultSkillNameRequired" xml:space="preserve"><value>[Error] skill_name is required.</value></data>
+  <data name="I18n_AgentResultCommandRequired" xml:space="preserve"><value>[Error] Command is required.</value></data>
+  <data name="I18n_AgentResultCommandCancelled" xml:space="preserve"><value>[Cancelled] External command was terminated.</value></data>
+  <data name="I18n_AgentResultCommandLabel" xml:space="preserve"><value>[Command] {0} {1}</value></data>
+  <data name="I18n_AgentResultExitCodeLabel" xml:space="preserve"><value>[Exit code] {0}</value></data>
+  <data name="I18n_AgentResultOutputLabel" xml:space="preserve"><value>[Output]&#10;{0}</value></data>
+  <data name="I18n_AgentResultErrorLabel" xml:space="preserve"><value>[Error]&#10;{0}</value></data>
+  <data name="I18n_AgentResultCommandTimedOut" xml:space="preserve"><value>[Timeout] Command “{0}” exceeded {1} seconds and was terminated.&#10;[Partial output]&#10;{2}&#10;[Partial error]&#10;{3}</value></data>
+  <data name="I18n_AgentResultCommandFailed" xml:space="preserve"><value>[Error] Could not execute command: {0}</value></data>
+  <data name="I18n_AgentResultUrlRequired" xml:space="preserve"><value>[Error] URL is required.</value></data>
+  <data name="I18n_AgentResultInvalidHeaders" xml:space="preserve"><value>[Error] headers must be a valid JSON object.&#10;Current value: {0}</value></data>
+  <data name="I18n_AgentResultUnsupportedHttpMethod" xml:space="preserve"><value>[Error] Unsupported HTTP method: {0}. Supported: GET/POST/PUT/DELETE/PATCH</value></data>
+  <data name="I18n_AgentResultResponseTruncated" xml:space="preserve"><value>&#10;&#10;...(truncated, total length {0} characters)</value></data>
+  <data name="I18n_AgentResultHttpResponse" xml:space="preserve"><value>[Status] {0} {1}&#10;[URL] {2}&#10;[Response]&#10;{3}</value></data>
+  <data name="I18n_AgentResultHttpCancelled" xml:space="preserve"><value>[Cancelled] HTTP request was terminated.</value></data>
+  <data name="I18n_AgentResultHttpErrorResponse" xml:space="preserve"><value>[Status] {0} {1}&#10;[URL] {2}&#10;[Error]&#10;{3}</value></data>
+  <data name="I18n_AgentResultHttpFailed" xml:space="preserve"><value>[Error] HTTP request failed: {0}</value></data>
+  <data name="I18n_AgentResultSkillDirectoryNotFound" xml:space="preserve"><value>[Error] Skill directory not found. Ensure “{0}” is under WordAgentSkills.</value></data>
+  <data name="I18n_AgentResultPythonScriptNotFound" xml:space="preserve"><value>[Error] No Python script was found under Skill “{0}”.</value></data>
+  <data name="I18n_AgentResultPythonCancelled" xml:space="preserve"><value>[Cancelled] Python script was terminated.</value></data>
+  <data name="I18n_AgentResultPythonTimedOut" xml:space="preserve"><value>[Error] Script timed out after 60 seconds.&#10;[Partial output]&#10;{0}&#10;[Partial error]&#10;{1}</value></data>
+  <data name="I18n_AgentResultNoErrorOutput" xml:space="preserve"><value>No error output.</value></data>
+  <data name="I18n_AgentResultEnvFilePresent" xml:space="preserve"><value>[Info] .env exists at {0}; check that it contains a valid YUANDIAN_API_KEY.</value></data>
+  <data name="I18n_AgentResultEnvFileMissing" xml:space="preserve"><value>[Info] No .env file found. Create {0} and configure YUANDIAN_API_KEY.</value></data>
+  <data name="I18n_AgentResultScriptFailedWithHint" xml:space="preserve"><value>[Script error] Exit code {0}: {1}&#10;{2}</value></data>
+  <data name="I18n_AgentResultScriptFailed" xml:space="preserve"><value>[Script error] Exit code {0}: {1}</value></data>
+  <data name="I18n_AgentResultStdErrLabel" xml:space="preserve"><value>&#10;[stderr]&#10;{0}</value></data>
+  <data name="I18n_AgentResultScriptSucceededNoOutput" xml:space="preserve"><value>[Done] Script completed successfully with no output.</value></data>
+  <data name="I18n_AgentResultExecutionException" xml:space="preserve"><value>[Execution error] {0}</value></data>
+  <data name="I18n_AgentResultPatternRequired" xml:space="preserve"><value>[Error] pattern is required.</value></data>
+  <data name="I18n_AgentResultPathNotFound" xml:space="preserve"><value>[Error] Path does not exist: {0}</value></data>
+  <data name="I18n_AgentResultNoMatchingFiles" xml:space="preserve"><value>[Result] No matching files were found.</value></data>
+  <data name="I18n_AgentResultNoGrepMatches" xml:space="preserve"><value>[Result] No content matches “{0}”.</value></data>
+  <data name="I18n_AgentResultSkippedLargeFiles" xml:space="preserve"><value>&#10;[Info] Skipped {0} oversized file(s).</value></data>
+  <data name="I18n_AgentResultSkippedBinaryFiles" xml:space="preserve"><value>&#10;[Info] Skipped {0} binary file(s).</value></data>
+  <data name="I18n_AgentResultGrepPattern" xml:space="preserve"><value>[grep] Pattern: {0}</value></data>
+  <data name="I18n_AgentResultGrepPath" xml:space="preserve"><value>[Path] {0} ({1})</value></data>
+  <data name="I18n_AgentResultGrepMatches" xml:space="preserve"><value>[Matches] {0} total, showing {1}</value></data>
+  <data name="I18n_AgentResultGrepSkippedLarge" xml:space="preserve"><value>[Skipped] {0} oversized file(s)</value></data>
+  <data name="I18n_AgentResultGrepSkippedBinary" xml:space="preserve"><value>[Skipped] {0} binary file(s)</value></data>
+  <data name="I18n_AgentResultGrepFailed" xml:space="preserve"><value>[Error] grep search failed: {0}</value></data>
+  <data name="I18n_AgentResultNoDocumentOutline" xml:space="preserve"><value>No headings were detected. The document may not use heading styles.</value></data>
+  <data name="I18n_AgentResultDocumentOutline" xml:space="preserve"><value>Document outline ({0} heading(s)):&#10;{1}</value></data>
+  <data name="I18n_AgentResultHeadingRequired" xml:space="preserve"><value>[Error] Heading is required.</value></data>
+  <data name="I18n_AgentResultHeadingNotFound" xml:space="preserve"><value>[Error] Could not find a heading containing “{0}”. Use get_document_outline() to inspect headings.</value></data>
+  <data name="I18n_AgentResultClauseExtractionFailed" xml:space="preserve"><value>[Error] A heading was located but its content could not be extracted.</value></data>
+  <data name="I18n_AgentResultNoDefinitions" xml:space="preserve"><value>No term definitions were detected.</value></data>
+  <data name="I18n_AgentResultDefinitionsExtracted" xml:space="preserve"><value>Extracted {0} definition(s):&#10;{1}&#10;&#10;Keep this terminology list in short-term memory for consistency checks.</value></data>
+  <data name="I18n_AgentResultBrokenReference" xml:space="preserve"><value>Paragraph {0} refers to clause {1}, but that number was not found (text: {2}).</value></data>
+  <data name="I18n_AgentResultCrossReferencesValid" xml:space="preserve"><value>Cross-reference check passed. Found {0} valid clause number(s).&#10;Identified clauses: {1}</value></data>
+  <data name="I18n_AgentResultCrossReferenceErrors" xml:space="preserve"><value>Found {0} cross-reference error(s):&#10;{1}&#10;&#10;Consider adding comments at these locations for review.</value></data>
+  <data name="I18n_AgentResultOldTextRequired" xml:space="preserve"><value>[Error] old_text is required.</value></data>
+  <data name="I18n_AgentResultExactTextNotFound" xml:space="preserve"><value>[Error] Could not find “{1}” in paragraph {0}.&#10;Paragraph text: {2}</value></data>
+  <data name="I18n_AgentResultExactTextReplaced" xml:space="preserve"><value>Exact replacement completed in paragraph {0}: “{1}” was replaced with “{2}”.</value></data>
+  <data name="I18n_AgentResultTargetHeadingRequired" xml:space="preserve"><value>[Error] target_heading is required.</value></data>
+  <data name="I18n_AgentResultNewClauseTextRequired" xml:space="preserve"><value>[Error] new_clause_text is required.</value></data>
+  <data name="I18n_AgentResultClauseInserted" xml:space="preserve"><value>Inserted the new clause after “{0}”.</value></data>
+  <data name="I18n_AgentResultAiRiskComment" xml:space="preserve"><value>[AI risk note] {0}</value></data>
+  <data name="I18n_AgentResultRiskHighlightNotFound" xml:space="preserve"><value>[Notice] Could not find “{0}” in the document.</value></data>
+  <data name="I18n_AgentResultRiskColorYellow" xml:space="preserve"><value>yellow (attention)</value></data>
+  <data name="I18n_AgentResultRiskColorRed" xml:space="preserve"><value>red (high risk)</value></data>
+  <data name="I18n_AgentResultRiskColorGreen" xml:space="preserve"><value>green (confirmed)</value></data>
+  <data name="I18n_AgentResultRiskColorLightBlue" xml:space="preserve"><value>light blue (reference)</value></data>
+  <data name="I18n_AgentResultRiskHighlighted" xml:space="preserve"><value>Highlighted {0} occurrence(s) of “{1}” in {2}.</value></data>
+  <data name="I18n_AgentResultRiskHighlightedWithComment" xml:space="preserve"><value>Highlighted {0} occurrence(s) of “{1}” in {2} and added this comment: “{3}”.</value></data>
+  <data name="I18n_AgentResultUnsupportedLegalFormat" xml:space="preserve"><value>[Error] Unsupported legal format “{0}”. Available: {1}</value></data>
+  <data name="I18n_AgentResultLegalFormatApplied" xml:space="preserve"><value>Applied legal format “{0}”:&#10;- Body font: {1}, {2}pt&#10;- Line spacing: {3}pt&#10;- Formatted {4}/{5} paragraph(s)&#10;- Applied standard page margins</value></data>
+  <data name="I18n_AgentResultCitationFieldsRequired" xml:space="preserve"><value>[Error] law_name and article_number are required.</value></data>
+  <data name="I18n_AgentResultCitationArticleUnparsable" xml:space="preserve"><value>Could not parse article number “{0}”. Use a form such as “Article 15”.</value></data>
+  <data name="I18n_AgentResultCitationLawUnknown" xml:space="preserve"><value>The built-in database has no article-range information for “{0}”. Please verify the citation independently.</value></data>
+  <data name="I18n_AgentResultCitationArticleOutOfRange" xml:space="preserve"><value>“{1}” does not exist in “{0}”.&#10;- Article range: {2} to {3}&#10;- Check the article number and the cited revision.</value></data>
+  <data name="I18n_AgentResultCitationValid" xml:space="preserve"><value>The citation “{1}” in “{0}” is within the known range.&#10;- Law: {0} ({2})&#10;- Article: {1} (known range: {3} to {4})&#10;- Note: this checks only the built-in article range, not substantive accuracy.</value></data>
+  <data name="I18n_AgentResultTaskCompleted" xml:space="preserve"><value>Task completed.</value></data>
+  <data name="I18n_AgentResultUnspecifiedQuestion" xml:space="preserve"><value>(No question specified)</value></data>
+  <data name="I18n_AgentResultUserAnswer" xml:space="preserve"><value>User answer: {0}</value></data>
+  <data name="I18n_AgentResultTrackedChanges" xml:space="preserve"><value> (all changes were marked with Track Changes)</value></data>
+  <data name="I18n_AgentResultFinishHandled" xml:space="preserve"><value>[System] The caller will complete the task.</value></data>
+  <data name="I18n_AgentResultUnknownTool" xml:space="preserve"><value>[Error] Tool “{0}” does not exist. Check the available tool list.</value></data>
+  <data name="I18n_AgentResultToolExecutionFailed" xml:space="preserve"><value>[Execution error] Tool {0} failed: {1}. Adjust the parameters or try another tool.</value></data>
+  <data name="I18n_AgentResultModeViewOnly" xml:space="preserve"><value>View only</value></data>
+  <data name="I18n_AgentResultModeProposeChanges" xml:space="preserve"><value>Propose changes</value></data>
+  <data name="I18n_AgentResultModeBlocked" xml:space="preserve"><value>[Blocked] {0} mode does not allow tool {1} to edit the Word document.</value></data>
+  <data name="I18n_AgentResultSearchMatch" xml:space="preserve"><value>Paragraph {0}: {1}</value></data>
+  <data name="I18n_AgentResultOverviewParagraph" xml:space="preserve"><value>Paragraph {0}: {1}</value></data>
+  <data name="I18n_AgentResultUnknownAuthor" xml:space="preserve"><value>Unknown author</value></data>
+  <data name="I18n_AgentResultCommentItem" xml:space="preserve"><value>[{0}] {1}: {2}&#10;Anchored text: {3}</value></data>
+  <data name="I18n_AgentResultCommentsTruncated" xml:space="preserve"><value>--- Showing the first 50 comments; the document has {0} total. ---</value></data>
+  <data name="I18n_AgentResultBookmarkItem" xml:space="preserve"><value>[{0}] {1}: start={2}, end={3}, text={4}</value></data>
+  <data name="I18n_AgentResultBookmarksTruncated" xml:space="preserve"><value>--- Showing the first 100 bookmarks; the document has {0} total. ---</value></data>
+  <data name="I18n_AgentResultParagraphItem" xml:space="preserve"><value>[Paragraph {0}] {1}</value></data>
+  <data name="I18n_AgentResultLargeChunkMore" xml:space="preserve"><value>--- Read paragraphs {0}-{1}; {2} remain. Call read_large_chunk(start_paragraph: {3}) to continue. ---</value></data>
+  <data name="I18n_AgentResultSemanticMapHeader" xml:space="preserve"><value>=== Document semantic map ({0} paragraph(s)) ===</value></data>
+  <data name="I18n_AgentResultEmptyParagraph" xml:space="preserve"><value>(empty paragraph)</value></data>
+  <data name="I18n_AgentResultSemanticMapEntry" xml:space="preserve"><value>[Paragraphs {0}-{1}] {2}</value></data>
+  <data name="I18n_AgentResultSemanticMapHint" xml:space="preserve"><value>Tip: use read_large_chunk(start_paragraph: N) to read an area in detail.</value></data>
+  <data name="I18n_AgentResultAlignLeft" xml:space="preserve"><value>left aligned</value></data>
+  <data name="I18n_AgentResultAlignCenter" xml:space="preserve"><value>center aligned</value></data>
+  <data name="I18n_AgentResultAlignRight" xml:space="preserve"><value>right aligned</value></data>
+  <data name="I18n_AgentResultAlignJustify" xml:space="preserve"><value>justified</value></data>
+  <data name="I18n_AgentResultFirstLineIndent" xml:space="preserve"><value>first-line indent: {0} character(s)</value></data>
+  <data name="I18n_AgentResultFirstLineIndentCleared" xml:space="preserve"><value>first-line indent cleared</value></data>
+  <data name="I18n_AgentResultLineSpacing" xml:space="preserve"><value>line spacing: {0}pt</value></data>
+  <data name="I18n_AgentResultSingleLineSpacing" xml:space="preserve"><value>single line spacing</value></data>
+  <data name="I18n_AgentResultSpaceBefore" xml:space="preserve"><value>space before: {0}pt</value></data>
+  <data name="I18n_AgentResultSpaceAfter" xml:space="preserve"><value>space after: {0}pt</value></data>
+  <data name="I18n_AgentResultFontName" xml:space="preserve"><value>font: {0}</value></data>
+  <data name="I18n_AgentResultFontSize" xml:space="preserve"><value>font size: {0}pt</value></data>
+  <data name="I18n_AgentResultBold" xml:space="preserve"><value>bold</value></data>
+  <data name="I18n_AgentResultBoldCleared" xml:space="preserve"><value>bold cleared</value></data>
+  <data name="I18n_AgentResultItalic" xml:space="preserve"><value>italic</value></data>
+  <data name="I18n_AgentResultItalicCleared" xml:space="preserve"><value>italic cleared</value></data>
+  <data name="I18n_AgentResultUnderline" xml:space="preserve"><value>underlined</value></data>
+  <data name="I18n_AgentResultUnderlineCleared" xml:space="preserve"><value>underline cleared</value></data>
+  <data name="I18n_AgentResultFontColor" xml:space="preserve"><value>color: {0}</value></data>
+  <data name="I18n_AgentResultWholeParagraph" xml:space="preserve"><value>the entire paragraph</value></data>
+  <data name="I18n_AgentResultQuotedText" xml:space="preserve"><value>“{0}”</value></data>
+  <data name="I18n_AgentResultTableHeader" xml:space="preserve"><value>Table {0} ({1} row(s) × {2} column(s))</value></data>
+  <data name="I18n_AgentResultMcpToolServerDisconnected" xml:space="preserve"><value>[Error] The server for MCP tool {0} is not connected.</value></data>
+  <data name="I18n_AgentResultMcpReconnectFailed" xml:space="preserve"><value>[Error] MCP server {0} disconnected and could not be reconnected automatically.</value></data>
+  <data name="I18n_AgentResultMcpServerDisconnected" xml:space="preserve"><value>[Error] MCP server {0} is not connected.</value></data>
+  <data name="I18n_AgentResultMcpError" xml:space="preserve"><value>[MCP error] {0}</value></data>
+  <data name="I18n_AgentResultMcpEmptyResponse" xml:space="preserve"><value>[MCP] Empty response</value></data>
+  <data name="I18n_AgentResultMcpException" xml:space="preserve"><value>[MCP exception] {0}/{1}: {2}</value></data>
+  <data name="I18n_AgentResultApiError" xml:space="preserve"><value>[API error] {0}</value></data>
+  <data name="I18n_AgentResultOllamaConnectionFailed" xml:space="preserve"><value>[API error] Could not connect to Ollama: {0}</value></data>
+  <data name="I18n_AgentResultTocUpdated" xml:space="preserve"><value>Updated {0} table-of-contents field(s).</value></data>
+  <data name="I18n_AgentResultTocNotFound" xml:space="preserve"><value>[Notice] No table-of-contents field was found. Use the insert action first.</value></data>
+  <data name="I18n_AgentResultTocHeading" xml:space="preserve"><value>Table of Contents</value></data>
+  <data name="I18n_AgentResultDefaultBodyStyle" xml:space="preserve"><value>Normal</value></data>
+  <data name="I18n_AgentResultListBullet" xml:space="preserve"><value>bullets</value></data>
+  <data name="I18n_AgentResultListNumber" xml:space="preserve"><value>numbering</value></data>
+  <data name="I18n_AgentResultListLegal" xml:space="preserve"><value>legal numbering</value></data>
+  <data name="I18n_AgentLogSnapshotLoaded" xml:space="preserve"><value>Document snapshot loaded ({0} characters)</value></data>
+  <data name="I18n_AgentLogDiffSnapshotSaved" xml:space="preserve"><value>Document comparison snapshot saved ({0} paragraph(s))</value></data>
+  <data name="I18n_AgentLogSelectionDetected" xml:space="preserve"><value>User selection detected (paragraph {0})</value></data>
+  <data name="I18n_AgentLogResumed" xml:space="preserve"><value>Resumed from checkpoint ({0} milestone(s) completed)</value></data>
+  <data name="I18n_AgentLogConsecutiveFailures" xml:space="preserve"><value>{0} consecutive failures; asking the user whether to continue.</value></data>
+  <data name="I18n_AgentQuestionRetryAfterFailures" xml:space="preserve"><value>The Agent has failed {0} times in a row. Continue? Describe an adjustment, or type “stop” to end the task.</value></data>
+  <data name="I18n_AgentResultUserStoppedTask" xml:space="preserve"><value>The user stopped the task.</value></data>
+  <data name="I18n_AgentLogUserStopped" xml:space="preserve"><value>User stopped: {0}</value></data>
+  <data name="I18n_AgentLogToolCallingFallback" xml:space="preserve"><value>The current model does not support native Tool Calling; switched to JSON ReAct mode.</value></data>
+  <data name="I18n_AgentLogInvalidModelOutput" xml:space="preserve"><value>Invalid AI output format; requesting a retry.</value></data>
+  <data name="I18n_AgentLogThought" xml:space="preserve"><value>Thought: {0}</value></data>
+  <data name="I18n_AgentLogRepeatedActionBlocked" xml:space="preserve"><value>Repeated action blocked: {0}</value></data>
+  <data name="I18n_AgentLogTaskFinished" xml:space="preserve"><value>Task finished: {0}</value></data>
+  <data name="I18n_AgentLogAction" xml:space="preserve"><value>Action: {0}</value></data>
+  <data name="I18n_AgentLogQuestion" xml:space="preserve"><value>AI question: {0}</value></data>
+  <data name="I18n_AgentLogAnswer" xml:space="preserve"><value>User answer: {0}</value></data>
+  <data name="I18n_AgentResultExternalPermissionDenied" xml:space="preserve"><value>[User denied] The required external permission was not granted. Use a tool that does not need it.</value></data>
+  <data name="I18n_AgentQuestionDangerousCommand" xml:space="preserve"><value>The Agent wants to run a potentially dangerous command:&#10;&#10;`{0}`&#10;&#10;Type **y** to allow or **n** to reject.</value></data>
+  <data name="I18n_AgentLogDangerousCommandPending" xml:space="preserve"><value>Dangerous command pending confirmation: {0}</value></data>
+  <data name="I18n_AgentResultDangerousCommandDenied" xml:space="preserve"><value>[User denied] The user rejected this dangerous command: {0}</value></data>
+  <data name="I18n_AgentLogDangerousCommandDenied" xml:space="preserve"><value>User rejected dangerous command: {0}</value></data>
+  <data name="I18n_AgentLogObservation" xml:space="preserve"><value>Observation: {0}</value></data>
+  <data name="I18n_AgentLogJsonParseFailed" xml:space="preserve"><value>JSON parsing failed: {0}</value></data>
+  <data name="I18n_AgentLogContextCompressed" xml:space="preserve"><value>Context compressed: {0} entries → ActionLog ({1}→{2} tok); retained the latest {3} complete round(s)</value></data>
+  <data name="I18n_AgentStatusAwaitingInput" xml:space="preserve"><value>AI needs your input...</value></data>
+  <data name="I18n_AgentResultNoUserAnswer" xml:space="preserve"><value>(No user answer)</value></data>
+  <data name="I18n_AgentLogEvaluatingPlan" xml:space="preserve"><value>AI is deciding whether a plan is needed...</value></data>
+  <data name="I18n_AgentStatusEvaluatingRequirement" xml:space="preserve"><value>Evaluating request...</value></data>
+  <data name="I18n_AgentLogPlanSkipped" xml:space="preserve"><value>AI classified this as a simple request; skipped planning.</value></data>
+  <data name="I18n_AgentResultPlanGenerationFailed" xml:space="preserve"><value>(Could not generate a plan)</value></data>
+  <data name="I18n_AgentLogPlan" xml:space="preserve"><value>Execution plan:&#10;{0}</value></data>
+  <data name="I18n_AgentLogPlanConfirmed" xml:space="preserve"><value>User confirmed the plan; starting execution.</value></data>
+  <data name="I18n_AgentLogPlanNotConfirmed" xml:space="preserve"><value>User has not confirmed the plan; waiting for a revised request...</value></data>
+  <data name="I18n_AgentQuestionReviseRequirement" xml:space="preserve"><value>Revise your request, or type “go” to execute directly:</value></data>
+  <data name="I18n_AgentLogDirectExecutionConfirmed" xml:space="preserve"><value>User confirmed direct execution.</value></data>
+  <data name="I18n_AgentPlanEffectsTitle" xml:space="preserve"><value>Side-effect summary:</value></data>
+  <data name="I18n_AgentPlanEffectsLine" xml:space="preserve"><value>- {0}: {1}</value></data>
+  <data name="I18n_AgentLogDocumentChanges" xml:space="preserve"><value>Document changes: {0} added, {1} modified, {2} deleted</value></data>
+  <data name="I18n_AgentQuestionExternalPermission" xml:space="preserve"><value>External permission required: the Agent wants to use {0}. Operation: {1}. This can {2}. Allow this operation only? Type y to allow or n to deny.</value></data>
+  <data name="I18n_AgentExternalOperationCommand" xml:space="preserve"><value>Command: {0} {1}</value></data>
+  <data name="I18n_AgentExternalOperationHttp" xml:space="preserve"><value>HTTP {0} {1}</value></data>
+  <data name="I18n_AgentExternalOperationPython" xml:space="preserve"><value>Skill: {0}; arguments: {1}</value></data>
+  <data name="I18n_AgentExternalOperationMcp" xml:space="preserve"><value>MCP {0}/{1}; arguments: {2}</value></data>
+  <data name="I18n_AgentExternalOperationGeneric" xml:space="preserve"><value>{0}; arguments: {1}</value></data>
+  <data name="I18n_UiAgentExternalToolsTitle" xml:space="preserve"><value>External tool authorization</value></data>
+  <data name="I18n_UiAgentExternalToolsPrompt" xml:space="preserve"><value>This Agent task may need commands, Python, HTTP, or MCP tools. By default these capabilities are not registered and MCP servers are not connected. Enable them for this task only?&#10;&#10;Each external operation will still ask for separate approval.</value></data>
+  <data name="I18n_RibbonMarkdownScreenTip" xml:space="preserve"><value>Convert Markdown text to Word formatting and insert it into the document</value></data>
+  <data name="I18n_AgentToolDescMcp" xml:space="preserve"><value>[External] {0} (MCP: {1})</value></data>
+  <data name="I18n_SettingsValidationFailed" xml:space="preserve"><value>Fix these settings before saving: {0}</value></data>
+  <data name="I18n_SettingsInvalidNumber" xml:space="preserve"><value>{0} must be a number between {1} and {2}.</value></data>
+  <data name="I18n_SettingsInvalidEndpoint" xml:space="preserve"><value>{0} must be an HTTP or HTTPS endpoint.</value></data>
+  <data name="I18n_SettingsUnsavedPrompt" xml:space="preserve"><value>Settings have not been saved. Save them before closing?</value></data>
+  <data name="I18n_SettingsUnsavedTitle" xml:space="preserve"><value>Unsaved settings</value></data>
+  <data name="I18n_UiAgentEmptyTitle" xml:space="preserve"><value>Agent</value></data>
+  <data name="I18n_UiAgentEmptyState" xml:space="preserve"><value>Ready for your request</value></data>
+  <data name="I18n_UiAgentExecutionDetails" xml:space="preserve"><value>Execution details</value></data>
+  <data name="I18n_UiAgentResultTitle" xml:space="preserve"><value>Task complete</value></data>
+</root>

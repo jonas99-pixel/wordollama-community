@@ -1,0 +1,287 @@
+<Window x:Class="WordOllama.NewUI.CustomPromptUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:properties="clr-namespace:WordOllama.Properties"
+        xmlns:local="clr-namespace:WordOllama.NewUI"
+        mc:Ignorable="d"
+        d:DesignHeight="520" d:DesignWidth="860"
+        FontFamily="Segoe UI, Microsoft YaHei UI"
+        FontSize="14"
+        Title="{x:Static properties:Resources.自定义提示词设置}" WindowStartupLocation="CenterScreen"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextOptions.TextFormattingMode="Ideal"
+        Background="{DynamicResource MaterialDesignPaper}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" ColorAdjustment="{materialDesign:ColorAdjustment}"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TabControl Grid.Row="0" TabStripPlacement="Left" Padding="0" Margin="0">
+            <!-- Tab C1 -->
+            <TabItem Header="C1">
+                <Grid Margin="28,20,28,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="C1_Name" Grid.Column="0"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.功能名称}"
+                                 materialDesign:HintAssist.HelperText="{x:Static properties:Resources.自定义名称}"
+                                 MaxLength="10" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        <ComboBox x:Name="C1_Function" Grid.Column="1"
+                                  materialDesign:HintAssist.HelperText="{x:Static properties:Resources.必填}"
+                                  materialDesign:HintAssist.Hint="{x:Static properties:Resources.已选功能}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  Width="200" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入}" IsSelected="True"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入并对比}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.批注}"/>
+                        </ComboBox>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <TextBox x:Name="C1_Prompt"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.随意填写提示词小心过长}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 TextAlignment="Left"
+                                 TextChanged="GetPromptTextLength_And_SetHelperText"
+                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab C2 -->
+            <TabItem Header="C2">
+                <Grid Margin="28,20,28,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="C2_Name" Grid.Column="0"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.功能名称}"
+                                 materialDesign:HintAssist.HelperText="{x:Static properties:Resources.自定义名称}"
+                                 MaxLength="10" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        <ComboBox x:Name="C2_Function" Grid.Column="1"
+                                  materialDesign:HintAssist.HelperText="{x:Static properties:Resources.必填}"
+                                  materialDesign:HintAssist.Hint="{x:Static properties:Resources.已选功能}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  Width="200" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入}" IsSelected="True"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入并对比}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.批注}"/>
+                        </ComboBox>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <TextBox x:Name="C2_Prompt"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.随意填写提示词小心过长}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 TextAlignment="Left"
+                                 TextChanged="GetPromptTextLength_And_SetHelperText"
+                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab C3 -->
+            <TabItem Header="C3">
+                <Grid Margin="28,20,28,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="C3_Name" Grid.Column="0"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.功能名称}"
+                                 materialDesign:HintAssist.HelperText="{x:Static properties:Resources.自定义名称}"
+                                 MaxLength="10" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        <ComboBox x:Name="C3_Function" Grid.Column="1"
+                                  materialDesign:HintAssist.HelperText="{x:Static properties:Resources.必填}"
+                                  materialDesign:HintAssist.Hint="{x:Static properties:Resources.已选功能}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  Width="200" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入}" IsSelected="True"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入并对比}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.批注}"/>
+                        </ComboBox>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <TextBox x:Name="C3_Prompt"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.随意填写提示词小心过长}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 TextAlignment="Left"
+                                 TextChanged="GetPromptTextLength_And_SetHelperText"
+                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab C4 -->
+            <TabItem Header="C4">
+                <Grid Margin="28,20,28,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="C4_Name" Grid.Column="0"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.功能名称}"
+                                 materialDesign:HintAssist.HelperText="{x:Static properties:Resources.自定义名称}"
+                                 MaxLength="10" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        <ComboBox x:Name="C4_Function" Grid.Column="1"
+                                  materialDesign:HintAssist.HelperText="{x:Static properties:Resources.必填}"
+                                  materialDesign:HintAssist.Hint="{x:Static properties:Resources.已选功能}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  Width="200" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入}" IsSelected="True"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.插入并对比}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.批注}"/>
+                        </ComboBox>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <TextBox x:Name="C4_Prompt"
+                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.随意填写提示词小心过长}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 TextAlignment="Left"
+                                 TextChanged="GetPromptTextLength_And_SetHelperText"
+                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- More tab -->
+            <TabItem Header="{x:Static properties:Resources.更多}">
+                <Grid Margin="28,20,28,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid x:Name="CustomDataGrid"
+                              ItemsSource="{Binding CustomPrompts}"
+                              AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                              Style="{DynamicResource MaterialDesignDataGrid}" Grid.Row="0">
+                        <DataGrid.Resources>
+                            <Style x:Key="ExpanderStyle" TargetType="Expander">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{x:Static properties:Resources.功能名称}" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTemplateColumn Header="{x:Static properties:Resources.提示词需要点击格子三次}" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Prompt}" TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding Prompt}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
+                                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                                 VerticalScrollBarVisibility="Auto" Height="100"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridComboBoxColumn Header="{x:Static properties:Resources.选择功能}"
+                                                     SelectedItemBinding="{Binding Function, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="*">
+                                <DataGridComboBoxColumn.ElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.FunctionOptions, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                    </Style>
+                                </DataGridComboBoxColumn.ElementStyle>
+                                <DataGridComboBoxColumn.EditingElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.FunctionOptions, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                    </Style>
+                                </DataGridComboBoxColumn.EditingElementStyle>
+                            </DataGridComboBoxColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                                Click="DeleteButton_Click"
+                                                ToolTip="{x:Static properties:Resources.删除此行}" Height="20" Width="20">
+                                            <materialDesign:PackIcon Kind="Delete" Height="15" Width="15"/>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button Grid.Row="1" Click="AddButton_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            HorizontalAlignment="Left" Margin="0,16,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="TableRowPlusAfter" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Static properties:Resources.新增}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Button Grid.Row="1"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                ToolTip="{x:Static properties:Resources.保存当前设置}"
+                HorizontalAlignment="Left" Margin="8,8"
+                Click="SaveButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center"/>
+                <TextBlock Text="{x:Static properties:Resources.Common_Save}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

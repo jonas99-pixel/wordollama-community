@@ -1,0 +1,81 @@
+<UserControl x:Class="WordOllama.NewUI.MootCourt"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WordOllama.NewUI"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             FontFamily="Segoe UI, Microsoft YaHei UI"
+             TextElement.FontSize="13"
+             d:DesignHeight="450" d:DesignWidth="800"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextOptions.TextFormattingMode="Ideal"
+             Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" ColorAdjustment="{materialDesign:ColorAdjustment}"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
+                <ResourceDictionary Source="ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="16,16,16,12">
+            <TextBlock Text="{local:Loc I18n_PleadingType}" Style="{StaticResource ModernSubHeader}" VerticalAlignment="Center" Margin="0,0,24,0"/>
+            <RadioButton x:Name="IndictmentRadio" Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}"
+                         Content="{local:Loc I18n_Indictment}" IsChecked="True"/>
+            <RadioButton x:Name="DefenseRadio" Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}"
+                         Content="{local:Loc I18n_Defense}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="16,0,16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Column="0">
+                <TextBlock DockPanel.Dock="Top" Text="{local:Loc I18n_PleadingToReview}" Style="{StaticResource ModernSubHeader}" Margin="0,0,0,8"/>
+                <TextBox x:Name="docText"
+                         materialDesign:HintAssist.Hint="{local:Loc I18n_InputTextHere}"
+                         TextWrapping="Wrap" AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+            </DockPanel>
+
+            <Separator Grid.Column="1" Style="{StaticResource MaterialDesignLightSeparator}" Width="1" Margin="11,0"/>
+
+            <DockPanel Grid.Column="2">
+                <TextBlock DockPanel.Dock="Top" Text="{local:Loc I18n_ReviewResult}" Style="{StaticResource ModernSubHeader}" Margin="0,0,0,8"/>
+                <TextBox x:Name="ResponseBox"
+                         materialDesign:HintAssist.Hint="{local:Loc I18n_ReviewResultHere}"
+                         IsReadOnly="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+            </DockPanel>
+        </Grid>
+
+        <Button x:Name="GetResponse"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                Content="{local:Loc I18n_StartReview}"
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                Margin="0,12,0,16"
+                Click="GetResponse_Click"/>
+
+        <local:LoadingOverlay x:Name="thisProgressBar" Grid.RowSpan="3"/>
+    </Grid>
+</UserControl>

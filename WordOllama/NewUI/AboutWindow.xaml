@@ -1,0 +1,76 @@
+<Window x:Class="WordOllama.NewUI.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WordOllama.NewUI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="{local:Loc I18n_AboutTitle}"
+        Height="340" Width="440"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextOptions.TextFormattingMode="Ideal"
+        TextElement.FontSize="13"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="Segoe UI, Microsoft YaHei UI">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Margin="0" Padding="32"
+            Background="{DynamicResource MaterialDesignPaper}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- App Icon + Name -->
+            <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,8,0,16">
+                <materialDesign:PackIcon Kind="Sparkles"
+                                         Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                         Width="40" Height="40"
+                                         HorizontalAlignment="Center"/>
+                <TextBlock Text="WordOllama"
+                           FontSize="28" FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                           Margin="0,8,0,0"/>
+            </StackPanel>
+
+            <!-- Version -->
+            <TextBlock Grid.Row="1" x:Name="VersionText"
+                       FontSize="13"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,16"
+                       Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+
+            <!-- Description -->
+            <TextBlock Grid.Row="2"
+                       Text="{local:Loc I18n_AboutDescription}"
+                       FontSize="13"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
+                       LineHeight="24"
+                       Opacity="0.75"/>
+
+            <!-- OK Button -->
+            <Button Grid.Row="3"
+                    Content="{local:Loc I18n_Ok}"
+                    HorizontalAlignment="Center"
+                    Width="100" Height="34"
+                    Margin="0,24,0,0"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Click="OkButton_Click"/>
+        </Grid>
+    </Border>
+</Window>

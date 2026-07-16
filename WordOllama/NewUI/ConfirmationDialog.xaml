@@ -1,0 +1,56 @@
+<Window x:Class="WordOllama.NewUI.ConfirmationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WordOllama.NewUI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="{local:Loc I18n_Confirm}" Height="Auto" Width="480"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        FontFamily="Segoe UI, Microsoft YaHei UI"
+        TextElement.FontSize="13"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextOptions.TextFormattingMode="Ideal">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Indigo" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Message -->
+        <TextBlock x:Name="txtMessage" Grid.Row="0"
+                   TextWrapping="Wrap" FontSize="13" LineHeight="22" MaxHeight="320"/>
+
+        <Separator Grid.Row="1" Margin="0,16"/>
+
+        <!-- Options -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,8">
+            <CheckBox x:Name="chkSession" Content="{local:Loc I18n_ConfirmationSessionSkip}" FontSize="13" Margin="0,0,0,4"
+                      Checked="ChkSession_Checked"/>
+            <CheckBox x:Name="chkPermanent" Content="{local:Loc I18n_ConfirmationPermanentSkip}" FontSize="13"
+                      Checked="ChkPermanent_Checked"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button x:Name="btnConfirm" Content="{local:Loc I18n_Confirm}" Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                    Height="34" FontSize="13" Padding="24,0" Click="BtnConfirm_Click"/>
+            <Button Content="{local:Loc I18n_Cancel}" Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Height="34" FontSize="13" Padding="24,0" Margin="8,0,0,0" Click="BtnCancel_Click"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
