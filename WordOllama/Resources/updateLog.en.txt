@@ -1,12 +1,12 @@
 Version V2.1.0 2026/07/17
 
 Changes
-1. Released the clean OpenWordOllama open-source edition under the GNU GPLv3 license.
-2. Replaced the toolbar artwork with original project assets and removed legacy third-party icon assets.
-3. Added privacy, permission, third-party notice, security policy, and contribution documentation.
-4. Added open-source build and release verification, and hardened MCP, external-tool, and Skill safety boundaries.
-5. Fixed false unsaved-settings prompts during settings-window initialization and fixed the Save and Close flow so the window closes after a successful save.
-6. Improved the Review Workspace layout with a wider usable area, clearer action grouping, and better button spacing.
+1. Optimize the Agent interface and functionality;
+2. Added a review workbench feature, which allows users to view a list of document review issues and quickly jump to the corresponding location.
+3. Optimized settings page;
+4. By default, Agent permissions are tightened to reduce the risk of accidental operations;
+4. Some infrequently used functions have been removed to reduce interface complexity;
+5. Fixed some known bugs.
 __________________________________________________
 
 Version V2.0.5 2026/06/05
