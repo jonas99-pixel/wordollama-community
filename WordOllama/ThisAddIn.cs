@@ -186,9 +186,10 @@ namespace WordOllama
         private const int MinAgentPaneWidth = 420;
         private const int MaxAgentPaneWidth = 900;
 
-        private const int DefaultReviewPaneWidth = 640;
-        private const int MinReviewPaneWidth = 480;
-        private const int MaxReviewPaneWidth = 1000;
+        private const int DefaultReviewPaneWidth = 900;
+        private const int MinReviewPaneWidth = 680;
+        private const int MaxReviewPaneWidth = 1100;
+        private const int LegacyReviewPaneWidth = 640;
 
         private static int ClampAgentPaneWidth(int width)
         {
@@ -224,7 +225,9 @@ namespace WordOllama
 
                 var newPane = new ReviewTaskPane();
                 var newCtp = this.CustomTaskPanes.Add(newPane, title, activeWindow);
-                int configuredWidth = AppConfig.Instance.ReviewPaneWidthUserSet
+                // Migrate the former 640px default so existing installations get a usable review workspace.
+                int configuredWidth = AppConfig.Instance.ReviewPaneWidthUserSet &&
+                                      AppConfig.Instance.ReviewPaneWidth > LegacyReviewPaneWidth
                     ? AppConfig.Instance.ReviewPaneWidth
                     : DefaultReviewPaneWidth;
                 newCtp.Width = ClampReviewPaneWidth(configuredWidth);

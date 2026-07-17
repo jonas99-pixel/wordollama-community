@@ -5,6 +5,8 @@ Changes
 2. Replaced the toolbar artwork with original project assets and removed legacy third-party icon assets.
 3. Added privacy, permission, third-party notice, security policy, and contribution documentation.
 4. Added open-source build and release verification, and hardened MCP, external-tool, and Skill safety boundaries.
+5. Fixed false unsaved-settings prompts during settings-window initialization and fixed the Save and Close flow so the window closes after a successful save.
+6. Improved the Review Workspace layout with a wider usable area, clearer action grouping, and better button spacing.
 __________________________________________________
 
 Version V2.0.5 2026/06/05
@@ -245,11 +247,3 @@ Version V1.0.1.1
 
 Changes
 Added the Ollama Model Management feature. You can add or delete Ollama models from Settings.
-Version V2.1.0 2026/07/17
-
-Changes
-1. Released the clean OpenWordOllama open-source edition under the GNU GPLv3 license.
-2. Replaced the toolbar artwork with original project assets and removed legacy third-party icon assets.
-3. Added privacy, permission, third-party notice, security policy, and contribution documentation.
-4. Added open-source build and release verification, and hardened MCP, external-tool, and Skill safety boundaries.
-__________________________________________________

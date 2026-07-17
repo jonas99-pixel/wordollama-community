@@ -141,7 +141,7 @@ namespace WordOllama.lib
         /// <summary>用户是否主动调整过 Agent 侧边栏宽度。</summary>
         public bool AgentPaneWidthUserSet { get; set; } = false;
         /// <summary>审阅工作台侧边栏宽度，范围由宿主侧统一限制。</summary>
-        public int ReviewPaneWidth { get; set; } = 640;
+        public int ReviewPaneWidth { get; set; } = 900;
         /// <summary>用户是否主动调整过审阅工作台宽度。</summary>
         public bool ReviewPaneWidthUserSet { get; set; } = false;
         /// <summary>ViewOnly / ProposeChanges / TrackedChanges.</summary>

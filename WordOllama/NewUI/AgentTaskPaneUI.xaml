@@ -482,10 +482,8 @@
             </TabItem>
 
             <TabItem x:Name="ReviewTabItem" Header="{x:Static local:UiText.ReviewTab}">
-                <Grid Margin="12,10,12,8">
+                <Grid Margin="16,14,16,12">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -493,94 +491,101 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                    <StackPanel Grid.Row="0" Margin="0,0,0,12">
                         <TextBlock Text="{x:Static local:UiText.ReviewWorkspaceTitle}"
-                                   FontWeight="SemiBold" FontSize="14"/>
+                                   FontWeight="SemiBold" FontSize="16"/>
                         <TextBlock Text="{x:Static local:UiText.ReviewWorkspaceSubtitle}"
-                                   FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                                   FontSize="12" Opacity="0.62" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </StackPanel>
 
-                    <Border Grid.Row="1" Padding="10,8" Margin="0,0,0,8"
-                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
-                            CornerRadius="6">
-                        <StackPanel>
-                            <TextBlock Text="{x:Static local:UiText.ReviewScopeLabel}"
-                                       FontWeight="SemiBold" FontSize="12"/>
-                            <TextBlock Text="{x:Static local:UiText.ReviewScopeHint}"
-                                       FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,2,0,7"/>
-                            <WrapPanel>
-                            <Button Content="{x:Static local:UiText.LoadSelection}"
-                                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnLoadReviewSelection_Click"/>
-                            <Button Content="{x:Static local:UiText.LoadParagraphs}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnLoadReviewParagraphs_Click"/>
-                            <Button Content="{x:Static local:UiText.LoadDocument}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnLoadReviewDocument_Click"/>
-                            </WrapPanel>
-                            <TextBlock x:Name="txtReviewScopeStatus"
-                                       Text="{x:Static local:UiText.ReviewScopeNone}"
-                                       FontSize="11" Opacity="0.68" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Border>
+                    <Grid Grid.Row="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Border Grid.Row="2" Padding="10,8" Margin="0,0,0,8"
-                            BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
-                            CornerRadius="6">
-                        <StackPanel>
-                            <TextBlock Text="{x:Static local:UiText.ReviewGenerationLabel}"
-                                       FontWeight="SemiBold" FontSize="12"/>
-                            <WrapPanel Margin="0,6,0,0">
-                            <Button Content="{x:Static local:UiText.GenerateAll}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnGenerateAllSuggestions_Click"/>
-                            <Button Content="{x:Static local:UiText.CancelReviewGeneration}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnCancelReviewGeneration_Click"/>
-                            </WrapPanel>
-                            <Expander Header="{x:Static local:UiText.ReviewBatchActions}" IsExpanded="False" Margin="0,2,0,0">
-                                <WrapPanel Margin="0,7,0,0">
-                            <Button Content="{x:Static local:UiText.AcceptAll}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnAcceptAllSuggestions_Click"/>
-                            <Button Content="{x:Static local:UiText.InsertAll}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnInsertAllSuggestions_Click"/>
-                            <Button Content="{x:Static local:UiText.CommentAll}"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnCommentAllSuggestions_Click"/>
-                            <Button Content="{x:Static local:UiText.SkipAll}"
-                                    Style="{StaticResource MaterialDesignFlatButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnSkipAllSuggestions_Click"/>
-                            <Button Content="{x:Static local:UiText.Clear}"
-                                    Style="{StaticResource MaterialDesignFlatButton}"
-                                    Height="30" FontSize="12" Padding="12,0" Margin="0,0,8,6"
-                                    Click="BtnClearSuggestions_Click"/>
+                        <Border Grid.Column="0" Padding="14,12" Margin="0,0,6,0"
+                                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                                CornerRadius="6">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static local:UiText.ReviewScopeLabel}"
+                                           FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Text="{x:Static local:UiText.ReviewScopeHint}"
+                                           FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                                <WrapPanel>
+                                    <Button Content="{x:Static local:UiText.LoadSelection}"
+                                            Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                            Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                            Click="BtnLoadReviewSelection_Click"/>
+                                    <Button Content="{x:Static local:UiText.LoadParagraphs}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                            Click="BtnLoadReviewParagraphs_Click"/>
+                                    <Button Content="{x:Static local:UiText.LoadDocument}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                            Click="BtnLoadReviewDocument_Click"/>
                                 </WrapPanel>
-                            </Expander>
-                        </StackPanel>
-                    </Border>
+                                <TextBlock x:Name="txtReviewScopeStatus"
+                                           Text="{x:Static local:UiText.ReviewScopeNone}"
+                                           FontSize="11" Opacity="0.68" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
 
-                    <TextBox Grid.Row="3" x:Name="txtReviewInstruction"
+                        <Border Grid.Column="1" Padding="14,12" Margin="6,0,0,0"
+                                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1"
+                                CornerRadius="6">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static local:UiText.ReviewGenerationLabel}"
+                                           FontWeight="SemiBold" FontSize="13"/>
+                                <WrapPanel Margin="0,8,0,0">
+                                    <Button Content="{x:Static local:UiText.GenerateAll}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                            Click="BtnGenerateAllSuggestions_Click"/>
+                                    <Button Content="{x:Static local:UiText.CancelReviewGeneration}"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                            Click="BtnCancelReviewGeneration_Click"/>
+                                </WrapPanel>
+                                <Expander Header="{x:Static local:UiText.ReviewBatchActions}" IsExpanded="False" Margin="0,2,0,0">
+                                    <WrapPanel Margin="0,8,0,0">
+                                        <Button Content="{x:Static local:UiText.AcceptAll}"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                                Click="BtnAcceptAllSuggestions_Click"/>
+                                        <Button Content="{x:Static local:UiText.InsertAll}"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                                Click="BtnInsertAllSuggestions_Click"/>
+                                        <Button Content="{x:Static local:UiText.CommentAll}"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                                Click="BtnCommentAllSuggestions_Click"/>
+                                        <Button Content="{x:Static local:UiText.SkipAll}"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                                Click="BtnSkipAllSuggestions_Click"/>
+                                        <Button Content="{x:Static local:UiText.Clear}"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                                Click="BtnClearSuggestions_Click"/>
+                                    </WrapPanel>
+                                </Expander>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <TextBox Grid.Row="2" x:Name="txtReviewInstruction"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              materialDesign:HintAssist.Hint="{x:Static local:UiText.CustomInstruction}"
                              materialDesign:HintAssist.HelperText="{x:Static local:UiText.CustomInstructionHint}"
                              TextWrapping="Wrap" AcceptsReturn="True"
-                             MinHeight="42" MaxHeight="90"
+                             MinHeight="48" MaxHeight="120"
                              VerticalScrollBarVisibility="Auto"
-                             Margin="0,0,0,8"/>
+                             Margin="0,0,0,12"/>
 
-                    <Expander Grid.Row="4" Header="{x:Static local:UiText.ProfileLabel}" IsExpanded="False" Margin="0,0,0,8">
+                    <Expander Grid.Row="3" Header="{x:Static local:UiText.ProfileLabel}" IsExpanded="False" Margin="0,0,0,12">
                         <StackPanel Margin="0,8,0,0">
                             <TextBlock Text="{x:Static local:UiText.ProfileHint}" FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,0,0,6"/>
                             <TextBox x:Name="txtWritingProfile"
@@ -597,7 +602,7 @@
                     </Expander>
 
                     <!-- The suggestion list occupies the remaining pane height. -->
-                    <Grid Grid.Row="6">
+                    <Grid Grid.Row="4">
                         <TextBlock x:Name="txtSuggestionEmpty"
                                    Text="{x:Static local:UiText.EmptySuggestions}"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"

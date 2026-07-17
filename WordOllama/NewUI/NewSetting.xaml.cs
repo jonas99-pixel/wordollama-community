@@ -95,6 +95,7 @@ namespace WordOllama.NewUI
         private string _addModeProviderType = "OpenAI"; // kept for ServiceProviderComboBox_SelectionChanged
         private IDisposable _settingsDraft;
         private string _lastSavedSettingsSnapshot;
+        private bool _isLoadingSettings;
 
 
         public NewSetting()
@@ -102,11 +103,21 @@ namespace WordOllama.NewUI
             InitializeComponent();
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
             _settingsDraft = AppConfig.BeginDraft();
-            _httpClient = new HttpClient();
-            OllamaModels = new ObservableCollection<OllamaModelInfo>();
-            ChatGPTModels = new ObservableCollection<ChatGPTModelInfo>();
-            InitSkillAndMcp();
-            LoadSettings();
+            _isLoadingSettings = true;
+            try
+            {
+                _httpClient = new HttpClient();
+                OllamaModels = new ObservableCollection<OllamaModelInfo>();
+                ChatGPTModels = new ObservableCollection<ChatGPTModelInfo>();
+                InitSkillAndMcp();
+                LoadSettings();
+            }
+            finally
+            {
+                _isLoadingSettings = false;
+                // Initial control population can raise SelectionChanged events. They are not user edits.
+                _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
+            }
             this.DataContext = this;
             KeyVisable = false;
         }
@@ -148,8 +159,7 @@ namespace WordOllama.NewUI
 
             if (result == MessageBoxResult.Yes)
             {
-                Save_btn_Click(this, new RoutedEventArgs());
-                if (HasUnsavedSettings())
+                if (!SaveSettings())
                 {
                     e.Cancel = true;
                     return;
@@ -1448,11 +1458,19 @@ namespace WordOllama.NewUI
         // 保存
         private void Save_btn_Click(object sender, RoutedEventArgs e)
         {
+            if (SaveSettings())
+            {
+                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.保存成功, 1000);
+            }
+        }
+
+        private bool SaveSettings()
+        {
             ValidationMessage.Text = "";
             if (!ValidateSettings(out string validationError))
             {
                 ValidationMessage.Text = validationError;
-                return;
+                return false;
             }
 
             // 通用
@@ -1519,8 +1537,7 @@ namespace WordOllama.NewUI
             // 在设置窗口草稿期间也立即落盘，但继续保留草稿状态，便于用户继续修改后再次保存或取消。
             AppConfig.SaveNow();
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
-
-            Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.保存成功, 1000);
+            return true;
         }
 
         private bool ValidateSettings(out string message)
@@ -1565,6 +1582,8 @@ namespace WordOllama.NewUI
 
         private void AgentExecutionModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_isLoadingSettings) return;
+
             if (AgentExecutionModeSelector.SelectedItem is ComboBoxItem item)
             {
                 AppConfig.Instance.AgentExecutionMode = item.Tag?.ToString() ?? "TrackedChanges";
@@ -2583,6 +2602,8 @@ namespace WordOllama.NewUI
 
         private void DefaultOutputModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_isLoadingSettings) return;
+
             if (DefaultOutputModeSelector?.SelectedItem is ComboBoxItem item)
                 SharedSettings.DefaultPromptOutputMode = item.Tag?.ToString() ?? "Auto";
         }

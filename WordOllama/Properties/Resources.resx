@@ -1773,13 +1773,13 @@
     <value>生成全部</value>
   </data>
   <data name="I18n_UiProfileLabel" xml:space="preserve">
-    <value>写作 Profile / Story Bible</value>
+    <value>设定/背景</value>
   </data>
   <data name="I18n_UiProfileHint" xml:space="preserve">
     <value>人物名、术语、特殊拼写、语法偏好、风格规则等。优先保存在当前文档同目录，并随审阅提示词一起发送给当前模型。</value>
   </data>
   <data name="I18n_UiSaveProfile" xml:space="preserve">
-    <value>保存 Profile</value>
+    <value>保存写作设定</value>
   </data>
   <data name="I18n_UiAcceptAll" xml:space="preserve"><value>全部接受</value></data>
   <data name="I18n_UiInsertAll" xml:space="preserve"><value>全部插入</value></data>
@@ -2430,7 +2430,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_UiDocumentChangeReview" xml:space="preserve"><value>文档更改审查</value></data>
   <data name="I18n_UiPlanConfirmPrompt" xml:space="preserve"><value>是否确认执行以上计划？</value></data>
   <data name="I18n_UiPlanConfirmTitle" xml:space="preserve"><value>执行计划确认</value></data>
-  <data name="I18n_UiWritingProfileSaved" xml:space="preserve"><value>写作 Profile 已保存到当前文档。</value></data>
+<data name="I18n_UiWritingProfileSaved" xml:space="preserve"><value>写作设定已保存到当前文档。</value></data>
   <data name="I18n_UiOpenDocumentFirst" xml:space="preserve"><value>请先打开一个 Word 文档。</value></data>
   <data name="I18n_UiSelectReviewTextFirst" xml:space="preserve"><value>请先选择需要审阅的文本。</value></data>
   <data name="I18n_UiLoadSelectionFailed" xml:space="preserve"><value>载入选区失败：{0}</value></data>
