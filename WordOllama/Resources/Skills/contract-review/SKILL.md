@@ -22,7 +22,7 @@ metadata:
 2. 逐一检查并修复以下格式问题：
    - **标题层级**：如发现同级标题格式不统一（如“一、定义”和“3.1 违约责任”同级），用 `replace_exact_text` 修正。如果发现完全没有层级，则可以不用修改。
    - **金额格式**：中文大小写不匹配、缺少千分位、缺少币种时，用 `replace_exact_text` 修正或 `add_comment` 提醒。
-3. **必备条款检查**：读取 `references/essential-clauses.md` (如果不存在则按常规法律常识)，检查主体、标的、价款、违约、争议解决等条款。缺失则在文末用 `add_comment` 补充建议。
+3. **必备条款检查**：调用 `read_skill` 并传入 `reference: "references/essential-clauses.md"`，检查主体、标的、价款、违约、争议解决等条款。缺失则在文末用 `add_comment` 补充建议。
 
 ## 第二步：术语一致性检查与修正
 1. 调用 `extract_definitions()` 提取定义术语。
@@ -35,7 +35,7 @@ metadata:
 2. 发现问题即时修正：引用的条款编号不存在（批注提醒）、引用自身（批注提醒）、附件编号错误（直接修正）。
 
 ## 第四步：风险条款标记与修改
-逐项审查，**发现一个处理一个**。若需详细判断标准，可参考 `references/risk-guidelines.md`。
+先调用 `read_skill` 并传入 `reference: "references/risk-guidelines.md"`，再逐项审查，**发现一个处理一个**。
 - **违约金**：超过 30% 必须用 `highlight_risk(text, "yellow", "比例过高")` 标黄；双方不对等需标黄+批注。
 - **知识产权**：未明确归属或未区分背景/前景 IP，用 `add_comment` 建议。
 - **管辖适用**：约定“甲方所在地法院”等模糊表述，或异地管辖对己方不利，用 `highlight_risk` 标黄。

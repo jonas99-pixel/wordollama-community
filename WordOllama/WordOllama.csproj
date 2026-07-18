@@ -27,6 +27,8 @@
     <RootNamespace>WordOllama</RootNamespace>
     <AssemblyName>WordOllama</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>false</GenerateBindingRedirectsOutputType>
     <DefineConstants>VSTO40</DefineConstants>
     <TargetFrameworkProfile />
     <OpenSourceBuild>true</OpenSourceBuild>
@@ -244,13 +246,17 @@
     <Compile Include="lib\MarkdownConverter.cs" />
     <Compile Include="lib\MarkdownToWord.cs" />
     <Compile Include="lib\PromptTemplateService.cs" />
+    <Compile Include="lib\TextDiffService.cs" />
     <Compile Include="lib\SilentLinter.cs" />
     <Compile Include="lib\Tools\DocumentTools.cs" />
+    <Compile Include="lib\Tools\FormattingTools.cs" />
     <Compile Include="lib\Tools\LegalTools.cs" />
     <Compile Include="lib\Tools\AskHumanTool.cs" />
     <Compile Include="lib\Tools\ReadSkillTool.cs" />
     <Compile Include="lib\Tools\ExternalTools.cs" />
     <Compile Include="lib\Tools\InsertImageTool.cs" />
+    <Compile Include="lib\Tools\PageLayoutTools.cs" />
+    <Compile Include="lib\Tools\TableOperations.cs" />
     <Compile Include="lib\IOnlineProvider.cs" />
     <Compile Include="lib\Providers\OpenAIProvider.cs" />
     <Compile Include="lib\Providers\ClaudeProvider.cs" />
@@ -482,7 +488,15 @@
       <WithCulture>false</WithCulture>
       <LogicalName>WordOllama.Resources.updateLog.en.txt</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Skills\contract-review\SKILL.md" />
+    <EmbeddedResource Include="Resources\Skills\contract-review\SKILL.md">
+      <LogicalName>WordOllama.Resources.Skills.contract-review/SKILL.md</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Skills\contract-review\references\essential-clauses.md">
+      <LogicalName>WordOllama.Resources.Skills.contract-review/references/essential-clauses.md</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Skills\contract-review\references\risk-guidelines.md">
+      <LogicalName>WordOllama.Resources.Skills.contract-review/references/risk-guidelines.md</LogicalName>
+    </EmbeddedResource>
     <Page Include="NewUI\TranslatorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

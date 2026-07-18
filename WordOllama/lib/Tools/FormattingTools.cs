@@ -200,15 +200,17 @@ namespace WordOllama.lib.Tools
                 // 加粗
                 if (parameters["bold"] != null)
                 {
-                    font.Bold = parameters["bold"].Value<int>() == 1 ? 1 : 0;
-                    changes.Add(parameters["bold"].Value<bool>() ? AgentToolText.T("I18n_AgentResultBold") : AgentToolText.T("I18n_AgentResultBoldCleared"));
+                    bool enabled = parameters["bold"].Value<bool>();
+                    font.Bold = enabled ? 1 : 0;
+                    changes.Add(enabled ? AgentToolText.T("I18n_AgentResultBold") : AgentToolText.T("I18n_AgentResultBoldCleared"));
                 }
 
                 // 斜体
                 if (parameters["italic"] != null)
                 {
-                    font.Italic = parameters["italic"].Value<int>() == 1 ? 1 : 0;
-                    changes.Add(parameters["italic"].Value<bool>() ? AgentToolText.T("I18n_AgentResultItalic") : AgentToolText.T("I18n_AgentResultItalicCleared"));
+                    bool enabled = parameters["italic"].Value<bool>();
+                    font.Italic = enabled ? 1 : 0;
+                    changes.Add(enabled ? AgentToolText.T("I18n_AgentResultItalic") : AgentToolText.T("I18n_AgentResultItalicCleared"));
                 }
 
                 // 下划线
@@ -320,25 +322,25 @@ namespace WordOllama.lib.Tools
                 Word.Range rng = doc.Range(
                     doc.Paragraphs[startIndex].Range.Start,
                     doc.Paragraphs[Math.Min(endIndex, doc.Paragraphs.Count)].Range.End);
-                Word.WdListType wdType;
+                Word.WdListGalleryType galleryType;
 
                 switch (listType)
                 {
                     case "bullet":
-                        wdType = Word.WdListType.wdListBullet;
+                        galleryType = Word.WdListGalleryType.wdBulletGallery;
                         break;
                     case "number":
-                        wdType = Word.WdListType.wdListSimpleNumbering;
+                        galleryType = Word.WdListGalleryType.wdNumberGallery;
                         break;
                     case "legal":
-                        wdType = Word.WdListType.wdListListNumOnly;
+                        galleryType = Word.WdListGalleryType.wdOutlineNumberGallery;
                         break;
                     default:
                         return AgentToolText.F("I18n_AgentResultUnsupportedListType", listType);
                 }
 
                 rng.ListFormat.ApplyListTemplateWithLevel(
-                    ListTemplate: app.ListGalleries[wdType].ListTemplates[1],
+                    ListTemplate: app.ListGalleries[galleryType].ListTemplates[1],
                     ContinuePreviousList: true,
                     ApplyTo: Word.WdListApplyTo.wdListApplyToWholeList);
 

@@ -37,6 +37,16 @@ namespace WordOllama.lib.Providers
             return await SendGenerateContentAsync(parts, null, temperature, null);
         }
 
+        public async Task<string> GenerateAsync(
+            string prompt,
+            string imageBase64,
+            double? temperature,
+            CancellationToken cancellationToken)
+        {
+            var parts = BuildParts(prompt, imageBase64);
+            return await SendGenerateContentAsync(parts, null, temperature, null, cancellationToken);
+        }
+
         public async Task<string> ChatAsync(List<Dictionary<string, string>> chatHistory, JArray tools = null)
         {
             var contents = ConvertHistory(chatHistory);
@@ -64,10 +74,10 @@ namespace WordOllama.lib.Providers
                 try
                 {
                     string baseUrl = GetBaseUrl();
-                    using (var httpClient = new HttpClient())
+                    using (var httpClient = ProviderRequestPolicy.CreateConnectClient())
                     {
-                        ProviderRequestPolicy.ConfigureConnectClient(httpClient);
-                        string url = $"{baseUrl}/models?key={_apiKey}";
+                        httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-goog-api-key", _apiKey);
+                        string url = $"{baseUrl}/models";
                         var response = await httpClient.GetAsync(url);
                         if (response.IsSuccessStatusCode)
                         {
@@ -199,13 +209,11 @@ namespace WordOllama.lib.Providers
             if (string.IsNullOrWhiteSpace(_apiKey))
                 return "API Key 为空，请输入有效的 API Key";
 
-            string url = GetGenerateUrl() + "?key=" + Uri.EscapeDataString(_apiKey);
+            string url = GetGenerateUrl();
 
-            using (var httpClient = new HttpClient())
+            using (var httpClient = ProviderRequestPolicy.CreateChatClient())
             {
-                ProviderRequestPolicy.ConfigureChatClient(httpClient);
-                ServicePointManager.SecurityProtocol =
-                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-goog-api-key", _apiKey);
 
                 var requestData = new Dictionary<string, object>();
 
@@ -325,6 +333,10 @@ namespace WordOllama.lib.Providers
 
                     return text;
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Gemini API 异常: {ex.Message}");
@@ -363,12 +375,11 @@ namespace WordOllama.lib.Providers
         {
             if (string.IsNullOrWhiteSpace(_apiKey)) return;
 
-            string url = GetStreamUrl() + "&key=" + Uri.EscapeDataString(_apiKey);
+            string url = GetStreamUrl();
 
-            using (var httpClient = new HttpClient())
+            using (var httpClient = ProviderRequestPolicy.CreateChatClient())
             {
-                ServicePointManager.SecurityProtocol =
-                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-goog-api-key", _apiKey);
 
                 var requestData = new Dictionary<string, object>
                 {

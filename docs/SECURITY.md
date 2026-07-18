@@ -18,6 +18,9 @@ Allow reasonable time for triage before public disclosure.
 ## User safety notes
 
 - External Agent tools are disabled by default.
+- Local file search is treated as an external permission. It is limited to the current document directory and WordAgentSkills directories, skips sensitive credential files, and requires approval.
 - Review every external operation approval, especially commands, URLs, and MCP calls.
 - Do not mark an MCP server trusted unless you control and understand it.
+- Legacy SSE message endpoints must remain on the same origin as the configured MCP server so authorization headers are not forwarded elsewhere.
+- Agent recovery checkpoints are encrypted for the current Windows user with DPAPI and are removed when a task exits normally or is cancelled.
 - Never commit API keys, certificates, document samples containing personal data, or local absolute paths.

@@ -102,7 +102,7 @@ namespace WordOllama.lib.Tools
             {
                 // 在文档末尾插入
                 Word.Range rng = doc.Range(doc.Content.End - 1, doc.Content.End - 1);
-                Word.Table table = doc.Tables.Add(rng, rows + 1, columns);
+                Word.Table table = doc.Tables.Add(rng, rows, columns);
                 table.Borders.Enable = 1;
 
                 // 设置表头
@@ -126,7 +126,7 @@ namespace WordOllama.lib.Tools
                 }
 
                 DocumentAgent.FocusOnRange(table.Range, app);
-                return AgentToolText.F("I18n_AgentResultTableInserted", rows + 1, columns);
+                return AgentToolText.F("I18n_AgentResultTableInserted", rows, columns);
             }
             catch (Exception ex)
             {

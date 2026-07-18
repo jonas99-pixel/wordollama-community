@@ -18,6 +18,7 @@ namespace WordOllama
 
     public partial class Ribbon1
     {
+        private bool _handlingCustomPrompt;
         private const int MIN_MINUTES_BETWEEN_CHECKS = 30;
         private static DateTime lastUpdateCheck = DateTime.MinValue;
         private readonly System.Windows.Forms.Timer _notificationTimer = new System.Windows.Forms.Timer();
@@ -90,12 +91,20 @@ namespace WordOllama
 
         private void ComboBox_TextChanged(object sender, RibbonControlEventArgs e)
         {
+            if (_handlingCustomPrompt) return;
             var comboBox = sender as RibbonComboBox;
             if (comboBox != null && !string.IsNullOrEmpty(comboBox.Text))
             {
-                CustomFuncAdv(comboBox.Text);
+                try
+                {
+                    _handlingCustomPrompt = true;
+                    CustomFuncAdv(comboBox.Text);
+                }
+                finally
+                {
+                    _handlingCustomPrompt = false;
+                }
             }
-            LoadCustomPrompts();
         }
 
 
@@ -229,6 +238,8 @@ namespace WordOllama
                     return PromptOutputMode.InsertBelow;
                 case "InsertBelowWithDiff":
                     return PromptOutputMode.InsertBelowWithDiff;
+                case "ReplaceOriginal":
+                    return PromptOutputMode.ReplaceOriginal;
                 case "Comment":
                     return PromptOutputMode.Comment;
                 case "ReviewPane":
@@ -249,6 +260,12 @@ namespace WordOllama
             if (outputMode == PromptOutputMode.InsertBelowWithDiff)
             {
                 Globals.ThisAddIn.InsertTextBelowSelectionWithDiff(selectionRange, result);
+                return;
+            }
+
+            if (outputMode == PromptOutputMode.ReplaceOriginal)
+            {
+                Globals.ThisAddIn.ReplaceTextPrecisely(selectionRange, result);
                 return;
             }
 

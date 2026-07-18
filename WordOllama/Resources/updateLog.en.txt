@@ -1,3 +1,21 @@
+Version V2.1.1 2026/07/18
+
+Changes
+1. Improved long-document reading and paragraph-location performance by reducing Word COM calls and UI stalls.
+2. Added capacity-aware batch generation to Review Workspace, with automatic single-item fallback for models that do not support the batch response format.
+3. Added “Replace original text (precise tracked edits),” which changes only the affected words while preserving unchanged formatting.
+4. Review batches and multi-step Agent writes now manage Track Changes once per task and preserve an already-enabled Track Changes state.
+5. Fixed incorrect unsaved-setting prompts, Save button state, and Close behavior in Settings.
+6. Hardened Agent external capabilities: local-file search is confined to document and Skill directories with sensitive-file filtering, MCP tools require an explicit allowlist, and legacy SSE rejects cross-origin endpoints.
+7. Agent task checkpoints are now encrypted with Windows DPAPI, with migration support for legacy checkpoints.
+8. Fixed duplicate streaming output, cancellation waits, theme-event retention, WebView initialization races, and duplicate document-wide replacement.
+9. Added the missing formatting, page-layout, and table Word Agent tools, and corrected list type, Boolean formatting, and table row behavior.
+10. Fixed built-in Skill parsing for extended front matter and added constrained, on-demand Skill reference loading.
+11. Improved online-provider connection reuse and Gemini API-key transport, and corrected runtime assembly bindings.
+12. Added executable Core and MCP smoke runners covering stdio, Streamable HTTP, and legacy SSE.
+13. Fixed a Settings crash on some .NET Framework environments caused by an incompatible System.Net.Http assembly binding.
+__________________________________________________
+
 Version V2.1.0 2026/07/17
 
 Changes

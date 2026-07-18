@@ -3,11 +3,12 @@
 ## Automated checks
 
 1. Build the current Release output:
-   `MSBuild.exe WordOllama.sln /t:Build /p:Configuration=Release`
+   `MSBuild.exe WordOllama.sln /t:Restore,Build /p:Configuration=Release`
 2. Run `tools/verify-localization.ps1`.
 3. Run `tools/run-core-smoke-test.ps1`.
-4. Run `tools/verify-release.ps1`.
-5. In Advanced Installer, sync files from `WordOllama/bin/Release/`; do not use a stale copied folder.
+4. With Node.js available, run `tools/run-mcp-smoke-test.ps1`.
+5. Run `tools/verify-release.ps1`.
+6. In Advanced Installer, sync files from `WordOllama/bin/Release/`; do not use a stale copied folder.
 
 ## Word host
 

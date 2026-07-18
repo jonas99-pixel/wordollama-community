@@ -17,6 +17,7 @@ namespace WordOllama.lib
 
     public interface ICancellableOnlineProvider
     {
+        Task<string> GenerateAsync(string prompt, string imageBase64, double? temperature, CancellationToken cancellationToken);
         Task<string> ChatAsync(List<Dictionary<string, string>> chatHistory, JArray tools, CancellationToken cancellationToken);
     }
 }

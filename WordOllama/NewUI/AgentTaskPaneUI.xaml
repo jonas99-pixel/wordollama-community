@@ -512,7 +512,7 @@
                                            FontWeight="SemiBold" FontSize="13"/>
                                 <TextBlock Text="{x:Static local:UiText.ReviewScopeHint}"
                                            FontSize="11" Opacity="0.62" TextWrapping="Wrap" Margin="0,4,0,10"/>
-                                <WrapPanel>
+                                <WrapPanel x:Name="reviewScopeActions">
                                     <Button Content="{x:Static local:UiText.LoadSelection}"
                                             Style="{StaticResource MaterialDesignFlatMidBgButton}"
                                             Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
@@ -526,6 +526,10 @@
                                             Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
                                             Click="BtnLoadReviewDocument_Click"/>
                                 </WrapPanel>
+                                <StackPanel x:Name="reviewLoadIndicator" Orientation="Horizontal" Visibility="Collapsed" Margin="0,0,0,4">
+                                    <ProgressBar IsIndeterminate="True" Width="96" Height="4" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Static local:UiText.LoadingReviewScope}" FontSize="11" Opacity="0.72" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
                                 <TextBlock x:Name="txtReviewScopeStatus"
                                            Text="{x:Static local:UiText.ReviewScopeNone}"
                                            FontSize="11" Opacity="0.68" TextWrapping="Wrap" Margin="0,2,0,0"/>
@@ -539,13 +543,14 @@
                                 <TextBlock Text="{x:Static local:UiText.ReviewGenerationLabel}"
                                            FontWeight="SemiBold" FontSize="13"/>
                                 <WrapPanel Margin="0,8,0,0">
-                                    <Button Content="{x:Static local:UiText.GenerateAll}"
+                                    <Button x:Name="btnGenerateAllSuggestions" Content="{x:Static local:UiText.GenerateAll}"
                                             Style="{StaticResource MaterialDesignOutlinedButton}"
                                             Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
                                             Click="BtnGenerateAllSuggestions_Click"/>
-                                    <Button Content="{x:Static local:UiText.CancelReviewGeneration}"
+                                    <Button x:Name="btnCancelReviewGeneration" Content="{x:Static local:UiText.CancelReviewGeneration}"
                                             Style="{StaticResource MaterialDesignOutlinedButton}"
                                             Height="34" FontSize="12" Padding="14,0" Margin="0,0,8,8"
+                                            IsEnabled="False"
                                             Click="BtnCancelReviewGeneration_Click"/>
                                 </WrapPanel>
                                 <Expander Header="{x:Static local:UiText.ReviewBatchActions}" IsExpanded="False" Margin="0,2,0,0">

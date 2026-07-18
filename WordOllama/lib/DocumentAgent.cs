@@ -58,6 +58,8 @@ namespace WordOllama.lib
 
         // [快照对比] 执行前文档快照
         private Dictionary<int, string> _preSnapshot;
+        private bool _trackedChangesBatchStarted;
+        private bool _trackRevisionsEnabledByAgent;
         /// <summary>执行完成后可通过此属性获取变更列表。</summary>
         public List<DiffChange> DiffChanges { get; private set; }
 
@@ -156,6 +158,8 @@ namespace WordOllama.lib
             _useEnglish = string.Equals(resolvedLanguage, "English", StringComparison.OrdinalIgnoreCase);
             AgentToolText.SetCurrentAgentLanguage(resolvedLanguage);
             IsAgentRunning = true;
+            _trackedChangesBatchStarted = false;
+            _trackRevisionsEnabledByAgent = false;
             _supportsToolCalling = !UnsupportedToolCallingProfiles.Contains(GetToolCallingProfileKey());
             try
             {
@@ -186,17 +190,8 @@ namespace WordOllama.lib
                     string selText = _app.Selection.Text?.Trim();
                     if (!string.IsNullOrEmpty(selText) && selText.Length > 2 && selText.Length < 5000)
                     {
-                        // 获取选中区域所在的段落编号
                         int selStart = _app.Selection.Start;
-                        int selParaIndex = 0;
-                        for (int i = 1; i <= _doc.Paragraphs.Count; i++)
-                        {
-                            if (_doc.Paragraphs[i].Range.End >= selStart)
-                            {
-                                selParaIndex = i;
-                                break;
-                            }
-                        }
+                        int selParaIndex = GetParagraphIndexAtPosition(_doc, selStart);
                         string selPreview = selText.Length > 200 ? selText.Substring(0, 200) + "..." : selText;
                         selectionHint = PromptTemplateService.BuildSelectionHint(
                             selParaIndex, selPreview, UseEnglish);
@@ -554,6 +549,7 @@ namespace WordOllama.lib
             }
             finally
             {
+                RestoreTrackedChangesMode();
                 // [Checkpoint] 清理断点（取消/异常情况下也清除，避免残留）
                 ClearCheckpoint();
                 IsAgentRunning = false;
@@ -609,35 +605,17 @@ namespace WordOllama.lib
                 var tool = registeredTool ?? _toolRegistry.GetTool(action);
                 if (tool != null)
                 {
-                    // [OCP] 通过工具自身的 IsWriteOperation 属性判断，而非硬编码集合
                     bool isWriteTool = tool.IsWriteOperation;
-                    bool originalTrackStatus = false;
+                    if (isWriteTool)
+                        EnsureTrackedChangesForTask();
 
-                    try
+                    string result = tool.Execute(parameters, _doc, _app);
+                    if (isWriteTool)
                     {
-                        if (isWriteTool)
-                        {
-                            originalTrackStatus = _doc.TrackRevisions;
-                            _doc.TrackRevisions = true;
-                        }
-
-                        string result = tool.Execute(parameters, _doc, _app);
-
-                        if (isWriteTool)
-                        {
-                            result += AgentToolText.T("I18n_AgentResultTrackedChanges");
-                        }
-
-                        return result;
+                        result += AgentToolText.T("I18n_AgentResultTrackedChanges");
                     }
-                    finally
-                    {
-                        // 恢复修订模式原始状态
-                        if (isWriteTool)
-                        {
-                            _doc.TrackRevisions = originalTrackStatus;
-                        }
-                    }
+
+                    return result;
                 }
 
                 // 兼容：处理 finish 动作（不是工具注册表中的工具）
@@ -651,6 +629,45 @@ namespace WordOllama.lib
             catch (Exception ex)
             {
                 return AgentToolText.F("I18n_AgentResultToolExecutionFailed", action, ex.Message);
+            }
+        }
+
+        private void EnsureTrackedChangesForTask()
+        {
+            if (_trackedChangesBatchStarted || _doc == null) return;
+
+            bool wasEnabled = _doc.TrackRevisions;
+            _trackedChangesBatchStarted = true;
+            _trackRevisionsEnabledByAgent = !wasEnabled;
+            if (_trackRevisionsEnabledByAgent)
+                _doc.TrackRevisions = true;
+        }
+
+        private void RestoreTrackedChangesMode()
+        {
+            if (!_trackedChangesBatchStarted) return;
+
+            Action restore = () =>
+            {
+                if (_trackRevisionsEnabledByAgent && _doc != null)
+                    _doc.TrackRevisions = false;
+            };
+
+            try
+            {
+                if (_mainDispatcher != null && !_mainDispatcher.CheckAccess())
+                    _mainDispatcher.Invoke(restore);
+                else
+                    restore();
+            }
+            catch
+            {
+                // Word may already be closing; shutdown should not be blocked.
+            }
+            finally
+            {
+                _trackedChangesBatchStarted = false;
+                _trackRevisionsEnabledByAgent = false;
             }
         }
 
@@ -676,13 +693,13 @@ namespace WordOllama.lib
                 return false;
 
             ToolEffect required = ToolExecutionPolicy.GetEffects(tool)
-                & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp);
+                & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp | ToolEffect.LocalFileRead);
             if (tool is McpToolWrapper trustedMcp && trustedMcp.IsTrusted)
                 required &= ~ToolEffect.ExternalMcp;
             if (required == ToolEffect.None) return true;
 
             bool english = UseEnglish;
-            foreach (ToolEffect effect in new[] { ToolEffect.LocalProcess, ToolEffect.ExternalNetwork, ToolEffect.ExternalMcp })
+            foreach (ToolEffect effect in new[] { ToolEffect.LocalFileRead, ToolEffect.LocalProcess, ToolEffect.ExternalNetwork, ToolEffect.ExternalMcp })
             {
                 if ((required & effect) == 0) continue;
 
@@ -722,6 +739,13 @@ namespace WordOllama.lib
                 return AgentToolText.F("I18n_AgentExternalOperationPython",
                     parameters?["skill_name"]?.ToString() ?? "",
                     parameters?["script_args"]?.ToString() ?? "");
+            }
+
+            if (tool is GrepTool)
+            {
+                return AgentToolText.F("I18n_AgentExternalOperationGrep",
+                    parameters?["path"]?.ToString() ?? AgentToolText.T("I18n_AgentExternalOperationCurrentDocumentDirectory"),
+                    parameters?["glob"]?.ToString() ?? "*");
             }
 
             if (tool is McpToolWrapper mcp)
@@ -805,13 +829,9 @@ namespace WordOllama.lib
             bool english = UseEnglish;
             int totalParas = doc.Paragraphs.Count;
             if (totalParas == 0) return PromptTemplateService.BuildDocumentSnapshotEmpty(english);
-
-            // 先估算全文长度
-            int totalChars = 0;
-            for (int i = 1; i <= totalParas; i++)
-            {
-                totalChars += (doc.Paragraphs[i].Range.Text ?? "").Length;
-            }
+            string fullText = ReadDocumentText(doc);
+            string[] paragraphs = fullText.Split(new[] { '\r' }, StringSplitOptions.None);
+            int totalChars = fullText.Length;
 
             // 小文档：直接注入全文
             if (totalChars <= 8000)
@@ -819,9 +839,9 @@ namespace WordOllama.lib
                 var sb = new StringBuilder();
                 sb.AppendLine(PromptTemplateService.BuildDocumentSnapshotFullHeader(totalParas, totalChars, english));
                 sb.AppendLine("<document>");
-                for (int i = 1; i <= totalParas; i++)
+                for (int i = 1; i <= totalParas && i <= paragraphs.Length; i++)
                 {
-                    string text = (doc.Paragraphs[i].Range.Text ?? "").TrimEnd('\r', '\a');
+                    string text = paragraphs[i - 1].Trim('\a');
                     if (!string.IsNullOrWhiteSpace(text))
                         sb.AppendLine(PromptTemplateService.FormatSnapshotParagraph(i, text, english));
                 }
@@ -838,11 +858,11 @@ namespace WordOllama.lib
             for (int i = 1; i <= totalParas; i += 10)
             {
                 int chunkEnd = Math.Min(i + 9, totalParas);
-                Word.Range range = doc.Range(
-                    doc.Paragraphs[i].Range.Start,
-                    doc.Paragraphs[chunkEnd].Range.End);
-                string chunkText = (range.Text ?? "").TrimEnd('\r', '\a');
-                string firstLine = chunkText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "";
+                string firstLine = paragraphs
+                    .Skip(i - 1)
+                    .Take(chunkEnd - i + 1)
+                    .Select(text => (text ?? "").Trim('\a'))
+                    .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text)) ?? "";
                 string summary = firstLine.Length > 60 ? firstLine.Substring(0, 60) + "..." : firstLine;
                 if (string.IsNullOrWhiteSpace(summary)) summary = PromptTemplateService.BuildDocumentSnapshotEmptyParagraph(english);
                 map.AppendLine(PromptTemplateService.FormatSnapshotOutlineEntry(i, chunkEnd, summary, english));
@@ -850,6 +870,43 @@ namespace WordOllama.lib
             map.AppendLine("</outline>");
             map.AppendLine(PromptTemplateService.BuildDocumentSnapshotOutlineNotice(english));
             return map.ToString();
+        }
+
+        private static string ReadDocumentText(Word.Document doc)
+        {
+            Word.Range contentRange = null;
+            try
+            {
+                contentRange = doc.Content;
+                return contentRange.Text ?? "";
+            }
+            finally
+            {
+                ComHelper.ReleaseCom(ref contentRange);
+            }
+        }
+
+        private static int GetParagraphIndexAtPosition(Word.Document doc, int position)
+        {
+            Word.Range contentRange = null;
+            Word.Range prefixRange = null;
+            try
+            {
+                contentRange = doc.Content;
+                int start = contentRange.Start;
+                int end = Math.Max(start, Math.Min(position, contentRange.End));
+                prefixRange = doc.Range(start, end);
+                return Math.Max(1, prefixRange.Paragraphs.Count);
+            }
+            catch
+            {
+                return 1;
+            }
+            finally
+            {
+                ComHelper.ReleaseCom(ref prefixRange);
+                ComHelper.ReleaseCom(ref contentRange);
+            }
         }
 
         /// <summary>
@@ -1148,7 +1205,7 @@ namespace WordOllama.lib
         internal void AskHumanQuestion(string question)
         {
             _pendingQuestion = question;
-            _pendingResponse = new TaskCompletionSource<string>();
+            _pendingResponse = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
             ReportStatus(AgentToolText.T("I18n_AgentStatusAwaitingInput"), WorkflowState.WaitingForUser);
             QuestionAsked?.Invoke(question);
         }
@@ -1158,10 +1215,16 @@ namespace WordOllama.lib
         /// </summary>
         public void SetUserResponse(string response)
         {
-            var tcs = _pendingResponse;
-            _pendingResponse = null;
+            var tcs = Interlocked.Exchange(ref _pendingResponse, null);
             _pendingQuestion = null;
             tcs?.TrySetResult(response ?? AgentToolText.T("I18n_AgentResultNoUserAnswer"));
+        }
+
+        public void CancelPendingInteractions()
+        {
+            _pendingQuestion = null;
+            Interlocked.Exchange(ref _pendingResponse, null)?.TrySetCanceled();
+            Interlocked.Exchange(ref _planConfirmation, null)?.TrySetCanceled();
         }
 
         /// <summary>
@@ -1235,11 +1298,20 @@ namespace WordOllama.lib
             Log(AgentToolText.F("I18n_AgentLogPlan", _currentPlan));
 
             // 触发计划展示事件，等待用户确认
-            _planConfirmation = new TaskCompletionSource<bool>();
+            var confirmation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _planConfirmation = confirmation;
             PlanReady?.Invoke(_currentPlan);
 
             // 挂起等待用户确认或拒绝
-            bool confirmed = await _planConfirmation.Task;
+            bool confirmed;
+            try
+            {
+                confirmed = await confirmation.Task;
+            }
+            finally
+            {
+                Interlocked.CompareExchange(ref _planConfirmation, null, confirmation);
+            }
             _ct.ThrowIfCancellationRequested();
 
             if (confirmed)
@@ -1334,9 +1406,12 @@ namespace WordOllama.lib
             var snapshot = new Dictionary<int, string>();
             try
             {
-                for (int i = 1; i <= _doc.Paragraphs.Count; i++)
+                string[] paragraphs = ReadDocumentText(_doc)
+                    .Split(new[] { '\r' }, StringSplitOptions.None);
+                int paragraphCount = Math.Min(_doc.Paragraphs.Count, paragraphs.Length);
+                for (int i = 1; i <= paragraphCount; i++)
                 {
-                    string text = (_doc.Paragraphs[i].Range.Text ?? "").TrimEnd('\r', '\a');
+                    string text = paragraphs[i - 1].Trim('\a');
                     if (!string.IsNullOrWhiteSpace(text))
                         snapshot[i] = text;
                 }
@@ -1481,13 +1556,21 @@ namespace WordOllama.lib
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WordOllama");
             try { Directory.CreateDirectory(dir); } catch { }
-            return Path.Combine(dir, "agent_checkpoint.json");
+            return Path.Combine(dir, "agent_checkpoint.dat");
+        }
+
+        private static string GetLegacyCheckpointPath()
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "WordOllama",
+                "agent_checkpoint.json");
         }
 
         /// <summary>检查是否存在可恢复的断点。</summary>
         public static bool HasCheckpoint()
         {
-            return File.Exists(GetCheckpointPath());
+            return File.Exists(GetCheckpointPath()) || File.Exists(GetLegacyCheckpointPath());
         }
 
         /// <summary>加载断点数据到当前 Agent 实例，返回原始用户需求。</summary>
@@ -1496,10 +1579,14 @@ namespace WordOllama.lib
             requirement = null;
             try
             {
-                string path = GetCheckpointPath();
+                string protectedPath = GetCheckpointPath();
+                string legacyPath = GetLegacyCheckpointPath();
+                string path = File.Exists(protectedPath) ? protectedPath : legacyPath;
                 if (!File.Exists(path)) return false;
 
-                string json = File.ReadAllText(path);
+                string stored = File.ReadAllText(path);
+                string json = SecretProtector.UnprotectOrLegacy(stored);
+                if (string.IsNullOrWhiteSpace(json)) return false;
                 var cp = JsonConvert.DeserializeObject<AgentCheckpoint>(json);
                 if (cp?.ChatHistory == null || cp.ChatHistory.Count == 0) return false;
 
@@ -1512,6 +1599,11 @@ namespace WordOllama.lib
                         _completedMilestones.Add(m);
 
                 requirement = cp.UserRequirement ?? "";
+                if (string.Equals(path, legacyPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    WriteProtectedCheckpoint(cp);
+                    try { File.Delete(legacyPath); } catch { }
+                }
                 return true;
             }
             catch
@@ -1532,10 +1624,15 @@ namespace WordOllama.lib
                     UserRequirement = requirement,
                     SavedAt = DateTime.Now
                 };
-                string json = JsonConvert.SerializeObject(cp, Formatting.Indented);
-                File.WriteAllText(GetCheckpointPath(), json);
+                WriteProtectedCheckpoint(cp);
             }
             catch { /* 断点保存失败不应影响主流程 */ }
+        }
+
+        private static void WriteProtectedCheckpoint(AgentCheckpoint checkpoint)
+        {
+            string json = JsonConvert.SerializeObject(checkpoint, Formatting.None);
+            File.WriteAllText(GetCheckpointPath(), SecretProtector.Protect(json));
         }
 
         private void ClearCheckpoint()
@@ -1545,6 +1642,9 @@ namespace WordOllama.lib
                 string path = GetCheckpointPath();
                 if (File.Exists(path))
                     File.Delete(path);
+                string legacyPath = GetLegacyCheckpointPath();
+                if (File.Exists(legacyPath))
+                    File.Delete(legacyPath);
             }
             catch { }
         }

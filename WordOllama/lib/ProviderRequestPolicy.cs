@@ -18,6 +18,8 @@ namespace WordOllama.lib
 
     public static class ProviderRequestPolicy
     {
+        private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+
         public static TimeSpan ChatTimeout => TimeSpan.FromSeconds(Math.Max(30, AppConfig.Instance?.ProviderTimeoutSeconds ?? 120));
         public static TimeSpan ConnectTimeout => TimeSpan.FromSeconds(Math.Max(5, AppConfig.Instance?.ProviderConnectTimeoutSeconds ?? 15));
 
@@ -29,6 +31,24 @@ namespace WordOllama.lib
         public static void ConfigureConnectClient(HttpClient client)
         {
             client.Timeout = ConnectTimeout;
+        }
+
+        public static HttpClient CreateChatClient()
+        {
+            return CreateClient(ChatTimeout);
+        }
+
+        public static HttpClient CreateConnectClient()
+        {
+            return CreateClient(ConnectTimeout);
+        }
+
+        public static HttpClient CreateClient(TimeSpan timeout)
+        {
+            return new HttpClient(SharedHandler, disposeHandler: false)
+            {
+                Timeout = timeout
+            };
         }
 
         public static ProviderCapabilityProfile GetDefaultCapabilities(string providerType)

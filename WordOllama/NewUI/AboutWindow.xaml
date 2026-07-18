@@ -65,7 +65,7 @@
 
             <!-- OK Button -->
             <Button Grid.Row="3"
-                    Content="{local:Loc I18n_Ok}"
+                    Content="{local:Loc I18n_OK}"
                     HorizontalAlignment="Center"
                     Width="100" Height="34"
                     Margin="0,24,0,0"

@@ -33,9 +33,10 @@ namespace WordOllama.lib.Tools
         public JObject ParameterSchema => new JObject
         {
             ["type"] = "object",
-            ["properties"] = new JObject
-            {
-                ["skill_name"] = new JObject { ["type"] = "string" }
+                ["properties"] = new JObject
+                {
+                ["skill_name"] = new JObject { ["type"] = "string" },
+                ["reference"] = new JObject { ["type"] = "string" }
             },
             ["required"] = new JArray("skill_name")
         };
@@ -45,7 +46,10 @@ namespace WordOllama.lib.Tools
             string skillName = parameters["skill_name"]?.ToString()?.Trim() ?? "";
             if (string.IsNullOrEmpty(skillName))
                 return AgentToolText.T("I18n_AgentResultSkillNameRequired");
-            return _skillManager.GetSkillInstructions(skillName);
+            string reference = parameters["reference"]?.ToString()?.Trim();
+            return string.IsNullOrWhiteSpace(reference)
+                ? _skillManager.GetSkillInstructions(skillName)
+                : _skillManager.GetSkillReference(skillName, reference);
         }
     }
 }

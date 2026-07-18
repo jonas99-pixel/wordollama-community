@@ -18,6 +18,7 @@ using WordOllama.Forms;
 using Word = Microsoft.Office.Interop.Word;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace WordOllama.NewUI
 {
@@ -39,6 +40,13 @@ namespace WordOllama.NewUI
         private string _pendingImageBase64;
         private readonly SkillManager _skillManager = new SkillManager();
         private int _selectedCommandIndex = -1;
+        private const int ReviewBatchMaxItems = 8;
+        private const int ReviewBatchMaxCharacters = 6000;
+        private const int ReviewMinimumParagraphCharacters = 20;
+        private const int ReviewMergedParagraphMaxCharacters = 2000;
+        private const int ReviewMaxConcurrentRequests = 3;
+        private bool _themeSubscribed;
+        private bool _isLoadingReviewScope;
 
         // ========== 图片粘贴 ==========
         /// <summary>用户粘贴的图片 Base64 数据（发送前暂存）。</summary>
@@ -49,6 +57,14 @@ namespace WordOllama.NewUI
         private string _bufferedThought = null;
         private string _bufferedAction = null;
         private readonly bool _reviewOnly;
+
+        private sealed class ReviewParagraphUnit
+        {
+            public int ParagraphIndex { get; set; }
+            public int Start { get; set; }
+            public int End { get; set; }
+            public string Text { get; set; }
+        }
 
         public AgentTaskPaneUI() : this(reviewOnly: false)
         {
@@ -76,7 +92,28 @@ namespace WordOllama.NewUI
             RefreshAgentApiDocumentation();
 
             ApplyTheme();
-            ThemeManager.ThemeChanged += (_, _) => ApplyTheme();
+            Loaded += AgentTaskPaneUI_Loaded;
+            Unloaded += AgentTaskPaneUI_Unloaded;
+        }
+
+        private void AgentTaskPaneUI_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_themeSubscribed) return;
+            ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+            _themeSubscribed = true;
+            ApplyTheme();
+        }
+
+        private void AgentTaskPaneUI_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (!_themeSubscribed) return;
+            ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+            _themeSubscribed = false;
+        }
+
+        private void ThemeManager_ThemeChanged(object sender, EventArgs e)
+        {
+            ApplyTheme();
         }
 
         private void ConfigurePanelMode()
@@ -505,8 +542,9 @@ namespace WordOllama.NewUI
                     _stepCounter = 0;
                     _bufferedThought = null;
                     _bufferedAction = null;
-                    _agent = null;
+                    _agent?.CancelPendingInteractions();
                     _cts?.Cancel();
+                    _agent = null;
                     _pendingRequirement = null;
                     _pendingImageBase64 = null;
                     _isWaitingForResponse = false;
@@ -591,7 +629,7 @@ namespace WordOllama.NewUI
             if (_isRunning)
             {
                 // 取消当前任务并释放可能挂起的 TCS
-                _agent?.SetUserResponse(UiText.T("I18n_UiUserInterrupted"));
+                _agent?.CancelPendingInteractions();
                 _isWaitingForResponse = false;
                 _cts?.Cancel();
 
@@ -820,7 +858,7 @@ namespace WordOllama.NewUI
                 {
                     AddAgentBubble(Properties.Resources.Agent_Cancelled);
                 });
-                _agent?.SetUserResponse(UiText.T("I18n_UiUserCancelled"));
+                _agent?.CancelPendingInteractions();
             }
             catch (Exception ex)
             {
@@ -1010,7 +1048,7 @@ namespace WordOllama.NewUI
         private void BtnCancelTask_Click(object sender, RoutedEventArgs e)
         {
             _isWaitingForResponse = false;
-            _agent?.SetUserResponse(UiText.T("I18n_UiUserCancelled"));
+            _agent?.CancelPendingInteractions();
             _cts?.Cancel();
             btnCancelTask.IsEnabled = false;
         }
@@ -1105,9 +1143,9 @@ namespace WordOllama.NewUI
             LoadCurrentParagraphForReview();
         }
 
-        private void BtnLoadReviewDocument_Click(object sender, RoutedEventArgs e)
+        private async void BtnLoadReviewDocument_Click(object sender, RoutedEventArgs e)
         {
-            LoadDocumentForReview();
+            await LoadDocumentForReviewAsync();
         }
 
         private void BtnClearSuggestions_Click(object sender, RoutedEventArgs e)
@@ -1142,8 +1180,26 @@ namespace WordOllama.NewUI
             }
             catch (Exception ex)
             {
+                SetReviewScopeStatus(UiText.F("I18n_UiLoadSelectionFailed", ex.Message));
                 MessageBox.Show(UiText.F("I18n_UiLoadSelectionFailed", ex.Message),
                     UiText.ReviewTab, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task LoadDocumentForReviewAsync()
+        {
+            if (_isLoadingReviewScope) return;
+
+            SetReviewScopeLoading(true);
+            try
+            {
+                // Let WPF paint the loading state before Word enumerates a large document.
+                await Dispatcher.Yield(DispatcherPriority.Background);
+                LoadDocumentForReview();
+            }
+            finally
+            {
+                SetReviewScopeLoading(false);
             }
         }
 
@@ -1165,6 +1221,7 @@ namespace WordOllama.NewUI
             }
             catch (Exception ex)
             {
+                SetReviewScopeStatus(UiText.F("I18n_UiLoadSelectionFailed", ex.Message));
                 MessageBox.Show(UiText.F("I18n_UiLoadSelectionFailed", ex.Message),
                     UiText.ReviewTab, MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -1206,20 +1263,100 @@ namespace WordOllama.NewUI
             DeleteSuggestionBookmarks(doc);
             int index = 1;
 
-            if (splitParagraphs && reviewRange.Paragraphs.Count > 1)
+            int paragraphCount = reviewRange.Paragraphs.Count;
+            if (splitParagraphs && paragraphCount > 1)
             {
+                int paragraphIndex = FindParagraphIndexByRange(doc, reviewRange);
+                bool createBookmarks = paragraphCount <= 200;
+                var paragraphUnits = new List<ReviewParagraphUnit>();
                 foreach (Word.Paragraph paragraph in reviewRange.Paragraphs)
                 {
-                    Word.Range range = paragraph.Range.Duplicate;
-                    string text = EditSuggestionSession.NormalizeWordText(range.Text);
-                    if (string.IsNullOrWhiteSpace(text)) continue;
+                    Word.Paragraph paragraphToRelease = paragraph;
+                    Word.Range range = null;
+                    try
+                    {
+                        range = paragraph.Range.Duplicate;
+                        string text = EditSuggestionSession.NormalizeWordText(range.Text);
+                        if (!string.IsNullOrWhiteSpace(text))
+                        {
+                            paragraphUnits.Add(new ReviewParagraphUnit
+                            {
+                                ParagraphIndex = paragraphIndex,
+                                Start = range.Start,
+                                End = range.End,
+                                Text = text
+                            });
+                        }
+                    }
+                    finally
+                    {
+                        ComHelper.ReleaseCom(ref range);
+                        ComHelper.ReleaseCom(ref paragraphToRelease);
+                    }
+                    paragraphIndex++;
+                }
 
-                    _editSuggestions.Add(CreateSuggestionSession(doc, range, text, index++));
+                // Keep short paragraphs, but review them with the following paragraph so
+                // headings and sentence fragments have enough context for the model.
+                for (int unitIndex = 0; unitIndex < paragraphUnits.Count;)
+                {
+                    int firstIndex = unitIndex;
+                    int lastIndex = unitIndex;
+                    int mergedCharacters = paragraphUnits[firstIndex].Text.Length;
+                    if (mergedCharacters < ReviewMinimumParagraphCharacters && lastIndex + 1 < paragraphUnits.Count)
+                    {
+                        while (lastIndex + 1 < paragraphUnits.Count
+                            && (lastIndex == firstIndex
+                                || mergedCharacters + paragraphUnits[lastIndex + 1].Text.Length + 1 <= ReviewMergedParagraphMaxCharacters))
+                        {
+                            lastIndex++;
+                            mergedCharacters += paragraphUnits[lastIndex].Text.Length + 1;
+                            if (mergedCharacters >= ReviewMinimumParagraphCharacters)
+                                break;
+                        }
+                    }
+
+                    Word.Range mergedRange = null;
+                    try
+                    {
+                        mergedRange = doc.Range(
+                            paragraphUnits[firstIndex].Start,
+                            paragraphUnits[lastIndex].End);
+                        string mergedText = EditSuggestionSession.NormalizeWordText(mergedRange.Text);
+                        _editSuggestions.Add(CreateSuggestionSession(
+                            doc,
+                            mergedRange,
+                            mergedText,
+                            index++,
+                            paragraphUnits[firstIndex].ParagraphIndex,
+                            createBookmarks));
+                    }
+                    finally
+                    {
+                        ComHelper.ReleaseCom(ref mergedRange);
+                    }
+
+                    unitIndex = lastIndex + 1;
                 }
             }
             else
             {
-                _editSuggestions.Add(CreateSuggestionSession(doc, reviewRange.Duplicate, selectedText, index));
+                Word.Range range = null;
+                try
+                {
+                    range = reviewRange.Duplicate;
+                    _editSuggestions.Add(CreateSuggestionSession(
+                        doc,
+                        range,
+                        selectedText,
+                        index,
+                        FindParagraphIndexByRange(doc, reviewRange),
+                        createBookmark: true));
+                }
+                finally
+                {
+                    ComHelper.ReleaseCom(ref range);
+                }
             }
 
             UpdateSuggestionEmptyState();
@@ -1233,29 +1370,68 @@ namespace WordOllama.NewUI
                 txtReviewScopeStatus.Text = message ?? "";
         }
 
-        private EditSuggestionSession CreateSuggestionSession(Word.Document doc, Word.Range range, string text, int index)
+        private void SetReviewScopeLoading(bool isLoading)
+        {
+            _isLoadingReviewScope = isLoading;
+            if (reviewLoadIndicator != null)
+                reviewLoadIndicator.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+            if (reviewScopeActions != null)
+                reviewScopeActions.IsEnabled = !isLoading;
+            if (isLoading)
+                SetReviewScopeStatus(UiText.LoadingReviewScope);
+        }
+
+        public void ShowExternalNotification(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.BeginInvoke(new Action(() => ShowExternalNotification(message)));
+                return;
+            }
+
+            statusBarCard.Visibility = Visibility.Visible;
+            UpdateStatusIcon(true);
+            lblStatus.Text = message;
+        }
+
+        private EditSuggestionSession CreateSuggestionSession(
+            Word.Document doc,
+            Word.Range range,
+            string text,
+            int index,
+            int paragraphIndex,
+            bool createBookmark)
         {
             var session = new EditSuggestionSession
             {
                 Index = index,
-                ParagraphIndex = FindParagraphIndexByRange(doc, range),
+                ParagraphIndex = paragraphIndex,
                 RangeStart = range.Start,
                 RangeEnd = range.End,
                 OriginalText = text,
                 OriginalHash = EditSuggestionSession.Hash(text),
-                OriginalEndsWithParagraphMark = (range.Text ?? "").EndsWith("\r", StringComparison.Ordinal),
                 Status = UiText.T("I18n_UiReady")
             };
+            if (!createBookmark)
+                return session;
+
             session.BookmarkName = "WO_SUG_" + session.Id.Substring(0, 32);
+            Word.Range bookmarkRange = null;
             try
             {
                 if (doc.Bookmarks.Exists(session.BookmarkName))
                     doc.Bookmarks[session.BookmarkName].Delete();
-                doc.Bookmarks.Add(session.BookmarkName, range.Duplicate);
+                bookmarkRange = range.Duplicate;
+                doc.Bookmarks.Add(session.BookmarkName, bookmarkRange);
             }
             catch
             {
                 session.BookmarkName = null;
+            }
+            finally
+            {
+                ComHelper.ReleaseCom(ref bookmarkRange);
             }
             return session;
         }
@@ -1282,22 +1458,201 @@ namespace WordOllama.NewUI
         private async Task GenerateAllSuggestionsAsync()
         {
             var generationCts = StartReviewGeneration();
+            var batches = CreateReviewBatches(_editSuggestions.ToList()).ToList();
             try
             {
-                foreach (var session in _editSuggestions.ToList())
+                statusBarCard.Visibility = Visibility.Visible;
+                UpdateStatusIcon(true);
+                lblStatus.Text = UiText.T("I18n_UiGeneratingReviewSuggestion");
+                lblIteration.Text = batches.Count > 0 ? $"0/{batches.Count}" : "";
+
+                using (var requestGate = new SemaphoreSlim(ReviewMaxConcurrentRequests))
                 {
-                    generationCts.Token.ThrowIfCancellationRequested();
-                    await GenerateSuggestionAsync(session, generationCts.Token);
+                    int completedBatches = 0;
+                    var tasks = batches.Select(async batch =>
+                    {
+                        bool enteredGate = false;
+                        try
+                        {
+                            await requestGate.WaitAsync(generationCts.Token);
+                            enteredGate = true;
+                            generationCts.Token.ThrowIfCancellationRequested();
+                            if (batch.Count == 1)
+                                await GenerateSuggestionAsync(batch[0], generationCts.Token, manageStatusBar: false);
+                            else
+                                await GenerateSuggestionBatchAsync(batch, generationCts.Token);
+
+                            int completed = Interlocked.Increment(ref completedBatches);
+                            lblIteration.Text = $"{completed}/{batches.Count}";
+                        }
+                        finally
+                        {
+                            if (enteredGate)
+                                requestGate.Release();
+                        }
+                    }).ToList();
+
+                    await Task.WhenAll(tasks);
                 }
             }
             catch (OperationCanceledException)
             {
-                AddAgentBubble(UiText.T("I18n_UiReviewQueueCancelled"), ChatMessageType.System);
+                if (IsCurrentReviewGeneration(generationCts.Token))
+                    AddAgentBubble(UiText.T("I18n_UiReviewQueueCancelled"), ChatMessageType.System);
             }
             finally
             {
+                if (IsCurrentReviewGeneration(generationCts.Token))
+                {
+                    statusBarCard.Visibility = Visibility.Collapsed;
+                    typingIndicator.Visibility = Visibility.Collapsed;
+                }
                 CompleteReviewGeneration(generationCts);
             }
+        }
+
+        private static IEnumerable<List<EditSuggestionSession>> CreateReviewBatches(
+            IEnumerable<EditSuggestionSession> sessions)
+        {
+            var sessionList = (sessions ?? Enumerable.Empty<EditSuggestionSession>()).ToList();
+            int configuredMaxTokens = string.Equals(SharedSettings.AIMode, "Ollama", StringComparison.OrdinalIgnoreCase)
+                ? SharedSettings.OllamaMaxToken
+                : SharedSettings.ChatGPTMaxToken;
+            bool containsCjk = sessionList.Any(session => ContainsCjk(session?.OriginalText));
+            int outputAwareLimit = containsCjk
+                ? configuredMaxTokens * 3 / 4
+                : configuredMaxTokens * 3;
+            int batchCharacterLimit = Math.Max(600, Math.Min(ReviewBatchMaxCharacters, outputAwareLimit));
+            var batch = new List<EditSuggestionSession>();
+            int batchCharacters = 0;
+
+            foreach (EditSuggestionSession session in sessionList)
+            {
+                int itemCharacters = (session?.OriginalText ?? "").Length;
+                if (batch.Count > 0 &&
+                    (batch.Count >= ReviewBatchMaxItems || batchCharacters + itemCharacters > batchCharacterLimit))
+                {
+                    yield return batch;
+                    batch = new List<EditSuggestionSession>();
+                    batchCharacters = 0;
+                }
+
+                batch.Add(session);
+                batchCharacters += itemCharacters;
+            }
+
+            if (batch.Count > 0)
+                yield return batch;
+        }
+
+        private static bool ContainsCjk(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+            return text.Any(character =>
+                (character >= '\u3400' && character <= '\u4dbf') ||
+                (character >= '\u4e00' && character <= '\u9fff') ||
+                (character >= '\uf900' && character <= '\ufaff'));
+        }
+
+        private async Task GenerateSuggestionBatchAsync(
+            List<EditSuggestionSession> batch,
+            CancellationToken cancellationToken)
+        {
+            foreach (EditSuggestionSession session in batch)
+            {
+                session.IsBusy = true;
+                session.Status = UiText.T("I18n_UiGenerating");
+            }
+
+            var unresolved = new List<EditSuggestionSession>();
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                string instruction = txtReviewInstruction.Text?.Trim();
+                if (string.IsNullOrWhiteSpace(instruction))
+                    instruction = UiText.DefaultReviewInstruction;
+                string profile = txtWritingProfile.Text?.Trim();
+                var items = batch.Select(session =>
+                    new KeyValuePair<string, string>(session.Index.ToString(), session.OriginalText));
+                string prompt = PromptTemplateService.BuildReviewSuggestionBatchPrompt(items, instruction, profile);
+                string result = await Globals.ThisAddIn.GenerateModelSeletor(
+                    prompt,
+                    cancellationToken: cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                Dictionary<string, string> suggestions = ParseReviewSuggestionBatch(result);
+                foreach (EditSuggestionSession session in batch)
+                {
+                    if (suggestions.TryGetValue(session.Index.ToString(), out string suggestion))
+                    {
+                        session.SuggestedText = CleanModelSuggestion(suggestion);
+                        session.Status = string.IsNullOrWhiteSpace(session.SuggestedText)
+                            ? UiText.T("I18n_UiNoOutput")
+                            : UiText.T("I18n_UiGenerated");
+                    }
+                    else
+                    {
+                        unresolved.Add(session);
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                foreach (EditSuggestionSession session in batch)
+                    session.Status = UiText.T("I18n_UiReady");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                foreach (EditSuggestionSession session in batch)
+                    session.Status = UiText.T("I18n_UiGenerationFailed");
+                MessageBox.Show(UiText.F("I18n_UiGenerateSuggestionFailed", ex.Message),
+                    UiText.ReviewTab, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                foreach (EditSuggestionSession session in batch)
+                    session.IsBusy = false;
+                UpdateSuggestionEmptyState();
+            }
+
+            // Some local models do not reliably return JSON. Retry only the unresolved
+            // items with the proven single-item prompt instead of discarding the batch.
+            foreach (EditSuggestionSession session in unresolved)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await GenerateSuggestionAsync(session, cancellationToken, manageStatusBar: false);
+            }
+        }
+
+        private static Dictionary<string, string> ParseReviewSuggestionBatch(string raw)
+        {
+            var suggestions = new Dictionary<string, string>(StringComparer.Ordinal);
+            if (string.IsNullOrWhiteSpace(raw)) return suggestions;
+
+            int start = raw.IndexOf('[');
+            int end = raw.LastIndexOf(']');
+            if (start < 0 || end <= start) return suggestions;
+
+            try
+            {
+                var array = JArray.Parse(raw.Substring(start, end - start + 1));
+                foreach (JObject item in array.OfType<JObject>())
+                {
+                    string id = item["id"]?.ToString();
+                    string text = item["text"]?.ToString()
+                        ?? item["revised_text"]?.ToString()
+                        ?? item["suggestion"]?.ToString();
+                    if (!string.IsNullOrWhiteSpace(id) && text != null)
+                        suggestions[id] = text;
+                }
+            }
+            catch
+            {
+                // The caller falls back to the single-item generation path.
+            }
+
+            return suggestions;
         }
 
         private CancellationTokenSource StartReviewGeneration()
@@ -1306,13 +1661,18 @@ namespace WordOllama.NewUI
             var current = new CancellationTokenSource();
             _reviewCts = current;
             previous?.Cancel();
+            SetReviewGenerationUi(isRunning: true);
             return current;
         }
 
         private void CompleteReviewGeneration(CancellationTokenSource completed)
         {
-            if (ReferenceEquals(_reviewCts, completed))
+            bool isCurrent = ReferenceEquals(_reviewCts, completed);
+            if (isCurrent)
+            {
                 _reviewCts = null;
+                SetReviewGenerationUi(isRunning: false);
+            }
             completed.Dispose();
         }
 
@@ -1323,7 +1683,18 @@ namespace WordOllama.NewUI
 
         private void BtnCancelReviewGeneration_Click(object sender, RoutedEventArgs e)
         {
-            _reviewCts?.Cancel();
+            var generationCts = _reviewCts;
+            if (generationCts == null) return;
+            generationCts.Cancel();
+            SetReviewGenerationUi(isRunning: false);
+        }
+
+        private void SetReviewGenerationUi(bool isRunning)
+        {
+            if (btnGenerateAllSuggestions != null)
+                btnGenerateAllSuggestions.IsEnabled = !isRunning;
+            if (btnCancelReviewGeneration != null)
+                btnCancelReviewGeneration.IsEnabled = isRunning;
         }
 
         private void BtnAcceptAllSuggestions_Click(object sender, RoutedEventArgs e)
@@ -1351,14 +1722,41 @@ namespace WordOllama.NewUI
 
         private void ApplyAllSuggestions(string mode)
         {
-            foreach (var session in _editSuggestions.ToList())
+            var app = Globals.ThisAddIn.Application;
+            var doc = app?.ActiveDocument;
+            if (doc == null) return;
+
+            bool requiresTrackedChanges = mode == "replace" || mode == "insert";
+            bool enabledTrackRevisions = requiresTrackedChanges && !doc.TrackRevisions;
+            bool originalScreenUpdating = app.ScreenUpdating;
+            try
             {
-                if (session.HasSuggestion)
-                    ApplySuggestion(session, mode);
+                if (enabledTrackRevisions)
+                    doc.TrackRevisions = true;
+                app.ScreenUpdating = false;
+
+                // Work from the end of the document so earlier offsets and paragraph
+                // locations stay stable while a whole review batch is applied.
+                foreach (var session in _editSuggestions
+                    .Where(item => item.HasSuggestion)
+                    .OrderByDescending(item => item.RangeStart)
+                    .ToList())
+                {
+                    ApplySuggestion(session, mode, manageTrackRevisions: false);
+                }
+            }
+            finally
+            {
+                app.ScreenUpdating = originalScreenUpdating;
+                if (enabledTrackRevisions)
+                    doc.TrackRevisions = false;
             }
         }
 
-        private async Task GenerateSuggestionAsync(EditSuggestionSession session, CancellationToken cancellationToken)
+        private async Task GenerateSuggestionAsync(
+            EditSuggestionSession session,
+            CancellationToken cancellationToken,
+            bool manageStatusBar = true)
         {
             if (session == null || session.IsBusy) return;
             try
@@ -1366,11 +1764,16 @@ namespace WordOllama.NewUI
                 cancellationToken.ThrowIfCancellationRequested();
                 session.IsBusy = true;
                 session.Status = UiText.T("I18n_UiGenerating");
-                statusBarCard.Visibility = Visibility.Visible;
-                UpdateStatusIcon(true);
-                lblStatus.Text = UiText.T("I18n_UiGeneratingReviewSuggestion");
+                if (manageStatusBar)
+                {
+                    statusBarCard.Visibility = Visibility.Visible;
+                    UpdateStatusIcon(true);
+                    lblStatus.Text = UiText.T("I18n_UiGeneratingReviewSuggestion");
+                }
 
-                string result = await Globals.ThisAddIn.GenerateModelSeletor(BuildSuggestionPrompt(session));
+                string result = await Globals.ThisAddIn.GenerateModelSeletor(
+                    BuildSuggestionPrompt(session),
+                    cancellationToken: cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 session.SuggestedText = CleanModelSuggestion(result);
                 session.Status = string.IsNullOrWhiteSpace(session.SuggestedText)
@@ -1391,7 +1794,7 @@ namespace WordOllama.NewUI
             finally
             {
                 session.IsBusy = false;
-                if (IsCurrentReviewGeneration(cancellationToken))
+                if (manageStatusBar && IsCurrentReviewGeneration(cancellationToken))
                 {
                     statusBarCard.Visibility = Visibility.Collapsed;
                     typingIndicator.Visibility = Visibility.Collapsed;
@@ -1474,7 +1877,10 @@ namespace WordOllama.NewUI
             catch { }
         }
 
-        private void ApplySuggestion(EditSuggestionSession session, string mode)
+        private void ApplySuggestion(
+            EditSuggestionSession session,
+            string mode,
+            bool manageTrackRevisions = true)
         {
             if (session == null || string.IsNullOrWhiteSpace(session.SuggestedText))
             {
@@ -1497,14 +1903,17 @@ namespace WordOllama.NewUI
 
                 if (mode == "replace")
                 {
-                    ReplaceRangeWithSuggestion(range, session);
+                    ReplaceRangeWithSuggestion(range, session, manageTrackRevisions);
                     session.Status = UiText.T("I18n_UiReplaced");
                     DeleteSuggestionBookmark(session);
                     _editSuggestions.Remove(session);
                 }
                 else if (mode == "insert")
                 {
-                    Globals.ThisAddIn.InsertTextBelowSelection(range.Duplicate, session.SuggestedText);
+                    Globals.ThisAddIn.InsertTextBelowSelection(
+                        range.Duplicate,
+                        session.SuggestedText,
+                        manageTrackRevisions);
                     session.Status = UiText.T("I18n_UiInserted");
                 }
                 else if (mode == "comment")
@@ -1606,23 +2015,16 @@ namespace WordOllama.NewUI
             return result == MessageBoxResult.Yes;
         }
 
-        private void ReplaceRangeWithSuggestion(Word.Range range, EditSuggestionSession session)
+        private void ReplaceRangeWithSuggestion(
+            Word.Range range,
+            EditSuggestionSession session,
+            bool manageTrackRevisions)
         {
-            var doc = range.Document;
-            bool originalTrack = doc.TrackRevisions;
-            try
-            {
-                doc.TrackRevisions = true;
-                string text = session.SuggestedText ?? "";
-                if (session.OriginalEndsWithParagraphMark && !text.EndsWith("\r", StringComparison.Ordinal))
-                    text += "\r";
-                range.Text = text;
-                DocumentAgent.FocusOnRange(range, Globals.ThisAddIn.Application);
-            }
-            finally
-            {
-                doc.TrackRevisions = originalTrack;
-            }
+            Globals.ThisAddIn.ReplaceTextPrecisely(
+                range,
+                session.SuggestedText ?? "",
+                manageTrackRevisions);
+            DocumentAgent.FocusOnRange(range, Globals.ThisAddIn.Application);
         }
 
         private void UpdateSuggestionEmptyState()
@@ -2064,13 +2466,22 @@ namespace WordOllama.NewUI
         private int FindParagraphIndexByRange(Word.Document doc, Word.Range targetRange)
         {
             if (doc == null || targetRange == null) return 1;
-            int start = targetRange.Start;
-            for (int i = 1; i <= doc.Paragraphs.Count; i++)
+            Word.Range contentRange = null;
+            Word.Range prefixRange = null;
+            try
             {
-                if (doc.Paragraphs[i].Range.End >= start)
-                    return i;
+                contentRange = doc.Content;
+                int start = contentRange.Start;
+                int targetStart = Math.Max(start, Math.Min(targetRange.Start, contentRange.End));
+                prefixRange = doc.Range(start, targetStart);
+                return Math.Max(1, prefixRange.Paragraphs.Count);
             }
-            return 1;
+            catch { return 1; }
+            finally
+            {
+                ComHelper.ReleaseCom(ref prefixRange);
+                ComHelper.ReleaseCom(ref contentRange);
+            }
         }
 
         // ========== 图片粘贴处理 ==========

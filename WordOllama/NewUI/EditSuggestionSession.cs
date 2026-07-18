@@ -13,7 +13,6 @@ namespace WordOllama.NewUI
         public int ParagraphIndex { get; set; }
         public int RangeStart { get; set; }
         public int RangeEnd { get; set; }
-        public bool OriginalEndsWithParagraphMark { get; set; }
         public string OriginalHash { get; set; }
 
         private string _originalText;

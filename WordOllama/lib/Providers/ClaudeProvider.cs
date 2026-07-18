@@ -38,6 +38,16 @@ namespace WordOllama.lib.Providers
             return await SendRequestAsync(messages, null, temperature);
         }
 
+        public async Task<string> GenerateAsync(
+            string prompt,
+            string imageBase64,
+            double? temperature,
+            CancellationToken cancellationToken)
+        {
+            var messages = BuildMessages(prompt, imageBase64);
+            return await SendRequestAsync(messages, null, temperature, cancellationToken);
+        }
+
         public async Task<string> ChatAsync(List<Dictionary<string, string>> chatHistory, JArray tools = null)
         {
             var messages = ConvertHistory(chatHistory);
@@ -143,11 +153,8 @@ namespace WordOllama.lib.Providers
             if (string.IsNullOrWhiteSpace(_apiKey))
                 return "API Key 为空，请输入有效的 API Key";
 
-            using (var httpClient = new HttpClient())
+            using (var httpClient = ProviderRequestPolicy.CreateChatClient())
             {
-                ProviderRequestPolicy.ConfigureChatClient(httpClient);
-                ServicePointManager.SecurityProtocol =
-                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
                 httpClient.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
                 if (_authScheme == "x-api-key")
@@ -262,6 +269,10 @@ namespace WordOllama.lib.Providers
 
                     return text;
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Claude API 异常: {ex.Message}");
@@ -296,10 +307,8 @@ namespace WordOllama.lib.Providers
         {
             string endpoint = NormalizeEndpoint();
 
-            using (var httpClient = new HttpClient())
+            using (var httpClient = ProviderRequestPolicy.CreateChatClient())
             {
-                ServicePointManager.SecurityProtocol =
-                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
                 httpClient.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
                 if (_authScheme == "x-api-key")

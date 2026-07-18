@@ -34,10 +34,13 @@ internal static class McpManagerSmokeTest
             string workingDirectory = Path.GetDirectoryName(commandPath);
             await manager.AddServerAsync(
                 "测试 server",
+                McpTransportKind.Stdio,
                 commandPath,
                 "",
                 workingDirectory,
-                new Dictionary<string, string> { ["WORDOLLAMA_MCP_SMOKE"] = "ok" });
+                new Dictionary<string, string> { ["WORDOLLAMA_MCP_SMOKE"] = "ok" },
+                null,
+                new[] { "echo", "second_tool", "env_probe" });
             if (manager.ServerCount != 1 || manager.ToolCount != 3)
             {
                 Console.Error.WriteLine($"FAIL: expected 1 server and 3 tools, found {manager.ServerCount}/{manager.ToolCount}.");
@@ -62,9 +65,9 @@ internal static class McpManagerSmokeTest
             }
 
             var destructiveWrapper = new McpToolWrapper(manager.GetDiscoveredTools()[1], manager);
-            if (ToolExecutionPolicy.GetEffects(destructiveWrapper) != ToolEffect.ExternalMcp)
+            if (!destructiveWrapper.IsWriteOperation)
             {
-                Console.Error.WriteLine("FAIL: MCP wrapper was not classified as an external MCP effect.");
+                Console.Error.WriteLine("FAIL: destructive MCP annotation was not mapped to write operation.");
                 return 6;
             }
         }

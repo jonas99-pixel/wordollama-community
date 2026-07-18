@@ -39,6 +39,15 @@ namespace WordOllama.lib.Providers
             return await CommonChatRequestAsync(prompt, imageBase64, null, null, temperature);
         }
 
+        public async Task<string> GenerateAsync(
+            string prompt,
+            string imageBase64,
+            double? temperature,
+            CancellationToken cancellationToken)
+        {
+            return await CommonChatRequestAsync(prompt, imageBase64, null, null, temperature, cancellationToken);
+        }
+
         public async Task<string> ChatAsync(List<Dictionary<string, string>> chatHistory, JArray tools = null)
         {
             return await CommonChatRequestAsync(null, null, chatHistory, tools);
@@ -59,12 +68,10 @@ namespace WordOllama.lib.Providers
             var models = new List<string>();
             try
             {
-                using (var httpClient = new HttpClient())
+                using (var httpClient = ProviderRequestPolicy.CreateConnectClient())
                 {
                     if (!string.IsNullOrEmpty(_apiKey))
                         httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _apiKey);
-                    ProviderRequestPolicy.ConfigureConnectClient(httpClient);
-
                     string baseUrl = GetBaseUrl(_endpoint);
                     string modelsUrl = baseUrl.TrimEnd('/') + "/models";
 
@@ -150,11 +157,8 @@ namespace WordOllama.lib.Providers
                 return "服务地址格式错误，请输入有效的URL";
             }
 
-            using (HttpClient httpClient = new HttpClient())
+            using (HttpClient httpClient = ProviderRequestPolicy.CreateChatClient())
             {
-                ProviderRequestPolicy.ConfigureChatClient(httpClient);
-                ServicePointManager.SecurityProtocol =
-                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _apiKey);
                 if (_endpoint.IndexOf(".openai.azure.com", StringComparison.OrdinalIgnoreCase) >= 0)
                     httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);
@@ -307,6 +311,10 @@ namespace WordOllama.lib.Providers
                         return HandleErrorResponse(response, responseBody);
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
                 catch (Exception ex) when (hadImage)
                 {
                     DocumentAgent.PendingImageBase64 = null;
@@ -323,10 +331,8 @@ namespace WordOllama.lib.Providers
 
         private async Task ChatGPTStreamAsync(string userPrompt, Action<string> processChunk)
         {
-            using (HttpClient httpClient = new HttpClient())
+            using (HttpClient httpClient = ProviderRequestPolicy.CreateChatClient())
             {
-                ServicePointManager.SecurityProtocol =
-                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _apiKey);
                 if (_endpoint.IndexOf(".openai.azure.com", StringComparison.OrdinalIgnoreCase) >= 0)
                     httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);

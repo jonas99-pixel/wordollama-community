@@ -557,48 +557,57 @@ namespace WordOllama.lib.Tools
 
             try
             {
-                Word.Range rng = doc.Range();
-                rng.Find.ClearFormatting();
-                rng.Find.Text = findText;
-                rng.Find.Replacement.ClearFormatting();
-                rng.Find.Replacement.Text = replaceText;
-                rng.Find.MatchCase = matchCase;
-                rng.Find.MatchWholeWord = false;
-                rng.Find.Forward = true;
-                rng.Find.Wrap = Word.WdFindWrap.wdFindContinue;
-
                 int count = 0;
-                rng.Find.Execute(Replace: Word.WdReplace.wdReplaceAll);
-                // 通过文档变更次数估算替换数量较困难，改用逐次 Find 计数
-                // 简单方案：执行替换后用另一种方式估算
-                // 先尝试用 wdReplaceAll 快速执行
-                object replaceAll = Word.WdReplace.wdReplaceAll;
-                object missing = System.Type.Missing;
-                rng.Find.Execute(
-                    FindText: findText,
-                    MatchCase: matchCase,
-                    MatchWholeWord: false,
-                    MatchWildcards: false,
-                    MatchSoundsLike: false,
-                    MatchAllWordForms: false,
-                    Forward: true,
-                    Wrap: Word.WdFindWrap.wdFindContinue,
-                    Format: false,
-                    ReplaceWith: replaceText,
-                    Replace: replaceAll);
-
-                // 替换后重新搜索计数
-                Word.Range countRange = doc.Range();
-                countRange.Find.ClearFormatting();
-                countRange.Find.Text = replaceText;
-                countRange.Find.MatchCase = matchCase;
-                countRange.Find.Forward = true;
-                while (countRange.Find.Execute())
+                Word.Range countRange = null;
+                Word.Range replaceRange = null;
+                Word.Range startRange = null;
+                try
                 {
-                    count++;
+                    countRange = doc.Range();
+                    int searchEnd = countRange.End;
+                    countRange.Find.ClearFormatting();
+                    countRange.Find.Text = findText;
+                    countRange.Find.MatchCase = matchCase;
+                    countRange.Find.MatchWholeWord = false;
+                    countRange.Find.Forward = true;
+                    countRange.Find.Wrap = Word.WdFindWrap.wdFindStop;
+                    while (countRange.Find.Execute())
+                    {
+                        count++;
+                        int nextStart = countRange.End;
+                        if (nextStart >= searchEnd) break;
+                        countRange.SetRange(nextStart, searchEnd);
+                    }
+
+                    if (count > 0)
+                    {
+                        replaceRange = doc.Range();
+                        replaceRange.Find.ClearFormatting();
+                        replaceRange.Find.Replacement.ClearFormatting();
+                        replaceRange.Find.Execute(
+                            FindText: findText,
+                            MatchCase: matchCase,
+                            MatchWholeWord: false,
+                            MatchWildcards: false,
+                            MatchSoundsLike: false,
+                            MatchAllWordForms: false,
+                            Forward: true,
+                            Wrap: Word.WdFindWrap.wdFindContinue,
+                            Format: false,
+                            ReplaceWith: replaceText,
+                            Replace: Word.WdReplace.wdReplaceAll);
+                    }
+
+                    startRange = doc.Range(0, 0);
+                    DocumentAgent.FocusOnRange(startRange, app);
+                }
+                finally
+                {
+                    ComHelper.ReleaseCom(ref startRange);
+                    ComHelper.ReleaseCom(ref replaceRange);
+                    ComHelper.ReleaseCom(ref countRange);
                 }
 
-                DocumentAgent.FocusOnRange(doc.Range(0, 0), app);
                 return AgentToolText.F("I18n_AgentResultFindReplaceCompleted", findText, replaceText, count);
             }
             catch (Exception ex)

@@ -11,7 +11,8 @@ namespace WordOllama.lib
         DocumentWrite = 2,
         ExternalNetwork = 4,
         LocalProcess = 8,
-        ExternalMcp = 16
+        ExternalMcp = 16,
+        LocalFileRead = 32
     }
 
     public enum AgentExecutionMode
@@ -36,6 +37,8 @@ namespace WordOllama.lib
                 return ToolEffect.ExternalNetwork;
             if (tool is McpToolWrapper)
                 return ToolEffect.ExternalMcp;
+            if (tool is GrepTool)
+                return ToolEffect.DocumentRead | ToolEffect.LocalFileRead;
 
             return tool.IsWriteOperation ? ToolEffect.DocumentWrite : ToolEffect.DocumentRead;
         }
@@ -48,7 +51,7 @@ namespace WordOllama.lib
         public static bool RequiresExternalToolPermission(IAgentTool tool)
         {
             if (tool == null) return false;
-            return (GetEffects(tool) & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp)) != 0;
+            return (GetEffects(tool) & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp | ToolEffect.LocalFileRead)) != 0;
         }
 
         public static AgentExecutionMode ParseMode(string value)
@@ -70,6 +73,7 @@ namespace WordOllama.lib
             if ((effects & ToolEffect.ExternalNetwork) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectExternalNetwork"));
             if ((effects & ToolEffect.LocalProcess) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectLocalProcess"));
             if ((effects & ToolEffect.ExternalMcp) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectExternalMcp"));
+            if ((effects & ToolEffect.LocalFileRead) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectLocalFileRead"));
             return string.Join(english ? ", " : "、", parts);
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace WordOllama.lib
 {
@@ -23,14 +24,15 @@ namespace WordOllama.lib
     {
         InsertBelow,
         InsertBelowWithDiff,
+        ReplaceOriginal,
         Comment,
         ReviewPane
     }
 
     public static class PromptTemplateService
     {
-        private const int ReviewPaneCharacterThreshold = 1200;
-        private const int ReviewPaneParagraphThreshold = 2;
+        private const int ReviewPaneCharacterThreshold = 4000;
+        private const int ReviewPaneParagraphThreshold = 8;
 
         public static string BuildPrompt(
             PromptTaskType taskType,
@@ -503,6 +505,7 @@ If the user's task closely matches an extended skill, **you MUST use read_skill 
 
 ## Important Rules
 - When performing write operations (insert, replace, highlight), the system automatically enables Track Changes mode. All modifications will be marked as revisions.
+- For a focused wording change, prefer replace_exact_text over replace_paragraph so unchanged text and formatting remain untouched.
 - Observe each step's results carefully and adjust subsequent operations accordingly.
 - **Do not call the same tool repeatedly**: get_doc_overview only needs to be called once. If the document is empty, use insert_text_at_end directly.
 - **Failure retry strategy**: If you encounter [execution exception] or [error], read the error message carefully, modify params, and retry. Do not blindly repeat the same attempt.
@@ -547,6 +550,7 @@ If the task is completed, set action to ""finish"" and done to true."
 
 ## 重要规则
 - 执行""写""操作（insert、replace、highlight）时，系统会自动开启修订模式，所有改动会被标记为修订。
+- 局部字词修改优先使用 replace_exact_text，不要整段调用 replace_paragraph，以保留未变化的文字和格式。
 - 请仔细观察每一步的结果，根据实际情况调整后续操作。
 - **不要重复调用同一工具**：get_doc_overview 只需调用一次。如果文档为空，直接用 insert_text_at_end 插入内容。
 - **失败重试策略**：如果遇到[执行异常]或[错误]，请认真阅读错误信息，修改 params 后再试，不要盲目重复相同的尝试。
@@ -757,6 +761,39 @@ If the task is completed, set action to ""finish"" and done to true."
             sb.AppendLine();
             sb.AppendLine("Text to revise:");
             sb.AppendLine(originalText ?? "");
+            return sb.ToString();
+        }
+
+        public static string BuildReviewSuggestionBatchPrompt(
+            IEnumerable<KeyValuePair<string, string>> items,
+            string instruction,
+            string writingProfile)
+        {
+            var payload = new JArray((items ?? Enumerable.Empty<KeyValuePair<string, string>>())
+                .Select(item => new JObject
+                {
+                    ["id"] = item.Key,
+                    ["text"] = item.Value ?? ""
+                }));
+
+            var sb = new StringBuilder();
+            sb.AppendLine("You are a careful writing editor working inside Microsoft Word.");
+            sb.AppendLine("Revise every input item independently and return only a valid JSON array.");
+            sb.AppendLine("Each output item must contain the unchanged id and the revised text: {\"id\":\"1\",\"text\":\"...\"}.");
+            sb.AppendLine("Return exactly one output item for every input item, in the same order. Do not add markdown, explanations, alternatives, or extra fields.");
+            sb.AppendLine("Preserve meaning, paragraph structure, proper nouns, numbers, citations, unusual spellings, and character voice unless the instruction says otherwise.");
+            if (!string.IsNullOrWhiteSpace(writingProfile))
+            {
+                sb.AppendLine();
+                sb.AppendLine("Writing profile / story bible:");
+                sb.AppendLine(writingProfile.Trim());
+            }
+            sb.AppendLine();
+            sb.AppendLine("Editing instruction:");
+            sb.AppendLine(instruction ?? "");
+            sb.AppendLine();
+            sb.AppendLine("Input JSON:");
+            sb.AppendLine(payload.ToString(Newtonsoft.Json.Formatting.None));
             return sb.ToString();
         }
 

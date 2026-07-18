@@ -80,7 +80,10 @@ namespace WordOllama.lib
                 WorkingDirectory = workingDirectory,
                 EnvironmentVariables = environmentVariables,
                 Headers = httpHeaders,
-                EnabledToolNames = enabledToolNames?.ToList(),
+                EnabledToolNames = enabledToolNames?
+                    .Where(name => !string.IsNullOrWhiteSpace(name))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList() ?? new List<string>(),
                 Trusted = trusted
             };
             _serverSpecs[serverName] = spec;
@@ -102,12 +105,9 @@ namespace WordOllama.lib
                 LastError = bridge.LastError;
                 LastErrorCategory = bridge.LastErrorCategory;
                 _discoveredTools.AddRange(tools);
-                if (enabledToolNames != null)
-                {
-                    _enabledToolsByServer[serverName] = new HashSet<string>(
-                        enabledToolNames.Where(name => !string.IsNullOrWhiteSpace(name)),
-                        StringComparer.OrdinalIgnoreCase);
-                }
+                _enabledToolsByServer[serverName] = new HashSet<string>(
+                    spec.EnabledToolNames,
+                    StringComparer.OrdinalIgnoreCase);
                 Debug.WriteLine($"MCP: 已连接 {serverName}，发现 {tools.Count} 个工具");
             }
             else
@@ -128,8 +128,8 @@ namespace WordOllama.lib
         public List<McpToolDefinition> GetEnabledTools()
         {
             return _discoveredTools.Where(tool =>
-                !_enabledToolsByServer.TryGetValue(tool.ServerName, out var enabled)
-                || enabled.Contains(tool.Name)).ToList();
+                _enabledToolsByServer.TryGetValue(tool.ServerName, out var enabled)
+                && enabled.Contains(tool.Name)).ToList();
         }
 
         public bool IsServerTrusted(string serverName) => _trustedServers.Contains(serverName ?? "");
@@ -394,8 +394,16 @@ namespace WordOllama.lib
         // Claude Code 风格命名: mcp__serverName__toolName
         public string Name => BuildSafeToolName(_def.ServerName, _def.Name);
         public string Description => AgentToolText.F("I18n_AgentToolDescMcp", _def.Description, _def.ServerName);
-        // MCP annotations are informational only. Every MCP call receives a separate runtime permission check.
-        public bool IsWriteOperation => false;
+        // Runtime approval is still required; annotations additionally inform planning and audit UI.
+        public bool IsWriteOperation
+        {
+            get
+            {
+                bool destructive = _def.Annotations?["destructiveHint"]?.Value<bool?>() == true;
+                bool explicitlyNotReadOnly = _def.Annotations?["readOnlyHint"]?.Value<bool?>() == false;
+                return destructive || explicitlyNotReadOnly;
+            }
+        }
         public bool IsConcurrencySafe => false;
         public bool IsTrusted => _manager.IsServerTrusted(_def.ServerName);
         public string ServerName => _def.ServerName;

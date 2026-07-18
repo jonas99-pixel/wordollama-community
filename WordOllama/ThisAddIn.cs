@@ -182,6 +182,20 @@ namespace WordOllama
             }
         }
 
+        public void ShowAgentNotification(string message)
+        {
+            if (SharedSettings.SuppressAgentNotifications || string.IsNullOrWhiteSpace(message))
+                return;
+
+            foreach (Microsoft.Office.Tools.CustomTaskPane ctp in this.CustomTaskPanes)
+            {
+                if (ctp.Control is NewUI.AgentTaskPane agentPane)
+                    agentPane.Panel.ShowExternalNotification(message);
+                else if (ctp.Control is NewUI.ReviewTaskPane reviewPane)
+                    reviewPane.Panel.ShowExternalNotification(message);
+            }
+        }
+
         private const int DefaultAgentPaneWidth = 900;
         private const int MinAgentPaneWidth = 420;
         private const int MaxAgentPaneWidth = 900;
@@ -325,38 +339,34 @@ namespace WordOllama
         /// <param name="selectionRange">文本范围</param>
         /// <param name="text">插入的文本内容</param>
         /// 
-        public void InsertTextBelowSelection(Word.Range selectionRange, string text)
+        public void InsertTextBelowSelection(Word.Range selectionRange, string text, bool manageTrackRevisions = true)
         {
-            // 获取当前文档对象
             Word.Document document = selectionRange.Document;
-
-            bool OrginTrackRevisions = document.TrackRevisions;
+            bool enabledTrackRevisions = manageTrackRevisions && !document.TrackRevisions;
 
             try
             {
-                document.TrackRevisions = true;
+                if (enabledTrackRevisions)
+                    document.TrackRevisions = true;
                 selectionRange.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
                 selectionRange.InsertParagraphAfter();
                 selectionRange.InsertAfter(text + "\n");
             }
             finally
             {
-                document.TrackRevisions = OrginTrackRevisions;
+                if (enabledTrackRevisions)
+                    document.TrackRevisions = false;
             }
         }
 
-        public void InsertTextBelowSelectionWithDiff(Word.Range selectionRange, string newText)
+        public void InsertTextBelowSelectionWithDiff(Word.Range selectionRange, string newText, bool manageTrackRevisions = true)
         {
+            Word.Document document = selectionRange.Document;
+            bool enabledTrackRevisions = manageTrackRevisions && !document.TrackRevisions;
             try
             {
-                // 获取当前文档对象
-                Word.Document document = selectionRange.Document;
-
-                // 保存当前的修订模式状态
-                bool originalTrackRevisions = document.TrackRevisions;
-
-                // 启用修订模式
-                document.TrackRevisions = true;
+                if (enabledTrackRevisions)
+                    document.TrackRevisions = true;
 
                 // 获取原文
                 string originalText = selectionRange.Text.Trim();
@@ -424,12 +434,59 @@ namespace WordOllama
                     }
                 }
 
-                // 恢复原始的修订模式状态
-                document.TrackRevisions = originalTrackRevisions;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(WordOllama.Properties.Resources.遇到错误 + ex.Message);
+            }
+            finally
+            {
+                if (enabledTrackRevisions)
+                    document.TrackRevisions = false;
+            }
+        }
+
+        /// <summary>
+        /// Applies only changed character spans, preserving unchanged Word formatting and
+        /// producing focused tracked revisions instead of replacing the whole paragraph.
+        /// </summary>
+        public void ReplaceTextPrecisely(Word.Range sourceRange, string revisedText, bool manageTrackRevisions = true)
+        {
+            if (sourceRange == null) throw new ArgumentNullException(nameof(sourceRange));
+
+            Word.Document document = sourceRange.Document;
+            string originalText = sourceRange.Text ?? "";
+            string targetText = TextDiffService.PreserveStructuralSuffix(originalText, revisedText);
+            var edits = TextDiffService.CreateEdits(originalText, targetText);
+            if (edits.Count == 0) return;
+
+            bool enabledTrackRevisions = manageTrackRevisions && !document.TrackRevisions;
+            int rangeStart = sourceRange.Start;
+            try
+            {
+                if (enabledTrackRevisions)
+                    document.TrackRevisions = true;
+
+                for (int i = edits.Count - 1; i >= 0; i--)
+                {
+                    TextEdit edit = edits[i];
+                    Word.Range editRange = null;
+                    try
+                    {
+                        int editStart = rangeStart + edit.OriginalStart;
+                        editRange = document.Range(editStart, editStart + edit.DeleteLength);
+                        editRange.Text = edit.InsertText ?? "";
+                    }
+                    finally
+                    {
+                        ComHelper.ReleaseCom(ref editRange);
+                    }
+                }
+            }
+            finally
+            {
+                if (enabledTrackRevisions)
+                    document.TrackRevisions = false;
             }
         }
         public async Task GenerateAndInsertTextBelowSelection(Word.Range selectionRange, string prompt)
@@ -448,24 +505,49 @@ namespace WordOllama
                 selectionRange.InsertParagraphAfter();
                 selectionRange.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
 
-                // 创建一个 StringBuilder 来累积文本
-                StringBuilder textBuilder = new StringBuilder();
+                var pendingText = new StringBuilder();
+                var pendingLock = new object();
+                var dispatcher = System.Windows.Application.Current?.Dispatcher
+                    ?? System.Windows.Threading.Dispatcher.FromThread(Thread.CurrentThread);
 
-                // 定义处理每个文本块的操作
-                Action<string> processChunk = async (chunk) =>
+                Action<string> processChunk = chunk =>
                 {
-                    // 将文本块追加到 StringBuilder 中
-                    textBuilder.Append(chunk);
-                    // 异步插入文本块
-                    await Task.Run(() =>
+                    if (string.IsNullOrEmpty(chunk)) return;
+                    lock (pendingLock)
                     {
-                        selectionRange.InsertAfter(chunk);  // 插入文本到文档
-                        selectionRange.Collapse(Word.WdCollapseDirection.wdCollapseEnd);  // 将光标移到插入后的末尾
-                    });
+                        pendingText.Append(chunk);
+                    }
                 };
 
-                // 使用 GenerateModelSeletorStream 生成文本
-                await GenerateModelSeletorStream(prompt, processChunk);
+                Action flushPendingText = () =>
+                {
+                    string text;
+                    lock (pendingLock)
+                    {
+                        if (pendingText.Length == 0) return;
+                        text = pendingText.ToString();
+                        pendingText.Clear();
+                    }
+
+                    Action insert = () =>
+                    {
+                        selectionRange.InsertAfter(text);
+                        selectionRange.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
+                    };
+                    if (dispatcher != null && !dispatcher.CheckAccess())
+                        dispatcher.Invoke(insert);
+                    else
+                        insert();
+                };
+
+                Task streamTask = GenerateModelSeletorStream(prompt, processChunk);
+                while (!streamTask.IsCompleted)
+                {
+                    await Task.WhenAny(streamTask, Task.Delay(120));
+                    flushPendingText();
+                }
+                await streamTask;
+                flushPendingText();
 
                 // 在生成的文本后插入换行
                 selectionRange.InsertAfter("\n");
@@ -645,11 +727,20 @@ namespace WordOllama
             return markdown;
         }
 
-        public async Task<String> GenerateModelSeletor(string inputPrompt, string imageBase64 = null, string SPMode = null, bool requireJsonOutput = false)
+        public async Task<String> GenerateModelSeletor(
+            string inputPrompt,
+            string imageBase64 = null,
+            string SPMode = null,
+            bool requireJsonOutput = false,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI工作中;
             if (!DocumentAgent.IsAgentRunning)
+            {
                 Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
+                ShowAgentNotification(WordOllama.Properties.Resources.AI开始工作了请稍等);
+            }
             string responseLanguage = PromptTemplateService.ResolveLanguage(
                 AppConfig.Instance.LanguageMode,
                 inputPrompt);
@@ -676,14 +767,19 @@ namespace WordOllama
                     if (AppConfig.Instance.AIMode == "Ollama")
                     {
 
-                        string response = await OllamaFunctions.OllamaGenerateAsync(inputPrompt, imageBase64);
+                        string response = await OllamaFunctions.OllamaGenerateAsync(
+                            inputPrompt,
+                            imageBase64,
+                            cancellationToken);
                         return response;
                     }
                     else
                     {
                         bool requestJsonOutput = requireJsonOutput && ProviderRequestPolicy.GetActiveCapabilities().SupportsJsonOutput;
                         var provider = ProviderFactory.CreateFromConfig(requestJsonOutput);
-                        string response = await provider.GenerateAsync(inputPrompt, imageBase64);
+                        string response = provider is ICancellableOnlineProvider cancellable
+                            ? await cancellable.GenerateAsync(inputPrompt, imageBase64, null, cancellationToken)
+                            : await provider.GenerateAsync(inputPrompt, imageBase64);
                         return response;
                     }
                 }
@@ -694,11 +790,19 @@ namespace WordOllama
                     string modelName = SPMode == "IMG" ? SharedSettings.IMGModel : SharedSettings.HTMLModel;
 
                     var openAIProvider = new OpenAIProvider(endpoint, apiKey, modelName);
-                    string response = await openAIProvider.GenerateAsync(inputPrompt, imageBase64);
+                    string response = await openAIProvider.GenerateAsync(
+                        inputPrompt,
+                        imageBase64,
+                        null,
+                        cancellationToken);
                     return response;
 
                 }
                 
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -844,11 +948,11 @@ namespace WordOllama
                     var cts = new CancellationTokenSource();
                     try
                     {
-                        await foreach (var chunk in OllamaFunctions.OllamaStreamAsync(inputPrompt, processChunk, cts.Token))
+                        await foreach (var chunk in OllamaFunctions.OllamaStreamAsync(inputPrompt, cts.Token))
                         {
                             try
                             {
-                                    processChunk(chunk.ToString()); 
+                                processChunk(chunk);
                             }
                             catch (OperationCanceledException)
                             {

@@ -81,6 +81,7 @@
                             <ComboBoxItem Content="{local:Loc I18n_OutputModeAuto}" Tag="Auto"/>
                             <ComboBoxItem Content="{local:Loc I18n_OutputModeInsertBelow}" Tag="InsertBelow"/>
                             <ComboBoxItem Content="{local:Loc I18n_OutputModeInsertWithDiff}" Tag="InsertBelowWithDiff"/>
+                            <ComboBoxItem Content="{local:Loc I18n_OutputModeReplaceOriginal}" Tag="ReplaceOriginal"/>
                             <ComboBoxItem Content="{local:Loc I18n_OutputModeComment}" Tag="Comment"/>
                             <ComboBoxItem Content="{local:Loc I18n_OutputModeReviewPane}" Tag="ReviewPane"/>
                         </ComboBox>
@@ -958,15 +959,17 @@
                        TextWrapping="Wrap"
                        MaxWidth="680"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="{local:Loc I18n_Cancel}"
+            <Button Content="{local:Loc I18n_Close}"
                     Style="{StaticResource MaterialDesignOutlinedButton}"
-                    AutomationProperties.Name="{local:Loc I18n_Cancel}"
+                    AutomationProperties.Name="{local:Loc I18n_Close}"
                     FocusVisualStyle="{StaticResource ModernFocusRing}"
                     Margin="0,0,8,0"
-                    Click="CancelSettings_Click"/>
-            <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                    Click="CloseSettings_Click"/>
+            <Button x:Name="SaveSettingsButton"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
                     AutomationProperties.Name="{x:Static properties:Resources.Common_Save}"
                     FocusVisualStyle="{StaticResource ModernFocusRing}"
+                    IsEnabled="False"
                     IsDefault="True"
                     Click="Save_btn_Click">
                 <StackPanel Orientation="Horizontal">

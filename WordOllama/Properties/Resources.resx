@@ -1760,6 +1760,9 @@
   <data name="I18n_UiReviewScopeNone" xml:space="preserve">
     <value>尚未载入范围。请选择一种审阅范围。</value>
   </data>
+  <data name="I18n_UiLoadingReviewScope" xml:space="preserve">
+    <value>正在载入审阅范围...</value>
+  </data>
   <data name="I18n_UiReviewGenerationLabel" xml:space="preserve">
     <value>生成建议</value>
   </data>
@@ -2304,7 +2307,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_CopiedArticle" xml:space="preserve">
     <value>✅ 已复制：{0}</value>
   </data>
-  <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>取消排队生成</value></data>
+  <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>停止生成</value></data>
   <data name="I18n_DefaultOutputMode" xml:space="preserve">
     <value>默认输出方式</value>
   </data>
@@ -2316,6 +2319,9 @@ ReAct 自主 Agent 模式</value>
   </data>
   <data name="I18n_OutputModeInsertWithDiff" xml:space="preserve">
     <value>插入并附带对比批注</value>
+  </data>
+  <data name="I18n_OutputModeReplaceOriginal" xml:space="preserve">
+    <value>直接替换原文（精确修订）</value>
   </data>
   <data name="I18n_OutputModeComment" xml:space="preserve">
     <value>写入批注</value>
@@ -2513,7 +2519,14 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_RevisionOther" xml:space="preserve"><value>其他修订类型</value></data>
   <data name="I18n_RevisionUnknown" xml:space="preserve"><value>未知修订类型</value></data>
   <data name="I18n_AgentToolDesc_ask_human" xml:space="preserve"><value>ask_human(question) — 当信息缺失、存在歧义或需要用户决策时，向用户提出具体问题并等待回答。</value></data>
-  <data name="I18n_AgentToolDesc_read_skill" xml:space="preserve"><value>read_skill(skill_name) — 读取匹配任务的本地 Skill 操作说明，再按其中工作流执行。</value></data>
+  <data name="I18n_AgentToolDesc_read_skill" xml:space="preserve"><value>read_skill(skill_name, reference) — 读取匹配任务的本地 Skill 操作说明，或读取该 Skill 目录内受控的 Markdown/TXT 参考文件。</value></data>
+  <data name="I18n_AgentResultSkillNotFound" xml:space="preserve"><value>[错误] 未找到 Skill“{0}”。可用 Skill：{1}</value></data>
+  <data name="I18n_AgentResultSkillReferenceDenied" xml:space="preserve"><value>[错误] 拒绝读取 Skill 参考文件“{0}”。只能读取该 Skill 目录内的 Markdown 或 TXT 文件。</value></data>
+  <data name="I18n_AgentResultSkillReferenceNotFound" xml:space="preserve"><value>[错误] 未找到 Skill 参考文件“{0}”。</value></data>
+  <data name="I18n_AgentResultSkillReferenceTooLarge" xml:space="preserve"><value>[错误] Skill 参考文件“{0}”超过 128 KB，拒绝加载。</value></data>
+  <data name="I18n_AgentSkillCatalogEmpty" xml:space="preserve"><value>（暂无扩展技能）</value></data>
+  <data name="I18n_AgentSkillHeader" xml:space="preserve"><value># 技能：{0}\n\n{1}</value></data>
+  <data name="I18n_AgentSkillReferenceHeader" xml:space="preserve"><value># {0}：{1}\n\n{2}</value></data>
   <data name="I18n_AgentToolDesc_insert_image" xml:space="preserve"><value>insert_image(file_path, base64_data, paragraph_index, width) — 从本地路径或 Base64 数据插入图片；未指定位置时追加到文档末尾。</value></data>
   <data name="I18n_AgentToolDesc_search_text" xml:space="preserve"><value>search_text(keyword) — 搜索文档文本，返回命中段落编号和上下文预览。</value></data>
   <data name="I18n_AgentToolDesc_get_doc_overview" xml:space="preserve"><value>get_doc_overview() — 获取文档字数、段落数和开头预览。</value></data>
@@ -2560,6 +2573,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_AgentEffectExternalNetwork" xml:space="preserve"><value>访问外部网络</value></data>
   <data name="I18n_AgentEffectLocalProcess" xml:space="preserve"><value>启动本地程序</value></data>
   <data name="I18n_AgentEffectExternalMcp" xml:space="preserve"><value>调用 MCP 服务器</value></data>
+  <data name="I18n_AgentEffectLocalFileRead" xml:space="preserve"><value>读取当前文档目录或 Skill 目录中的本地文件</value></data>
   <data name="I18n_AgentCatalogTitle" xml:space="preserve"><value># WordOllama Agent 接口</value></data>
   <data name="I18n_AgentCatalogIntro" xml:space="preserve"><value>这些接口是 Word 操作的安全 Agent 封装。模型只能获得工具名称和 JSON 参数，不会直接接触 Word COM 对象。</value></data>
   <data name="I18n_AgentCatalogContractTitle" xml:space="preserve"><value>## 调用约定</value></data>
@@ -2834,9 +2848,16 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_AgentExternalOperationHttp" xml:space="preserve"><value>HTTP {0} {1}</value></data>
   <data name="I18n_AgentExternalOperationPython" xml:space="preserve"><value>Skill：{0}；参数：{1}</value></data>
   <data name="I18n_AgentExternalOperationMcp" xml:space="preserve"><value>MCP {0}/{1}；参数：{2}</value></data>
+  <data name="I18n_AgentExternalOperationGrep" xml:space="preserve"><value>搜索本地文件：{0}；文件模式：{1}</value></data>
+  <data name="I18n_AgentExternalOperationCurrentDocumentDirectory" xml:space="preserve"><value>当前文档目录</value></data>
   <data name="I18n_AgentExternalOperationGeneric" xml:space="preserve"><value>{0}；参数：{1}</value></data>
+  <data name="I18n_AgentResultGrepPathDenied" xml:space="preserve"><value>拒绝读取路径“{0}”。grep 只能访问当前文档目录或 WordAgentSkills 目录。</value></data>
+  <data name="I18n_AgentResultGrepGlobDenied" xml:space="preserve"><value>拒绝文件模式“{0}”。文件模式不能包含目录或上级路径。</value></data>
+  <data name="I18n_AgentResultGrepSensitivePathDenied" xml:space="preserve"><value>拒绝读取敏感文件“{0}”。</value></data>
+  <data name="I18n_AgentResultSkippedSensitiveFiles" xml:space="preserve"><value>（已跳过 {0} 个敏感文件）</value></data>
+  <data name="I18n_AgentResultGrepSkippedSensitive" xml:space="preserve"><value>已跳过敏感文件：{0}</value></data>
   <data name="I18n_UiAgentExternalToolsTitle" xml:space="preserve"><value>外部工具授权</value></data>
-  <data name="I18n_UiAgentExternalToolsPrompt" xml:space="preserve"><value>当前 Agent 任务可能需要调用命令、Python、网络或 MCP 工具。默认情况下这些能力不会注册，也不会连接 MCP 服务器。是否仅为本次任务启用？&#10;&#10;启用后，每次外部操作仍会单独询问。</value></data>
+  <data name="I18n_UiAgentExternalToolsPrompt" xml:space="preserve"><value>当前 Agent 任务可能需要调用命令、Python、网络、受限本地文件检索或 MCP 工具。默认情况下这些能力不会注册，也不会连接 MCP 服务器。是否仅为本次任务启用？&#10;&#10;启用后，每次不受信任的外部操作仍会单独询问。</value></data>
   <data name="I18n_RibbonMarkdownScreenTip" xml:space="preserve"><value>将 Markdown 文本转换为 Word 样式后插入文档</value></data>
   <data name="I18n_AgentToolDescMcp" xml:space="preserve"><value>[外部] {0}（MCP：{1}）</value></data>
   <data name="I18n_SettingsValidationFailed" xml:space="preserve"><value>请先修正以下设置：{0}</value></data>

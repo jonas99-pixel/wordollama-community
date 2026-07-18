@@ -99,30 +99,29 @@ namespace WordOllama.NewUI
         public void CaptureSnapshot()
         {
             _snapshotByIndex.Clear();
+            Word.Range contentRange = null;
             try
             {
                 var doc = _app.ActiveDocument;
                 if (doc == null) return;
-                int count = doc.Paragraphs.Count;
+                contentRange = doc.Content;
+                string[] paragraphs = (contentRange.Text ?? "")
+                    .Split(new[] { '\r' }, StringSplitOptions.None);
+                int count = Math.Min(doc.Paragraphs.Count, paragraphs.Length);
                 for (int i = 1; i <= count; i++)
                 {
-                    Word.Range paraRange = null;
-                    try
+                    string text = (paragraphs[i - 1] ?? "").Trim('\a', '\r', '\n', ' ', '\t');
+                    if (!string.IsNullOrEmpty(text))
                     {
-                        paraRange = doc.Paragraphs[i].Range;
-                        string text = paraRange.Text?.Trim() ?? "";
-                        if (!string.IsNullOrEmpty(text))
-                        {
-                            _snapshotByIndex[i] = text;
-                        }
-                    }
-                    finally
-                    {
-                        ComHelper.ReleaseCom(ref paraRange);
+                        _snapshotByIndex[i] = text;
                     }
                 }
             }
             catch { }
+            finally
+            {
+                ComHelper.ReleaseCom(ref contentRange);
+            }
         }
 
         /// <summary>

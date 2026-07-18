@@ -318,7 +318,7 @@ namespace WordOllama.NewUI
             HTMLNameTextBox.Clear();
         }
 
-        private void RunHtml_Click(object sender, RoutedEventArgs e)
+        private async void RunHtml_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -331,7 +331,7 @@ namespace WordOllama.NewUI
                     return;
                 }
                 var webViewWindow = new WebViewWindow();
-                webViewWindow.UpdateWebView(contentToRun);
+                await webViewWindow.UpdateWebViewAsync(contentToRun);
                 webViewWindow.Show();
 
             }

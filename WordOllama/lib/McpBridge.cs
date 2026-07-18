@@ -428,7 +428,10 @@ namespace WordOllama.lib
 
         private HttpClient CreateHttpClient()
         {
-            var client = new HttpClient();
+            var client = new HttpClient(new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            });
             client.Timeout = Timeout.InfiniteTimeSpan;
             return client;
         }
@@ -628,9 +631,21 @@ namespace WordOllama.lib
         {
             if (string.IsNullOrWhiteSpace(endpoint))
                 throw new IOException("Legacy SSE endpoint event did not include a message endpoint.");
-            if (Uri.TryCreate(endpoint.Trim(), UriKind.Absolute, out var absolute))
-                return absolute;
-            return new Uri(_httpEndpoint, endpoint.Trim());
+
+            Uri resolved = Uri.TryCreate(endpoint.Trim(), UriKind.Absolute, out var absolute)
+                ? absolute
+                : new Uri(_httpEndpoint, endpoint.Trim());
+            if (!IsSameOrigin(_httpEndpoint, resolved))
+                throw new IOException("Legacy SSE message endpoint must use the same origin as the configured MCP server.");
+            return resolved;
+        }
+
+        private static bool IsSameOrigin(Uri configured, Uri candidate)
+        {
+            if (configured == null || candidate == null) return false;
+            return string.Equals(configured.Scheme, candidate.Scheme, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(configured.Host, candidate.Host, StringComparison.OrdinalIgnoreCase)
+                && configured.Port == candidate.Port;
         }
 
         private async Task ReadSseEventsAsync(

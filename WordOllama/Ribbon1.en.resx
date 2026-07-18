@@ -200,4 +200,10 @@
   <data name="group3.Label" xml:space="preserve">
     <value>Agent</value>
   </data>
+  <data name="LawSearchBtn.Label" xml:space="preserve">
+    <value>Legal Search</value>
+  </data>
+  <data name="LawSearchBtn.ScreenTip" xml:space="preserve">
+    <value>Search statutes and regulations by keyword</value>
+  </data>
 </root>

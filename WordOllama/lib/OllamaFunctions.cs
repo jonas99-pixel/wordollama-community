@@ -20,7 +20,7 @@ namespace WordOllama.lib
     public static class OllamaFunctions
     {
         private static readonly int _spanMinutes = 10;
-        private static readonly string thinkPattern = @"]*?)</think>\n\n";
+        private static readonly string thinkPattern = @"<think>([\s\S]*?)</think>";
 
         /// <summary>格式化 API 错误响应，统一返回 [API 错误] 前缀供 Agent 识别。</summary>
         private static string FormatApiError(System.Net.HttpStatusCode statusCode, string responseBody)
@@ -39,13 +39,20 @@ namespace WordOllama.lib
             if (errorMsg.Length > 500) errorMsg = errorMsg.Substring(0, 500) + "...";
             return ProviderRequestPolicy.NormalizeError("Ollama", statusCode, errorMsg);
         }
-        public static async Task<string> OllamaGenerateAsync(string systemPrompt, string image = null)
+        public static Task<string> OllamaGenerateAsync(string systemPrompt, string image = null)
+        {
+            return OllamaGenerateAsync(systemPrompt, image, CancellationToken.None);
+        }
+
+        public static async Task<string> OllamaGenerateAsync(
+            string systemPrompt,
+            string image,
+            CancellationToken cancellationToken)
         {
             string ollamaEndPoint = AppConfig.Instance.OllamaEndPoint + "/api/generate";
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = ProviderRequestPolicy.CreateClient(TimeSpan.FromMinutes(_spanMinutes)))
             {
-                client.Timeout = TimeSpan.FromMinutes(_spanMinutes); // 超时设置
                 var requestData = new Dictionary<string, object>
         {
             { "model", AppConfig.Instance.OllamaModel },
@@ -79,7 +86,7 @@ namespace WordOllama.lib
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync(ollamaEndPoint, postData);
+                    HttpResponseMessage response = await client.PostAsync(ollamaEndPoint, postData, cancellationToken);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -144,6 +151,10 @@ namespace WordOllama.lib
                         return FormatApiError(response.StatusCode, errorDetail);
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
                 catch (Exception e)
                 {
                     return ProviderRequestPolicy.NormalizeError("Ollama", null, null, e);
@@ -151,11 +162,11 @@ namespace WordOllama.lib
             
         }
 
-        public static async IAsyncEnumerable<string> OllamaStreamAsync(string systemPrompt, Action<string> processChunk, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public static async IAsyncEnumerable<string> OllamaStreamAsync(string systemPrompt, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             string ollamaEndPoint = AppConfig.Instance.OllamaEndPoint + "/api/generate";
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = ProviderRequestPolicy.CreateClient(TimeSpan.FromMinutes(_spanMinutes)))
             {
                 var postData = new StringContent(
                     JsonConvert.SerializeObject(new
@@ -200,7 +211,6 @@ namespace WordOllama.lib
                                     var chunk = responseLine["response"]?.ToString();
                                     if (!string.IsNullOrEmpty(chunk))
                                     {
-                                        processChunk(chunk); // 处理数据
                                         await channel.Writer.WriteAsync(chunk, cancellationToken); // 写入通道
                                     }
                                 }
@@ -230,17 +240,15 @@ namespace WordOllama.lib
         public static async Task<string> OllamaChatAsync(List<Dictionary<string, string>> ChatHistory, JArray tools = null, CancellationToken cancellationToken = default)
         {
             string ollamaEndPoint = AppConfig.Instance.OllamaEndPoint + "/api/chat";
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = ProviderRequestPolicy.CreateChatClient())
             {
-                ProviderRequestPolicy.ConfigureChatClient(client);
-
                 // 构建请求体 —— 支持可选的 tools 参数
                 var requestBodyObj = new Dictionary<string, object>
                 {
                     ["model"] = AppConfig.Instance.OllamaModel,
                     ["messages"] = ChatHistory,
                     ["stream"] = false,
-                    ["options"] = new Dictionary<string, double> { { "temperature", AppConfig.Instance.ChatGPTTemperature } }
+                    ["options"] = new Dictionary<string, double> { { "temperature", AppConfig.Instance.OllamaTemperature } }
                 };
 
                 // 图片支持：若有待发送图片，将首条 user 消息转为多模态格式

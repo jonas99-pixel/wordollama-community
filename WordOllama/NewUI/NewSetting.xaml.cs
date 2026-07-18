@@ -96,11 +96,14 @@ namespace WordOllama.NewUI
         private IDisposable _settingsDraft;
         private string _lastSavedSettingsSnapshot;
         private bool _isLoadingSettings;
+        private bool _suppressSettingsChangeTracking;
+        private bool _settingsDirty;
 
 
         public NewSetting()
         {
             InitializeComponent();
+            RegisterSettingsChangeTracking();
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
             _settingsDraft = AppConfig.BeginDraft();
             _isLoadingSettings = true;
@@ -111,21 +114,110 @@ namespace WordOllama.NewUI
                 ChatGPTModels = new ObservableCollection<ChatGPTModelInfo>();
                 InitSkillAndMcp();
                 LoadSettings();
+                // Keep change tracking suspended while bindings populate the controls.
+                DataContext = this;
+                KeyVisable = false;
             }
             finally
             {
                 _isLoadingSettings = false;
                 // Initial control population can raise SelectionChanged events. They are not user edits.
                 _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
+                SetSettingsDirty(false);
             }
-            this.DataContext = this;
-            KeyVisable = false;
         }
 
         private bool HasUnsavedSettings()
         {
-            string current = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
-            return !string.Equals(current, _lastSavedSettingsSnapshot, StringComparison.Ordinal);
+            return _settingsDirty;
+        }
+
+        private void RegisterSettingsChangeTracking()
+        {
+            AddHandler(TextBoxBase.TextChangedEvent,
+                new TextChangedEventHandler(SettingsTextChanged), true);
+            AddHandler(PasswordBox.PasswordChangedEvent,
+                new RoutedEventHandler(SettingsControlChanged), true);
+            AddHandler(Selector.SelectionChangedEvent,
+                new SelectionChangedEventHandler(SettingsSelectionChanged), true);
+            AddHandler(ToggleButton.CheckedEvent,
+                new RoutedEventHandler(SettingsControlChanged), true);
+            AddHandler(ToggleButton.UncheckedEvent,
+                new RoutedEventHandler(SettingsControlChanged), true);
+            AddHandler(RangeBase.ValueChangedEvent,
+                new RoutedPropertyChangedEventHandler<double>(SettingsValueChanged), true);
+        }
+
+        private void SettingsTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (IsUserInitiatedSettingEvent(e))
+                SetSettingsDirty(true);
+        }
+
+        private void SettingsSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // The outer TabControl is navigation, not a setting. Its selection changes
+            // must not enable Save or trigger the unsaved-settings prompt.
+            if (ReferenceEquals(e.OriginalSource, SettingsNavigation)
+                || ReferenceEquals(e.Source, SettingsNavigation)
+                || e.OriginalSource is TabControl
+                || e.OriginalSource is TabItem
+                || e.OriginalSource is DataGrid
+                || e.OriginalSource is DataGridRow)
+            {
+                return;
+            }
+
+            if (IsUserInitiatedSettingEvent(e))
+                SetSettingsDirty(true);
+        }
+
+        private void SettingsValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (IsUserInitiatedSettingEvent(e))
+                SetSettingsDirty(true);
+        }
+
+        private void SettingsControlChanged(object sender, RoutedEventArgs e)
+        {
+            if (IsUserInitiatedSettingEvent(e))
+                SetSettingsDirty(true);
+        }
+
+        private bool IsUserInitiatedSettingEvent(RoutedEventArgs e)
+        {
+            if (_isLoadingSettings || _suppressSettingsChangeTracking)
+                return false;
+
+            return HasKeyboardFocusWithin(e?.OriginalSource as DependencyObject)
+                || HasKeyboardFocusWithin(e?.Source as DependencyObject);
+        }
+
+        private static bool HasKeyboardFocusWithin(DependencyObject source)
+        {
+            // Do not walk up to the navigation TabControl. Selecting a page can
+            // give that parent control focus even though no setting was edited.
+            return source is UIElement element && element.IsKeyboardFocusWithin;
+        }
+
+        private void SetSettingsDirty(bool dirty)
+        {
+            // Collection refreshes can raise routed control events without a user edit.
+            // Preserve an actual edit made before the refresh completes.
+            if (_suppressSettingsChangeTracking)
+            {
+                if (!dirty)
+                {
+                    _settingsDirty = false;
+                    if (SaveSettingsButton != null)
+                        SaveSettingsButton.IsEnabled = false;
+                }
+                return;
+            }
+
+            _settingsDirty = !_isLoadingSettings && dirty;
+            if (SaveSettingsButton != null)
+                SaveSettingsButton.IsEnabled = _settingsDirty;
         }
 
         private void CancelSettingsDraft()
@@ -134,6 +226,7 @@ namespace WordOllama.NewUI
             AppConfig.Restore(_lastSavedSettingsSnapshot);
             _settingsDraft.Dispose();
             _settingsDraft = null;
+            SetSettingsDirty(false);
         }
 
         private void NewSetting_Closing(object sender, CancelEventArgs e)
@@ -174,9 +267,8 @@ namespace WordOllama.NewUI
             _settingsDraft = null;
         }
 
-        private void CancelSettings_Click(object sender, RoutedEventArgs e)
+        private void CloseSettings_Click(object sender, RoutedEventArgs e)
         {
-            CancelSettingsDraft();
             Close();
         }
 
@@ -294,6 +386,7 @@ namespace WordOllama.NewUI
         // Ollama 部分功能
         private async void LoadOllamaLocalModels(bool userClick = false)
         {
+            bool suppressRefreshChanges = _isLoadingSettings && !userClick;
             try
             {
                 var requestUri = AppConfig.Instance.OllamaEndPoint + "/api/tags";
@@ -308,25 +401,34 @@ namespace WordOllama.NewUI
                 {
                     await Dispatcher.InvokeAsync(() =>
                     {
-                        OllamaModels.Clear();
-                        foreach (var model in models)
+                        bool previousSuppression = _suppressSettingsChangeTracking;
+                        _suppressSettingsChangeTracking |= suppressRefreshChanges;
+                        try
                         {
-                            string name = model["name"]?.ToString();
-                            long sizeBytes = model["size"]?.ToObject<long>() ?? 0;
-                            string parameterSize = model["details"]?["parameter_size"]?.ToString();
-                            string modifiedAt = model["modified_at"]?.ToString();
-
-                            double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
-                            DateTime modifiedDate = DateTime.Parse(modifiedAt);
-                            string formattedDate = modifiedDate.ToString("yyyy-MM-dd HH:mm:ss");
-
-                            OllamaModels.Add(new OllamaModelInfo
+                            OllamaModels.Clear();
+                            foreach (var model in models)
                             {
-                                Name = name,
-                                SizeGB = sizeGB.ToString("F2"),
-                                ParameterSize = parameterSize,
-                                ModifiedAt = formattedDate
-                            });
+                                string name = model["name"]?.ToString();
+                                long sizeBytes = model["size"]?.ToObject<long>() ?? 0;
+                                string parameterSize = model["details"]?["parameter_size"]?.ToString();
+                                string modifiedAt = model["modified_at"]?.ToString();
+
+                                double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
+                                DateTime modifiedDate = DateTime.Parse(modifiedAt);
+                                string formattedDate = modifiedDate.ToString("yyyy-MM-dd HH:mm:ss");
+
+                                OllamaModels.Add(new OllamaModelInfo
+                                {
+                                    Name = name,
+                                    SizeGB = sizeGB.ToString("F2"),
+                                    ParameterSize = parameterSize,
+                                    ModifiedAt = formattedDate
+                                });
+                            }
+                        }
+                        finally
+                        {
+                            _suppressSettingsChangeTracking = previousSuppression;
                         }
                     });
                 }
@@ -1537,6 +1639,7 @@ namespace WordOllama.NewUI
             // 在设置窗口草稿期间也立即落盘，但继续保留草稿状态，便于用户继续修改后再次保存或取消。
             AppConfig.SaveNow();
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
+            SetSettingsDirty(false);
             return true;
         }
 

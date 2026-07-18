@@ -39,7 +39,9 @@ WordOllama 是面向 Microsoft Word 以及兼容 WPS Word 宿主的开源 AI 加
 
 WordOllama 项目方不运营遥测，也没有收集文档的后端。当用户主动开始 AI 操作时，加载项会把所需文档文本发送给用户配置的模型服务。Ollama 请求通常留在配置的本机地址；在线模型和远程 MCP 服务会按照各自的隐私政策接收数据。处理敏感文档前，请确认服务和组织政策允许这样做。
 
-高风险 Agent 外部工具默认关闭，包括本地命令、Python Skill、任意 HTTP 请求和 MCP 工具。未获得用户授权前，Agent 不会连接配置的 MCP 服务器。用户可以仅为当前任务启用，也可以在设置中主动开启默认权限。不可信外部操作仍会单独询问，并显示命令、URL、Skill 或 MCP 服务/工具；参数中的密钥、令牌、密码等字段会在确认提示中隐藏。把 MCP 服务器标记为可信，是一个持久化的权限决定，此后不会对每次 MCP 调用再次弹窗。
+高风险 Agent 外部工具默认关闭，包括本地命令、Python 脚本、任意 HTTP 请求、受限本地文件检索和 MCP 工具。本地文件检索仅限当前文档目录和 Word Agent Skill 目录，并会跳过凭据、私钥等敏感文件。未获得用户授权前，Agent 不会连接配置的 MCP 服务器。用户可以仅为当前任务启用，也可以在设置中主动开启默认权限。不可信外部操作仍会单独询问，并显示命令、URL、路径、Skill 或 MCP 服务/工具；参数中的密钥、令牌、密码等字段会在确认提示中隐藏。把 MCP 服务器标记为可信，是一个持久化的权限决定，此后不会对每次 MCP 调用再次弹窗。
+
+未完成的 Agent 检查点使用 Windows DPAPI 按当前用户加密，数据只保存在本机，并可在恢复提示中清除。
 
 加载项不依赖 Office.js，也没有为任意外部程序提供沙箱。请把外部工具授权当作真正的系统权限决定。
 
@@ -93,6 +95,7 @@ MCP 服务器在设置中配置。只勾选确实需要的工具；只有在服�
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\verify-localization.ps1
 powershell -ExecutionPolicy Bypass -File .\tools\run-core-smoke-test.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\run-mcp-smoke-test.ps1
 powershell -ExecutionPolicy Bypass -File .\tools\verify-release.ps1 -SkipBuild
 ```
 
@@ -112,7 +115,7 @@ Word 和 WPS 的 COM 加载、Ribbon、WebView2、任务窗格尺寸以及宿主
 - `WordOllama/NewUI/`：WPF 任务窗格和窗口。
 - `WordOllama/Properties/`：程序集信息和本地化资源。
 - `tools/`：轻量 smoke 和验证脚本。
-- `docs/`：设计及 UI 文档。
+- `docs/`：安全、贡献、发布和第三方说明文档。
 
 ## ⚠️ 限制
 

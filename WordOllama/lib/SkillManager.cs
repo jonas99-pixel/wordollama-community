@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -26,7 +27,8 @@ namespace WordOllama.lib
         private const string EMBEDDED_SKILLS_PREFIX = "WordOllama.Resources.Skills.";
         private const string SKILL_FILE_NAME = "SKILL.md";
 
-        private readonly Dictionary<string, AgentSkill> _skills = new Dictionary<string, AgentSkill>();
+        private readonly Dictionary<string, AgentSkill> _skills =
+            new Dictionary<string, AgentSkill>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// 扫描指定目录下所有 SKILL.md 文件（含首次自动提取内置技能）。
@@ -45,25 +47,39 @@ namespace WordOllama.lib
                 try
                 {
                     string content = File.ReadAllText(file);
-                    var match = Regex.Match(content,
-                        @"^---\s*[\r\n]+name:\s*(.+?)[\r\n]+description:\s*(.+?)[\r\n]+---\s*[\r\n]+(.*)",
-                        RegexOptions.Singleline);
-
-                    if (match.Success)
+                    AgentSkill skill;
+                    if (TryParseSkill(content, file, out skill))
                     {
-                        var skill = new AgentSkill
-                        {
-                            Name = match.Groups[1].Value.Trim(),
-                            Description = match.Groups[2].Value.Trim(),
-                            Instructions = match.Groups[3].Value.Trim(),
-                            FilePath = file
-                        };
-                        if (!string.IsNullOrEmpty(skill.Name))
-                            _skills[skill.Name] = skill;
+                        _skills[skill.Name] = skill;
                     }
                 }
                 catch { }
             }
+        }
+
+        private static bool TryParseSkill(string content, string filePath, out AgentSkill skill)
+        {
+            skill = null;
+            var frontMatter = Regex.Match(content ?? "",
+                @"\A---\s*\r?\n(?<header>[\s\S]*?)\r?\n---\s*(?:\r?\n)?(?<body>[\s\S]*)\z");
+            if (!frontMatter.Success) return false;
+
+            string header = frontMatter.Groups["header"].Value;
+            var nameMatch = Regex.Match(header, @"(?m)^name:\s*(?<value>.+?)\s*$", RegexOptions.IgnoreCase);
+            var descriptionMatch = Regex.Match(header, @"(?m)^description:\s*(?<value>.+?)\s*$", RegexOptions.IgnoreCase);
+            if (!nameMatch.Success || !descriptionMatch.Success) return false;
+
+            string name = nameMatch.Groups["value"].Value.Trim().Trim('"', '\'');
+            if (string.IsNullOrWhiteSpace(name)) return false;
+
+            skill = new AgentSkill
+            {
+                Name = name,
+                Description = descriptionMatch.Groups["value"].Value.Trim().Trim('"', '\''),
+                Instructions = frontMatter.Groups["body"].Value.Trim(),
+                FilePath = filePath
+            };
+            return true;
         }
 
         /// <summary>
@@ -75,26 +91,25 @@ namespace WordOllama.lib
             try
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                string suffix = "." + SKILL_FILE_NAME; // ".SKILL.md"
-
                 foreach (string name in assembly.GetManifestResourceNames())
                 {
-                    if (!name.StartsWith(EMBEDDED_SKILLS_PREFIX) || !name.EndsWith(suffix))
+                    if (!name.StartsWith(EMBEDDED_SKILLS_PREFIX, StringComparison.Ordinal))
                         continue;
 
-                    // 从 "WordOllama.Resources.Skills.{skillName}.SKILL.md" 提取 skill 名称
-                    string skillName = name.Substring(
-                        EMBEDDED_SKILLS_PREFIX.Length,
-                        name.Length - EMBEDDED_SKILLS_PREFIX.Length - suffix.Length);
-                    if (string.IsNullOrEmpty(skillName)) continue;
+                    string relativePath = name.Substring(EMBEDDED_SKILLS_PREFIX.Length)
+                        .Replace('/', Path.DirectorySeparatorChar);
+                    if (string.IsNullOrWhiteSpace(relativePath)) continue;
 
-                    string targetDir = Path.Combine(rootPath, skillName);
-                    string targetFile = Path.Combine(targetDir, SKILL_FILE_NAME);
+                    string fullRoot = Path.GetFullPath(rootPath)
+                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    string targetFile = Path.GetFullPath(Path.Combine(fullRoot, relativePath));
+                    if (!targetFile.StartsWith(fullRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                        continue;
 
                     // 磁盘上已存在 → 保留用户的版本，不覆盖
                     if (File.Exists(targetFile)) continue;
 
-                    Directory.CreateDirectory(targetDir);
+                    Directory.CreateDirectory(Path.GetDirectoryName(targetFile));
                     using (var stream = assembly.GetManifestResourceStream(name))
                     {
                         if (stream == null) continue;
@@ -113,7 +128,7 @@ namespace WordOllama.lib
         /// </summary>
         public string GetSkillCatalog()
         {
-            if (_skills.Count == 0) return "（暂无扩展技能）";
+            if (_skills.Count == 0) return AgentToolText.T("I18n_AgentSkillCatalogEmpty");
             var lines = new List<string>();
             foreach (var s in _skills.Values)
                 lines.Add($"- {s.Name}: {s.Description}");
@@ -126,8 +141,39 @@ namespace WordOllama.lib
         public string GetSkillInstructions(string name)
         {
             if (_skills.TryGetValue(name, out var skill))
-                return $"# 技能: {skill.Name}\n\n{skill.Instructions}";
-            return $"[错误] 未找到技能 \"{name}\"。可用技能: {string.Join(", ", _skills.Keys)}";
+                return AgentToolText.F("I18n_AgentSkillHeader", skill.Name, skill.Instructions);
+            return AgentToolText.F("I18n_AgentResultSkillNotFound", name, string.Join(", ", _skills.Keys));
+        }
+
+        public string GetSkillReference(string name, string reference)
+        {
+            if (!_skills.TryGetValue(name, out var skill))
+                return AgentToolText.F("I18n_AgentResultSkillNotFound", name, string.Join(", ", _skills.Keys));
+            if (string.IsNullOrWhiteSpace(reference))
+                return GetSkillInstructions(name);
+
+            try
+            {
+                string root = Path.GetFullPath(Path.GetDirectoryName(skill.FilePath))
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                string target = Path.GetFullPath(Path.Combine(root, reference));
+                if (!target.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                    return AgentToolText.F("I18n_AgentResultSkillReferenceDenied", reference);
+                if (!File.Exists(target))
+                    return AgentToolText.F("I18n_AgentResultSkillReferenceNotFound", reference);
+
+                string extension = Path.GetExtension(target)?.ToLowerInvariant();
+                if (extension != ".md" && extension != ".txt")
+                    return AgentToolText.F("I18n_AgentResultSkillReferenceDenied", reference);
+                if (new FileInfo(target).Length > 128 * 1024)
+                    return AgentToolText.F("I18n_AgentResultSkillReferenceTooLarge", reference);
+
+                return AgentToolText.F("I18n_AgentSkillReferenceHeader", skill.Name, reference, File.ReadAllText(target));
+            }
+            catch
+            {
+                return AgentToolText.F("I18n_AgentResultSkillReferenceDenied", reference);
+            }
         }
 
         public bool HasSkill(string name) => _skills.ContainsKey(name);

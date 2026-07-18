@@ -1749,6 +1749,9 @@ This action cannot be undone.</value>
   <data name="I18n_UiReviewScopeNone" xml:space="preserve">
     <value>No scope loaded. Choose a review scope to begin.</value>
   </data>
+  <data name="I18n_UiLoadingReviewScope" xml:space="preserve">
+    <value>Loading review scope...</value>
+  </data>
   <data name="I18n_UiReviewGenerationLabel" xml:space="preserve">
     <value>Generate suggestions</value>
   </data>
@@ -2294,7 +2297,7 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_CopiedArticle" xml:space="preserve">
     <value>✅ Copied: {0}</value>
   </data>
-  <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>Cancel queued generation</value></data>
+  <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>Stop generation</value></data>
   <data name="I18n_DefaultOutputMode" xml:space="preserve">
     <value>Default output mode</value>
   </data>
@@ -2306,6 +2309,9 @@ Check your network connection or try again later. Error: {0}</value>
   </data>
   <data name="I18n_OutputModeInsertWithDiff" xml:space="preserve">
     <value>Insert with comparison comment</value>
+  </data>
+  <data name="I18n_OutputModeReplaceOriginal" xml:space="preserve">
+    <value>Replace original text (precise tracked edits)</value>
   </data>
   <data name="I18n_OutputModeComment" xml:space="preserve">
     <value>Add as comment</value>
@@ -2503,7 +2509,14 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_RevisionOther" xml:space="preserve"><value>Other revision type</value></data>
   <data name="I18n_RevisionUnknown" xml:space="preserve"><value>Unknown revision type</value></data>
   <data name="I18n_AgentToolDesc_ask_human" xml:space="preserve"><value>ask_human(question) — Ask the user a specific question when information is missing, ambiguous, or needs a decision.</value></data>
-  <data name="I18n_AgentToolDesc_read_skill" xml:space="preserve"><value>read_skill(skill_name) — Load a matching local Skill workflow before following its instructions.</value></data>
+  <data name="I18n_AgentToolDesc_read_skill" xml:space="preserve"><value>read_skill(skill_name, reference) — Load a local Skill workflow or a controlled Markdown/TXT reference inside that Skill directory.</value></data>
+  <data name="I18n_AgentResultSkillNotFound" xml:space="preserve"><value>[Error] Skill “{0}” was not found. Available Skills: {1}</value></data>
+  <data name="I18n_AgentResultSkillReferenceDenied" xml:space="preserve"><value>[Error] Skill reference “{0}” was denied. Only Markdown or TXT files inside that Skill directory can be read.</value></data>
+  <data name="I18n_AgentResultSkillReferenceNotFound" xml:space="preserve"><value>[Error] Skill reference “{0}” was not found.</value></data>
+  <data name="I18n_AgentResultSkillReferenceTooLarge" xml:space="preserve"><value>[Error] Skill reference “{0}” exceeds 128 KB and was not loaded.</value></data>
+  <data name="I18n_AgentSkillCatalogEmpty" xml:space="preserve"><value>(No extension skills are available.)</value></data>
+  <data name="I18n_AgentSkillHeader" xml:space="preserve"><value># Skill: {0}\n\n{1}</value></data>
+  <data name="I18n_AgentSkillReferenceHeader" xml:space="preserve"><value># {0}: {1}\n\n{2}</value></data>
   <data name="I18n_AgentToolDesc_insert_image" xml:space="preserve"><value>insert_image(file_path, base64_data, paragraph_index, width) — Insert an image from a local path or Base64 data, defaulting to the document end.</value></data>
   <data name="I18n_AgentToolDesc_search_text" xml:space="preserve"><value>search_text(keyword) — Search document text and return matching paragraph numbers with context.</value></data>
   <data name="I18n_AgentToolDesc_get_doc_overview" xml:space="preserve"><value>get_doc_overview() — Read document word count, paragraph count, and an opening preview.</value></data>
@@ -2550,6 +2563,7 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_AgentEffectExternalNetwork" xml:space="preserve"><value>access external network</value></data>
   <data name="I18n_AgentEffectLocalProcess" xml:space="preserve"><value>start a local program</value></data>
   <data name="I18n_AgentEffectExternalMcp" xml:space="preserve"><value>call an MCP server</value></data>
+  <data name="I18n_AgentEffectLocalFileRead" xml:space="preserve"><value>read local files in the current document or Skill directory</value></data>
   <data name="I18n_AgentCatalogTitle" xml:space="preserve"><value># WordOllama Agent API</value></data>
   <data name="I18n_AgentCatalogIntro" xml:space="preserve"><value>These interfaces are safe Agent wrappers around Word operations. The model receives tool names and JSON arguments, not raw Word COM objects.</value></data>
   <data name="I18n_AgentCatalogContractTitle" xml:space="preserve"><value>## Invocation contract</value></data>
@@ -2824,9 +2838,16 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_AgentExternalOperationHttp" xml:space="preserve"><value>HTTP {0} {1}</value></data>
   <data name="I18n_AgentExternalOperationPython" xml:space="preserve"><value>Skill: {0}; arguments: {1}</value></data>
   <data name="I18n_AgentExternalOperationMcp" xml:space="preserve"><value>MCP {0}/{1}; arguments: {2}</value></data>
+  <data name="I18n_AgentExternalOperationGrep" xml:space="preserve"><value>Search local files: {0}; file pattern: {1}</value></data>
+  <data name="I18n_AgentExternalOperationCurrentDocumentDirectory" xml:space="preserve"><value>current document directory</value></data>
   <data name="I18n_AgentExternalOperationGeneric" xml:space="preserve"><value>{0}; arguments: {1}</value></data>
+  <data name="I18n_AgentResultGrepPathDenied" xml:space="preserve"><value>Access to “{0}” was denied. grep can only read the current document directory or WordAgentSkills directories.</value></data>
+  <data name="I18n_AgentResultGrepGlobDenied" xml:space="preserve"><value>File pattern “{0}” was denied. Patterns cannot contain directories or parent-path traversal.</value></data>
+  <data name="I18n_AgentResultGrepSensitivePathDenied" xml:space="preserve"><value>Access to sensitive file “{0}” was denied.</value></data>
+  <data name="I18n_AgentResultSkippedSensitiveFiles" xml:space="preserve"><value> ({0} sensitive file(s) skipped)</value></data>
+  <data name="I18n_AgentResultGrepSkippedSensitive" xml:space="preserve"><value>Sensitive files skipped: {0}</value></data>
   <data name="I18n_UiAgentExternalToolsTitle" xml:space="preserve"><value>External tool authorization</value></data>
-  <data name="I18n_UiAgentExternalToolsPrompt" xml:space="preserve"><value>This Agent task may need commands, Python, HTTP, or MCP tools. By default these capabilities are not registered and MCP servers are not connected. Enable them for this task only?&#10;&#10;Each external operation will still ask for separate approval.</value></data>
+  <data name="I18n_UiAgentExternalToolsPrompt" xml:space="preserve"><value>This Agent task may need commands, Python, HTTP, restricted local-file search, or MCP tools. By default these capabilities are not registered and MCP servers are not connected. Enable them for this task only?&#10;&#10;Each untrusted external operation will still ask for separate approval.</value></data>
   <data name="I18n_RibbonMarkdownScreenTip" xml:space="preserve"><value>Convert Markdown text to Word formatting and insert it into the document</value></data>
   <data name="I18n_AgentToolDescMcp" xml:space="preserve"><value>[External] {0} (MCP: {1})</value></data>
   <data name="I18n_SettingsValidationFailed" xml:space="preserve"><value>Fix these settings before saving: {0}</value></data>

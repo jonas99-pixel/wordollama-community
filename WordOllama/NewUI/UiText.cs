@@ -40,6 +40,7 @@ namespace WordOllama.NewUI
         public static string ReviewScopeLabel => Loc.T("I18n_UiReviewScopeLabel");
         public static string ReviewScopeHint => Loc.T("I18n_UiReviewScopeHint");
         public static string ReviewScopeNone => Loc.T("I18n_UiReviewScopeNone");
+        public static string LoadingReviewScope => Loc.T("I18n_UiLoadingReviewScope");
         public static string ReviewGenerationLabel => Loc.T("I18n_UiReviewGenerationLabel");
         public static string ReviewBatchActions => Loc.T("I18n_UiReviewBatchActions");
         public static string GenerateAll => Loc.T("I18n_UiGenerateAll");

@@ -10,7 +10,8 @@ namespace WordOllama.NewUI
     public partial class WebViewWindow : Window
     {
         private WebView2 _webView;
-        private string _userDataFolder;
+        private readonly string _userDataFolder;
+        private readonly Task _initializationTask;
 
         public WebViewWindow()
         {
@@ -28,24 +29,22 @@ namespace WordOllama.NewUI
                 Directory.CreateDirectory(_userDataFolder);
             }
 
-            InitializeWebViewAsync();
+            _initializationTask = InitializeWebViewAsync();
 
             this.Closed += WebViewWindow_Closed;
         }
 
-        private async void InitializeWebViewAsync()
+        private async Task InitializeWebViewAsync()
         {
             var env = await CoreWebView2Environment.CreateAsync(null, _userDataFolder);
             await _webView.EnsureCoreWebView2Async(env);
         }
 
-        public async void UpdateWebView(string htmlContent)
+        public async Task UpdateWebViewAsync(string htmlContent)
         {
-            if (_webView.CoreWebView2 == null)
-            {
-                await _webView.EnsureCoreWebView2Async(null);
-            }
-
+            await _initializationTask;
+            if (_webView?.CoreWebView2 == null)
+                throw new InvalidOperationException("WebView2 initialization did not complete.");
             _webView.CoreWebView2.NavigateToString(htmlContent);
         }
 

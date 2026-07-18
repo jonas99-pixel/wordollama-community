@@ -4,6 +4,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
+    throw 'The VSTO build requires Windows, Visual Studio, and the Office developer tools.'
+}
 $root = Split-Path -Parent $PSScriptRoot
 $solution = Join-Path $root 'WordOllama.sln'
 $msbuild = Get-Command MSBuild.exe -ErrorAction SilentlyContinue
@@ -36,7 +39,7 @@ if (-not $msbuildPath) { $msbuildPath = $msbuild.Path }
 if (-not $msbuildPath) { $msbuildPath = $msbuild.FullName }
 & $msbuildPath $solution /t:Restore,Build /p:Configuration=$Configuration /p:OpenSourceBuild=true
 if ($LASTEXITCODE -ne 0) {
-    throw "WordOllama Community Edition $Configuration build failed with exit code $LASTEXITCODE."
+    throw "WordOllama open-source $Configuration build failed with exit code $LASTEXITCODE."
 }
 
-Write-Host "WordOllama Community Edition $Configuration build completed without ClickOnce signing."
+Write-Host "WordOllama open-source $Configuration build completed without ClickOnce or assembly signing."

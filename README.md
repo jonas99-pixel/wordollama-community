@@ -39,7 +39,9 @@ The project is designed for people who want to use a local model or connect an A
 
 The WordOllama project does not operate telemetry or a document-collection backend. When the user starts an AI operation, the add-in forwards the required document text to the provider configured by the user. Local Ollama requests stay on the configured local endpoint; online providers and remote MCP servers receive data according to their own policies. Do not send confidential material to a provider unless you have permission to do so.
 
-High-risk external Agent tools are disabled by default. These include local commands, Python Skills, arbitrary HTTP requests, and MCP tools. The Agent does not connect configured MCP servers until the user enables external tools for the task or turns on the explicit default-permission setting. Untrusted external operations ask for approval and show a command, URL, Skill, or MCP server/tool. A server explicitly marked as trusted is a persistent permission decision and does not show a separate confirmation for every MCP call. Secret-like parameter fields are redacted in the approval message.
+High-risk external Agent tools are disabled by default. These include local commands, Python scripts, arbitrary HTTP requests, restricted local-file search, and MCP tools. Local-file search is limited to the active document directory and Word Agent Skill directories; sensitive credential and key files are skipped. The Agent does not connect configured MCP servers until the user enables external tools for the task or turns on the explicit default-permission setting. Untrusted external operations ask for approval and show a command, URL, path, Skill, or MCP server/tool. A server explicitly marked as trusted is a persistent permission decision and does not show a separate confirmation for every MCP call. Secret-like parameter fields are redacted in the approval message.
+
+Unfinished Agent checkpoints are encrypted for the current Windows user with DPAPI. They remain local and can be cleared from the resume prompt.
 
 The add-in does not require Office.js and does not provide a sandbox around arbitrary external programs. Treat external tool approval as a real system permission decision.
 
@@ -95,6 +97,7 @@ The repository keeps lightweight checks instead of a heavyweight Office UI autom
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\verify-localization.ps1
 powershell -ExecutionPolicy Bypass -File .\tools\run-core-smoke-test.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\run-mcp-smoke-test.ps1
 powershell -ExecutionPolicy Bypass -File .\tools\verify-release.ps1 -SkipBuild
 ```
 
@@ -114,7 +117,7 @@ Manual validation in both Word and WPS remains necessary for COM loading, ribbon
 - `WordOllama/NewUI/`: WPF task panes and windows.
 - `WordOllama/Properties/`: localized resources and assembly metadata.
 - `tools/`: focused smoke and validation scripts.
-- `docs/`: design and UI documentation.
+- `docs/`: security, contribution, release, and third-party documentation.
 
 ## ⚠️ Limitations
 

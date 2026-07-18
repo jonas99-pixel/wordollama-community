@@ -542,7 +542,7 @@ namespace WordOllama.lib.Tools
         public string Execute(JObject parameters, Word.Document doc, Word.Application app)
         {
             string pattern = parameters["pattern"]?.ToString() ?? "";
-            string searchPath = parameters["path"]?.ToString() ?? Directory.GetCurrentDirectory();
+            string requestedPath = parameters["path"]?.ToString();
             string glob = parameters["glob"]?.ToString() ?? "*";
             bool ignoreCase = parameters["ignore_case"]?.Value<bool>() ?? false;
             int maxMatches = Math.Min(parameters["max_matches"]?.Value<int>() ?? 50, 200);
@@ -553,6 +553,22 @@ namespace WordOllama.lib.Tools
 
             try
             {
+                string defaultRoot = GetDefaultSearchRoot(doc);
+                string searchPath = string.IsNullOrWhiteSpace(requestedPath)
+                    ? defaultRoot
+                    : Path.GetFullPath(Path.IsPathRooted(requestedPath)
+                        ? requestedPath
+                        : Path.Combine(defaultRoot, requestedPath));
+
+                if (!IsAllowedSearchPath(searchPath, doc) || HasReparsePoint(searchPath))
+                    return AgentToolText.F("I18n_AgentResultGrepPathDenied", searchPath);
+                if (glob.IndexOf("..", StringComparison.Ordinal) >= 0
+                    || glob.IndexOf(Path.DirectorySeparatorChar) >= 0
+                    || glob.IndexOf(Path.AltDirectorySeparatorChar) >= 0)
+                    return AgentToolText.F("I18n_AgentResultGrepGlobDenied", glob);
+                if (File.Exists(searchPath) && IsSensitiveFile(searchPath))
+                    return AgentToolText.F("I18n_AgentResultGrepSensitivePathDenied", searchPath);
+
                 var regex = new Regex(
                     pattern,
                     ignoreCase
@@ -565,33 +581,17 @@ namespace WordOllama.lib.Tools
                 if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
                     return AgentToolText.F("I18n_AgentResultPathNotFound", searchPath);
 
-                // 收集要搜索的文件
-                var files = new List<string>();
-                if (File.Exists(searchPath))
-                {
-                    files.Add(searchPath);
-                }
-                else
-                {
-                    try
-                    {
-                        files.AddRange(
-                            Directory.EnumerateFiles(searchPath, glob, SearchOption.AllDirectories)
-                        );
-                    }
-                    catch
-                    { /* 部分目录无权限，跳过 */
-                    }
-                }
-
-                if (files.Count == 0)
-                    return AgentToolText.T("I18n_AgentResultNoMatchingFiles");
+                IEnumerable<string> files = File.Exists(searchPath)
+                    ? new[] { searchPath }
+                    : EnumerateSafeFiles(searchPath, glob);
 
                 var results = new List<string>();
                 int totalMatches = 0;
                 long totalBytesScanned = 0;
                 int skippedLarge = 0;
                 int skippedBinary = 0;
+                int skippedSensitive = 0;
+                int scannedFiles = 0;
 
                 foreach (string file in files)
                 {
@@ -600,6 +600,15 @@ namespace WordOllama.lib.Tools
 
                     try
                     {
+                        if (!IsAllowedSearchPath(file, doc) || HasReparsePoint(file))
+                            continue;
+                        if (IsSensitiveFile(file))
+                        {
+                            skippedSensitive++;
+                            continue;
+                        }
+
+                        scannedFiles++;
                         var fi = new FileInfo(file);
                         // 跳过超大文件
                         if (fi.Length > maxFileSizeKb * 1024L)
@@ -626,10 +635,7 @@ namespace WordOllama.lib.Tools
                                 string lineNum = (i + 1).ToString();
                                 string displayPath = file;
                                 // 如果路径在搜索目录下，用相对路径简洁些
-                                if (
-                                    searchPath != Directory.GetCurrentDirectory()
-                                    && file.StartsWith(searchPath)
-                                )
+                                if (Directory.Exists(searchPath) && IsPathUnderRootOrEqual(file, searchPath))
                                     displayPath = file.Substring(searchPath.Length)
                                         .TrimStart('\\', '/');
                                 string preview = lines[i].Trim();
@@ -650,10 +656,14 @@ namespace WordOllama.lib.Tools
                     }
                 }
 
+                if (scannedFiles == 0 && skippedSensitive == 0)
+                    return AgentToolText.T("I18n_AgentResultNoMatchingFiles");
+
                 if (results.Count == 0)
                     return AgentToolText.F("I18n_AgentResultNoGrepMatches", pattern)
                         + (skippedLarge > 0 ? AgentToolText.F("I18n_AgentResultSkippedLargeFiles", skippedLarge) : "")
-                        + (skippedBinary > 0 ? AgentToolText.F("I18n_AgentResultSkippedBinaryFiles", skippedBinary) : "");
+                        + (skippedBinary > 0 ? AgentToolText.F("I18n_AgentResultSkippedBinaryFiles", skippedBinary) : "")
+                        + (skippedSensitive > 0 ? AgentToolText.F("I18n_AgentResultSkippedSensitiveFiles", skippedSensitive) : "");
 
                 var sb = new StringBuilder();
                 sb.AppendLine(AgentToolText.F("I18n_AgentResultGrepPattern", pattern));
@@ -663,6 +673,8 @@ namespace WordOllama.lib.Tools
                     sb.AppendLine(AgentToolText.F("I18n_AgentResultGrepSkippedLarge", skippedLarge));
                 if (skippedBinary > 0)
                     sb.AppendLine(AgentToolText.F("I18n_AgentResultGrepSkippedBinary", skippedBinary));
+                if (skippedSensitive > 0)
+                    sb.AppendLine(AgentToolText.F("I18n_AgentResultGrepSkippedSensitive", skippedSensitive));
                 sb.AppendLine();
                 sb.AppendLine(string.Join("\n", results));
 
@@ -672,6 +684,110 @@ namespace WordOllama.lib.Tools
             {
                 return AgentToolText.F("I18n_AgentResultGrepFailed", ex.Message);
             }
+        }
+
+        private static string GetDefaultSearchRoot(Word.Document doc)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(doc?.Path))
+                    return Path.GetFullPath(doc.Path);
+            }
+            catch { }
+
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "WordAgentSkills");
+        }
+
+        private static bool IsAllowedSearchPath(string path, Word.Document doc)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+
+            var roots = new List<string>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(doc?.Path))
+                    roots.Add(doc.Path);
+            }
+            catch { }
+
+            roots.Add(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "WordAgentSkills"));
+
+            string oneDrive = Environment.GetEnvironmentVariable("OneDrive");
+            if (!string.IsNullOrWhiteSpace(oneDrive))
+            {
+                roots.Add(Path.Combine(oneDrive, "Documents", "WordAgentSkills"));
+                roots.Add(Path.Combine(oneDrive, "文档", "WordAgentSkills"));
+            }
+
+            return roots.Any(root => IsPathUnderRootOrEqual(path, root));
+        }
+
+        private static bool IsPathUnderRootOrEqual(string path, string root)
+        {
+            if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(root)) return false;
+            string fullPath = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string fullRoot = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            return string.Equals(fullPath, fullRoot, StringComparison.OrdinalIgnoreCase)
+                || fullPath.StartsWith(fullRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static IEnumerable<string> EnumerateSafeFiles(string root, string glob)
+        {
+            var pending = new Stack<string>();
+            pending.Push(root);
+            while (pending.Count > 0)
+            {
+                string current = pending.Pop();
+                if (HasReparsePoint(current)) continue;
+
+                string[] files;
+                try { files = Directory.GetFiles(current, glob, SearchOption.TopDirectoryOnly); }
+                catch { files = Array.Empty<string>(); }
+                foreach (string file in files)
+                    yield return file;
+
+                string[] directories;
+                try { directories = Directory.GetDirectories(current); }
+                catch { directories = Array.Empty<string>(); }
+                foreach (string directory in directories)
+                {
+                    if (!HasReparsePoint(directory))
+                        pending.Push(directory);
+                }
+            }
+        }
+
+        private static bool HasReparsePoint(string path)
+        {
+            try
+            {
+                return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        private static bool IsSensitiveFile(string path)
+        {
+            string name = Path.GetFileName(path)?.ToLowerInvariant() ?? "";
+            string ext = Path.GetExtension(path)?.ToLowerInvariant() ?? "";
+            string[] exactNames =
+            {
+                ".env", ".npmrc", ".yarnrc", ".netrc", "credentials", "credentials.json",
+                "secrets.json", "id_rsa", "id_ed25519"
+            };
+            string[] sensitiveExtensions = { ".pfx", ".p12", ".key", ".pem", ".snk", ".kdbx" };
+            return exactNames.Contains(name)
+                || sensitiveExtensions.Contains(ext)
+                || name.IndexOf("credential", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("password", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("secret", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>快速判断是否为二进制文件（基于扩展名和前 512 字节）。</summary>
