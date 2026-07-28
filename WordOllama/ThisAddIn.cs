@@ -87,6 +87,10 @@ namespace WordOllama
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
+            // UI resources must be resolved before any runtime windows or controls are created.
+            // Chinese Word uses zh-CN; every other Word UI language falls back to English.
+            UiCulture.Initialize(Application);
+
             // 全局未捕获异常处理 — 防止 async void 等未处理异常直接崩溃 Word
             AppDomain.CurrentDomain.UnhandledException += (_, args) =>
             {
@@ -129,11 +133,6 @@ namespace WordOllama
             {
                 DebugLogger.Log("SilentLinter", $"初始化失败: {ex.Message}");
             }
-
-            // 获取Word UI语言设置并应用到当前线程
-            var wordLang = Application.LanguageSettings.LanguageID[MsoAppLanguageID.msoLanguageIDUI];
-            CultureInfo culture = new CultureInfo((int)wordLang);
-            Thread.CurrentThread.CurrentUICulture = culture;
 
             // 应用就绪后刷新功能区标签，确保显示上次保存的 AI 模式和模型名
             System.Windows.Forms.Application.Idle += OnStartupIdle;

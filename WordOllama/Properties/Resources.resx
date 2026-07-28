@@ -772,7 +772,7 @@
   <data name="更新说明" xml:space="preserve">
     <value>更新说明</value>
   </data>
-  <data name="本插件名称WordOllamaX0aX0a制作者李伯阳北京市隆安广州律师事务所X0aX0a声明X0a1本插件不会收集您的任何数据和个人信息X0a2AI人工智能所生成的内容仅供参考可能存在错误对于任何AI生成的文本本制作者不承担任何责任X0a3本插件完全免费如您在其他地方付费后获取本插件请进行举报X0aX0a如您对本插件有任何建议或疑惑请联系微信LegalLby" xml:space="preserve">
+  <data name="I18n_AboutLegalNotice" xml:space="preserve">
     <value>本插件名称：WordOllama
 制作者：李伯阳 - 北京市隆安（广州）律师事务所
 
@@ -782,7 +782,6 @@
 3. AI（人工智能）所生成的内容仅供参考，可能存在错误。对于任何AI生成的文本，本制作者不承担任何责任。
 4. 本插件完全免费，如您在其他地方付费后获取本插件，请进行举报。
 
-如您对本插件有任何建议或疑惑，请联系微信: legal-lby
 </value>
   </data>
   <data name="X0aX0a本插件ICONS来源" xml:space="preserve">
@@ -2869,4 +2868,26 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_UiAgentEmptyState" xml:space="preserve"><value>等待你的指令</value></data>
   <data name="I18n_UiAgentExecutionDetails" xml:space="preserve"><value>执行过程</value></data>
   <data name="I18n_UiAgentResultTitle" xml:space="preserve"><value>任务完成</value></data>
+  <data name="I18n_AboutWebsiteLabel" xml:space="preserve"><value>项目网址：</value></data>
+  <data name="I18n_AboutPersonalWebsiteLabel" xml:space="preserve"><value>个人主页：</value></data>
+  <data name="I18n_AboutEmailLabel" xml:space="preserve"><value>邮箱：</value></data>
+  <data name="I18n_AboutWechatLabel" xml:space="preserve"><value>微信：</value></data>
+  <data name="I18n_Import" xml:space="preserve"><value>导入</value></data>
+  <data name="I18n_ImportMcpJson" xml:space="preserve"><value>导入 MCP JSON</value></data>
+  <data name="I18n_ImportMcpJsonDesc" xml:space="preserve"><value>粘贴包含 mcpServers 的 JSON 配置。重名服务器会在确认后更新，密钥和请求头将使用 Windows 当前用户加密保存。</value></data>
+  <data name="I18n_ImportMcpJsonHint" xml:space="preserve"><value>在此粘贴 MCP JSON 配置</value></data>
+  <data name="I18n_McpImportInvalid" xml:space="preserve"><value>没有找到有效的 MCP 服务器配置。请检查 JSON 是否包含 mcpServers，或是否为服务器数组。</value></data>
+  <data name="I18n_McpImportPreview" xml:space="preserve"><value>将新增 {0} 个、更新 {1} 个 MCP 服务器。是否继续？</value></data>
+  <data name="I18n_McpImportComplete" xml:space="preserve"><value>已导入 {0} 个 MCP 服务器（新增 {1} 个，更新 {2} 个）。服务器默认为不受信任；请测试连接并选择允许 Agent 使用的工具。</value></data>
+  <data name="I18n_McpImportFailed" xml:space="preserve"><value>MCP JSON 导入失败：{0}</value></data>
+  <data name="I18n_AgentPermissionTitle" xml:space="preserve"><value>Agent 权限请求</value></data>
+  <data name="I18n_AgentPermissionHeading" xml:space="preserve"><value>允许这项操作？</value></data>
+  <data name="I18n_AgentPermissionMessage" xml:space="preserve"><value>工具：{0}&#10;操作：{1}&#10;可能影响：{2}</value></data>
+  <data name="I18n_AgentPermissionSessionNote" xml:space="preserve"><value>“本次会话允许”只对当前 Agent 对话中的同一工具生效；新建对话或重启 Word 后会自动清除。</value></data>
+  <data name="I18n_AllowOnce" xml:space="preserve"><value>仅允许本次</value></data>
+  <data name="I18n_AllowSession" xml:space="preserve"><value>本次会话允许</value></data>
+  <data name="I18n_Deny" xml:space="preserve"><value>拒绝</value></data>
+  <data name="I18n_AgentDangerousPermissionMessage" xml:space="preserve"><value>工具：execute_command&#10;危险命令：{0}&#10;此操作可能删除或破坏本地数据，只能逐次批准。</value></data>
+  <data name="I18n_OrderedList" xml:space="preserve"><value>有序列表（1.）</value></data>
+  <data name="I18n_SelectAllTools" xml:space="preserve"><value>全选工具</value></data>
 </root>

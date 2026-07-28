@@ -97,7 +97,7 @@ namespace WordOllama.lib
                 }
 
                 // Ordered list
-                var olMatch = Regex.Match(trimmed, @"^(\d+)\.\s+(.+)$");
+                var olMatch = Regex.Match(trimmed, @"^(\d+)[.)]\s+(.+)$");
                 if (olMatch.Success)
                 {
                     string text = olMatch.Groups[2].Value;

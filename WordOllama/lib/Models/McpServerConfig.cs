@@ -48,5 +48,10 @@ namespace WordOllama.lib
         public DateTime? LastTestedAt { get; set; }
         public int LastToolCount { get; set; }
         public string LastError { get; set; }
+
+        public string DisplayTarget =>
+            string.Equals(Transport, "stdio", StringComparison.OrdinalIgnoreCase)
+                ? $"{Command} {Args}".Trim()
+                : Url ?? "";
     }
 }

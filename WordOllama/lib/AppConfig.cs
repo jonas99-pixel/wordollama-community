@@ -351,7 +351,10 @@ namespace WordOllama.lib
                 SettingsManager.LoadLegacyIniIntoProperties();
                 var s = Properties.Settings.Default;
                 Instance.AIMode = s.AIMode ?? "Ollama";
-                Instance.LanguageMode = s.LanguageMode ?? "Auto";
+                Instance.LanguageMode = string.IsNullOrWhiteSpace(s.LanguageMode) ||
+                                        string.Equals(s.LanguageMode, "null", StringComparison.OrdinalIgnoreCase)
+                    ? "Auto"
+                    : s.LanguageMode;
                 Instance.ThemeType = s.themeType ?? "Light";
                 Instance.DefaultPromptOutputMode = "Auto";
                 Instance.OllamaEndPoint = s.OllamaEndPoint ?? "http://localhost:11434";

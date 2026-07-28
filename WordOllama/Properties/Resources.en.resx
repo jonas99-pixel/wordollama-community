@@ -769,8 +769,8 @@ View User Guide:</value>
   <data name="本地模式" xml:space="preserve">
     <value>Local Mode</value>
   </data>
-  <data name="本插件名称WordOllamaX0aX0a制作者李伯阳北京市隆安广州律师事务所X0aX0a声明X0a1本插件不会收集您的任何数据和个人信息X0a2AI人工智能所生成的内容仅供参考可能存在错误对于任何AI生成的文本本制作者不承担任何责任X0a3本插件完全免费如您在其他地方付费后获取本插件请进行举报X0aX0a如您对本插件有任何建议或疑惑请联系微信LegalLby" xml:space="preserve">
-    <value>Plugin Name: WordOllama\nAuthor: Li Boyang - Beijing Longan (Guangzhou) Law Firm\n\nDisclaimer:\n1. The WordOllama project does not operate telemetry or collect or retain user documents.\n2. When you actively use AI or MCP, relevant content is sent to the service you configured and handled under that provider's policies.\n3. AI-generated content is for reference only and may contain errors. The author assumes no liability for any AI-generated text.\n4. This plugin is completely free. If you paid for it elsewhere, please report it.\n\nFor suggestions or questions, contact WeChat: legal-lby</value>
+  <data name="I18n_AboutLegalNotice" xml:space="preserve">
+    <value>Plugin Name: WordOllama\nAuthor: Li Boyang - Beijing Longan (Guangzhou) Law Firm\n\nDisclaimer:\n1. The WordOllama project does not operate telemetry or collect or retain user documents.\n2. When you actively use AI or MCP, relevant content is sent to the service you configured and handled under that provider's policies.\n3. AI-generated content is for reference only and may contain errors. The author assumes no liability for any AI-generated text.\n4. This plugin is completely free. If you paid for it elsewhere, please report it.</value>
   </data>
   <data name="查看思维链" xml:space="preserve">
     <value>View Chain of Thought</value>
@@ -2859,4 +2859,26 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_UiAgentEmptyState" xml:space="preserve"><value>Ready for your request</value></data>
   <data name="I18n_UiAgentExecutionDetails" xml:space="preserve"><value>Execution details</value></data>
   <data name="I18n_UiAgentResultTitle" xml:space="preserve"><value>Task complete</value></data>
+  <data name="I18n_AboutWebsiteLabel" xml:space="preserve"><value>Website: </value></data>
+  <data name="I18n_AboutPersonalWebsiteLabel" xml:space="preserve"><value>Personal website: </value></data>
+  <data name="I18n_AboutEmailLabel" xml:space="preserve"><value>Email: </value></data>
+  <data name="I18n_AboutWechatLabel" xml:space="preserve"><value>WeChat: </value></data>
+  <data name="I18n_Import" xml:space="preserve"><value>Import</value></data>
+  <data name="I18n_ImportMcpJson" xml:space="preserve"><value>Import MCP JSON</value></data>
+  <data name="I18n_ImportMcpJsonDesc" xml:space="preserve"><value>Paste a JSON configuration containing mcpServers. Existing servers with the same name will be updated after confirmation. Secrets and headers are encrypted for the current Windows user.</value></data>
+  <data name="I18n_ImportMcpJsonHint" xml:space="preserve"><value>Paste MCP JSON configuration here</value></data>
+  <data name="I18n_McpImportInvalid" xml:space="preserve"><value>No valid MCP server configuration was found. Check that the JSON contains mcpServers or is a server array.</value></data>
+  <data name="I18n_McpImportPreview" xml:space="preserve"><value>This will add {0} and update {1} MCP server(s). Continue?</value></data>
+  <data name="I18n_McpImportComplete" xml:space="preserve"><value>Imported {0} MCP server(s): {1} added and {2} updated. Servers remain untrusted by default; test each connection and select the tools the Agent may use.</value></data>
+  <data name="I18n_McpImportFailed" xml:space="preserve"><value>MCP JSON import failed: {0}</value></data>
+  <data name="I18n_AgentPermissionTitle" xml:space="preserve"><value>Agent permission request</value></data>
+  <data name="I18n_AgentPermissionHeading" xml:space="preserve"><value>Allow this operation?</value></data>
+  <data name="I18n_AgentPermissionMessage" xml:space="preserve"><value>Tool: {0}&#10;Operation: {1}&#10;Possible effects: {2}</value></data>
+  <data name="I18n_AgentPermissionSessionNote" xml:space="preserve"><value>“Allow for this session” applies only to the same tool in the current Agent conversation. It is cleared when you start a new conversation or restart Word.</value></data>
+  <data name="I18n_AllowOnce" xml:space="preserve"><value>Allow once</value></data>
+  <data name="I18n_AllowSession" xml:space="preserve"><value>Allow for this session</value></data>
+  <data name="I18n_Deny" xml:space="preserve"><value>Deny</value></data>
+  <data name="I18n_AgentDangerousPermissionMessage" xml:space="preserve"><value>Tool: execute_command&#10;Dangerous command: {0}&#10;This operation may delete or damage local data and must be approved each time.</value></data>
+  <data name="I18n_OrderedList" xml:space="preserve"><value>Ordered list (1.)</value></data>
+  <data name="I18n_SelectAllTools" xml:space="preserve"><value>Select all tools</value></data>
 </root>

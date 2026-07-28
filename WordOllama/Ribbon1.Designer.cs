@@ -10,6 +10,7 @@ namespace WordOllama
         public Ribbon1()
             : base(Globals.Factory.GetRibbonFactory())
         {
+            try { WordOllama.lib.UiCulture.Initialize(Globals.ThisAddIn?.Application); } catch { }
             InitializeComponent();
         }
 

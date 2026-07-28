@@ -26,6 +26,8 @@ using System.Windows.Media.Media3D;
 using WordOllama.lib;
 using Word = Microsoft.Office.Interop.Word;
 using WordOllama.lib.Providers;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace WordOllama.NewUI
 {
@@ -34,6 +36,21 @@ namespace WordOllama.NewUI
     /// </summary>
     public partial class NewSetting : Window
     {
+        private static readonly IntPtr HwndNotTopmost = new IntPtr(-2);
+        private const uint SwpNoSize = 0x0001;
+        private const uint SwpNoMove = 0x0002;
+        private const uint SwpNoActivate = 0x0010;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool SetWindowPos(
+            IntPtr hWnd,
+            IntPtr hWndInsertAfter,
+            int x,
+            int y,
+            int cx,
+            int cy,
+            uint flags);
+
         private HttpClient _httpClient;
         public ObservableCollection<OllamaModelInfo> OllamaModels { get; set; }
         public ObservableCollection<ChatGPTModelInfo> ChatGPTModels { get; set; }
@@ -45,6 +62,36 @@ namespace WordOllama.NewUI
         // 弹窗拖拽
         private bool _isPopupDragging;
         private Point _popupDragStart;
+
+        private void NonTopmostPopup_Opened(object sender, EventArgs e)
+        {
+            if (sender is Popup popup)
+                Dispatcher.BeginInvoke(new Action(() => DemotePopup(popup)));
+        }
+
+        private void NewSetting_Deactivated(object sender, EventArgs e)
+        {
+            DemotePopup(AddModelPopup);
+            DemotePopup(McpServerPopup);
+            DemotePopup(McpToolPermissionsPopup);
+            DemotePopup(McpImportPopup);
+        }
+
+        private static void DemotePopup(Popup popup)
+        {
+            if (popup?.IsOpen != true || popup.Child == null) return;
+            var source = PresentationSource.FromVisual(popup.Child) as HwndSource;
+            if (source?.Handle == IntPtr.Zero) return;
+
+            SetWindowPos(
+                source.Handle,
+                HwndNotTopmost,
+                0,
+                0,
+                0,
+                0,
+                SwpNoMove | SwpNoSize | SwpNoActivate);
+        }
 
         // Provider 默认端点
         private Dictionary<string, string> providerDefaultEndpoints = new Dictionary<string, string>()
@@ -1467,7 +1514,7 @@ namespace WordOllama.NewUI
             }
             catch { }
 
-            var allCombos = new[] { MdStyleH1, MdStyleH2, MdStyleH3, MdStyleP, MdStyleCode, MdStyleBlockquote, MdStyleUl };
+            var allCombos = new[] { MdStyleH1, MdStyleH2, MdStyleH3, MdStyleP, MdStyleCode, MdStyleBlockquote, MdStyleUl, MdStyleOl };
             foreach (var combo in allCombos)
             {
                 combo.ItemsSource = styleNames;
@@ -1485,6 +1532,7 @@ namespace WordOllama.NewUI
                 MdStyleCode.Text = "Normal";
                 MdStyleBlockquote.Text = "Normal";
                 MdStyleUl.Text = "List Bullet";
+                MdStyleOl.Text = "List Number";
                 return;
             }
 
@@ -1504,6 +1552,7 @@ namespace WordOllama.NewUI
                         case "code": MdStyleCode.Text = m.WordStyleName; break;
                         case "blockquote": MdStyleBlockquote.Text = m.WordStyleName; break;
                         case "ul": MdStyleUl.Text = m.WordStyleName; break;
+                        case "ol": MdStyleOl.Text = m.WordStyleName; break;
                     }
                 }
             }
@@ -1632,6 +1681,7 @@ namespace WordOllama.NewUI
                 new() { MarkdownElement = "code", WordStyleName = MdStyleCode.Text },
                 new() { MarkdownElement = "blockquote", WordStyleName = MdStyleBlockquote.Text },
                 new() { MarkdownElement = "ul", WordStyleName = MdStyleUl.Text },
+                new() { MarkdownElement = "ol", WordStyleName = MdStyleOl.Text },
             };
             SharedSettings.MarkdownStyleMappingsJson =
                 Newtonsoft.Json.JsonConvert.SerializeObject(mdMappings, Newtonsoft.Json.Formatting.Indented);
@@ -2083,6 +2133,12 @@ namespace WordOllama.NewUI
             Process.Start("explorer.exe", _skillsPath);
         }
 
+        private void AboutLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
         private void ImportSkillZip_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new Microsoft.Win32.OpenFileDialog
@@ -2202,31 +2258,7 @@ namespace WordOllama.NewUI
                     foreach (var item in EnumerateMcpServerItems(JToken.Parse(json)))
                     {
                         migratedLegacySecrets |= item["envProtected"] == null || item["headersProtected"] == null || item["enabledTools"] == null;
-                        _mcpServers.Add(new McpServerConfig
-                        {
-                            Name = item["name"]?.ToString() ?? "",
-                            Transport = item["transport"]?.ToString() ?? "stdio",
-                            Url = item["url"]?.ToString()
-                                ?? item["endpoint"]?.ToString()
-                                ?? "",
-                            Command = item["command"]?.ToString() ?? "",
-                            Args = ReadMcpArgs(item["args"]),
-                            WorkingDirectory = item["cwd"]?.ToString()
-                                ?? item["workingDirectory"]?.ToString()
-                                ?? "",
-                            EnvironmentVariables = ReadProtectedMcpValue(item, "envProtected", item["env"] ?? item["environment"]),
-                            Headers = ReadProtectedMcpValue(item, "headersProtected", item["headers"]),
-                            Enabled = item["enabled"]?.ToObject<bool>() ?? true,
-                            TrustLevel = item["trustLevel"]?.ToString() ?? "Untrusted",
-                            AvailableToolNames = ReadMcpToolNames(item["availableTools"]),
-                            EnabledToolNames = ReadMcpToolNames(item["enabledTools"]),
-                            ConnectionState = item["connectionState"]?.ToString() ?? "Not tested",
-                            EndpointDisplay = item["endpointDisplay"]?.ToString(),
-                            LastHandshakeAt = item["lastHandshakeAt"]?.ToObject<DateTime?>(),
-                            LastTestedAt = item["lastTestedAt"]?.ToObject<DateTime?>(),
-                            LastToolCount = item["lastToolCount"]?.ToObject<int>() ?? 0,
-                            LastError = item["lastError"]?.ToString()
-                        });
+                        _mcpServers.Add(CreateMcpServerConfig(item));
                     }
                 }
             }
@@ -2288,8 +2320,41 @@ namespace WordOllama.NewUI
                 : new List<string>();
         }
 
+        private static McpServerConfig CreateMcpServerConfig(JObject item, bool forceUntrusted = false)
+        {
+            return new McpServerConfig
+            {
+                Name = item["name"]?.ToString()?.Trim() ?? "",
+                Transport = McpToolManager.TransportToText(McpToolManager.ParseTransportKind(
+                    item["transport"]?.ToString()
+                    ?? item["type"]?.ToString()
+                    ?? "stdio")),
+                Url = item["url"]?.ToString()
+                    ?? item["endpoint"]?.ToString()
+                    ?? "",
+                Command = item["command"]?.ToString() ?? "",
+                Args = ReadMcpArgs(item["args"]),
+                WorkingDirectory = item["cwd"]?.ToString()
+                    ?? item["workingDirectory"]?.ToString()
+                    ?? "",
+                EnvironmentVariables = ReadProtectedMcpValue(item, "envProtected", item["env"] ?? item["environment"]),
+                Headers = ReadProtectedMcpValue(item, "headersProtected", item["headers"]),
+                Enabled = item["enabled"]?.ToObject<bool>() ?? true,
+                TrustLevel = forceUntrusted ? "Untrusted" : item["trustLevel"]?.ToString() ?? "Untrusted",
+                AvailableToolNames = ReadMcpToolNames(item["availableTools"]),
+                EnabledToolNames = ReadMcpToolNames(item["enabledTools"]),
+                ConnectionState = item["connectionState"]?.ToString() ?? "Not tested",
+                EndpointDisplay = item["endpointDisplay"]?.ToString(),
+                LastHandshakeAt = item["lastHandshakeAt"]?.ToObject<DateTime?>(),
+                LastTestedAt = item["lastTestedAt"]?.ToObject<DateTime?>(),
+                LastToolCount = item["lastToolCount"]?.ToObject<int>() ?? 0,
+                LastError = item["lastError"]?.ToString()
+            };
+        }
+
         private string _editingMcpName = null; // null = 添加模式，非null = 编辑模式
         private McpServerConfig _toolPermissionsServer;
+        private bool _updatingMcpToolSelection;
 
         private void ConfigureMcpTools_Click(object sender, RoutedEventArgs e)
         {
@@ -2307,15 +2372,72 @@ namespace WordOllama.NewUI
             var enabled = new HashSet<string>(server.EnabledToolNames ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
             foreach (string toolName in server.AvailableToolNames.OrderBy(tool => tool, StringComparer.OrdinalIgnoreCase))
             {
-                McpToolPermissionsPanel.Children.Add(new CheckBox
+                var toolCheckBox = new CheckBox
                 {
                     Content = toolName,
                     Tag = toolName,
                     IsChecked = enabled.Contains(toolName),
                     Margin = new Thickness(0, 0, 0, 8)
-                });
+                };
+                toolCheckBox.Checked += McpToolCheckBox_Changed;
+                toolCheckBox.Unchecked += McpToolCheckBox_Changed;
+                McpToolPermissionsPanel.Children.Add(toolCheckBox);
             }
+            UpdateMcpSelectAllState();
             McpToolPermissionsPopup.IsOpen = true;
+        }
+
+        private void McpSelectAllToolsCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_updatingMcpToolSelection) return;
+            SetAllMcpToolSelections(true);
+        }
+
+        private void McpSelectAllToolsCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (_updatingMcpToolSelection) return;
+            SetAllMcpToolSelections(false);
+        }
+
+        private void McpToolCheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!_updatingMcpToolSelection)
+                UpdateMcpSelectAllState();
+        }
+
+        private void SetAllMcpToolSelections(bool selected)
+        {
+            _updatingMcpToolSelection = true;
+            try
+            {
+                foreach (var checkBox in McpToolPermissionsPanel.Children.OfType<CheckBox>())
+                    checkBox.IsChecked = selected;
+                McpSelectAllToolsCheckBox.IsChecked = selected;
+            }
+            finally
+            {
+                _updatingMcpToolSelection = false;
+            }
+        }
+
+        private void UpdateMcpSelectAllState()
+        {
+            var checkBoxes = McpToolPermissionsPanel.Children.OfType<CheckBox>().ToList();
+            int selectedCount = checkBoxes.Count(checkBox => checkBox.IsChecked == true);
+
+            _updatingMcpToolSelection = true;
+            try
+            {
+                McpSelectAllToolsCheckBox.IsChecked = selectedCount == 0
+                    ? false
+                    : selectedCount == checkBoxes.Count
+                        ? true
+                        : (bool?)null;
+            }
+            finally
+            {
+                _updatingMcpToolSelection = false;
+            }
         }
 
         private void SaveMcpToolPermissions_Click(object sender, RoutedEventArgs e)
@@ -2355,6 +2477,110 @@ namespace WordOllama.NewUI
             McpTrustedCheckBox.IsChecked = false;
             McpNameBox.IsEnabled = true;
             McpServerPopup.IsOpen = true;
+        }
+
+        private void ImportMcpJson_Click(object sender, RoutedEventArgs e)
+        {
+            McpImportJsonBox.Text = "";
+            McpImportPopup.IsOpen = true;
+            McpImportJsonBox.Focus();
+        }
+
+        private void CancelMcpImport_Click(object sender, RoutedEventArgs e)
+        {
+            McpImportPopup.IsOpen = false;
+        }
+
+        private void ConfirmMcpImport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                JToken root = JToken.Parse(McpImportJsonBox.Text ?? "");
+                var imported = EnumerateMcpServerItems(root)
+                    .Select(item => CreateMcpServerConfig(item, forceUntrusted: true))
+                    .Where(IsValidImportedMcpServer)
+                    .GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+                    .Select(group => group.Last())
+                    .ToList();
+
+                if (imported.Count == 0)
+                {
+                    MessageBox.Show(Loc.T("I18n_McpImportInvalid"), Loc.T("I18n_ImportMcpJson"),
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                int updateCount = imported.Count(item =>
+                    _mcpServers.Any(existing => string.Equals(existing.Name, item.Name, StringComparison.OrdinalIgnoreCase)));
+                int addCount = imported.Count - updateCount;
+                if (MessageBox.Show(
+                        Loc.F("I18n_McpImportPreview", addCount, updateCount),
+                        Loc.T("I18n_ImportMcpJson"),
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    return;
+
+                foreach (var server in imported)
+                {
+                    var existing = _mcpServers.FirstOrDefault(item =>
+                        string.Equals(item.Name, server.Name, StringComparison.OrdinalIgnoreCase));
+                    if (existing == null)
+                    {
+                        _mcpServers.Add(server);
+                        continue;
+                    }
+
+                    UpdateMcpServerFromImport(existing, server);
+                }
+
+                SaveMcpServers();
+                McpServerDataGrid.Items.Refresh();
+                McpImportPopup.IsOpen = false;
+                MessageBox.Show(
+                    Loc.F("I18n_McpImportComplete", imported.Count, addCount, updateCount),
+                    Loc.T("I18n_ImportMcpJson"),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    Loc.F("I18n_McpImportFailed", ex.Message),
+                    Loc.T("I18n_ImportMcpJson"),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private static bool IsValidImportedMcpServer(McpServerConfig server)
+        {
+            if (server == null || string.IsNullOrWhiteSpace(server.Name)) return false;
+            if (McpToolManager.ParseTransportKind(server.Transport) == McpTransportKind.Stdio)
+                return !string.IsNullOrWhiteSpace(server.Command);
+
+            return Uri.TryCreate(server.Url, UriKind.Absolute, out var uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+        }
+
+        private static void UpdateMcpServerFromImport(McpServerConfig target, McpServerConfig source)
+        {
+            target.Transport = source.Transport;
+            target.Url = source.Url;
+            target.Command = source.Command;
+            target.Args = source.Args;
+            target.WorkingDirectory = source.WorkingDirectory;
+            target.EnvironmentVariables = source.EnvironmentVariables;
+            target.Headers = source.Headers;
+            target.Enabled = source.Enabled;
+            target.TrustLevel = "Untrusted";
+            target.AvailableToolNames = new List<string>();
+            target.EnabledToolNames = new List<string>();
+            target.ConnectionState = "Not tested";
+            target.EndpointDisplay = null;
+            target.LastHandshakeAt = null;
+            target.LastTestedAt = null;
+            target.LastToolCount = 0;
+            target.LastError = null;
         }
 
         private void EditMcpServer_Click(object sender, RoutedEventArgs e)

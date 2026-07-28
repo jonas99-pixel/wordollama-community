@@ -518,6 +518,13 @@
     <Compile Include="NewUI\ConfirmationDialog.xaml.cs">
       <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="NewUI\AgentPermissionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\AgentPermissionDialog.xaml.cs">
+      <DependentUpon>AgentPermissionDialog.xaml</DependentUpon>
+    </Compile>
     <Page Include="NewUI\DiffReviewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

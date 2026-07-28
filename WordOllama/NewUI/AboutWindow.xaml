@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:WordOllama.NewUI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="{local:Loc I18n_AboutTitle}"
-        Height="340" Width="440"
+        Height="460" Width="480"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -27,6 +27,7 @@
             Background="{DynamicResource MaterialDesignPaper}">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -63,8 +64,33 @@
                        LineHeight="24"
                        Opacity="0.75"/>
 
+            <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="0,18,0,0">
+                <TextBlock HorizontalAlignment="Center">
+                    <Run Text="{local:Loc I18n_AboutWebsiteLabel}"/>
+                    <Hyperlink NavigateUri="https://www.wordollama.com" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Run Text="www.wordollama.com"/>
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center" Margin="0,8,0,0">
+                    <Run Text="{local:Loc I18n_AboutPersonalWebsiteLabel}"/>
+                    <Hyperlink NavigateUri="https://www.lslby.com" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Run Text="www.lslby.com"/>
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center" Margin="0,8,0,0">
+                    <Run Text="{local:Loc I18n_AboutEmailLabel}"/>
+                    <Hyperlink NavigateUri="mailto:liboyang@lslby.com" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Run Text="liboyang@lslby.com"/>
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center" Margin="0,8,0,0">
+                    <Run Text="{local:Loc I18n_AboutWechatLabel}"/>
+                    <Run Text="legal-lby"/>
+                </TextBlock>
+            </StackPanel>
+
             <!-- OK Button -->
-            <Button Grid.Row="3"
+            <Button Grid.Row="4"
                     Content="{local:Loc I18n_OK}"
                     HorizontalAlignment="Center"
                     Width="100" Height="34"

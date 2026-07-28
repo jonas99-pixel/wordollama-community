@@ -1,3 +1,11 @@
+Version V2.1.2 2026/07/29
+
+Changes
+1. Fixed interface language issues.
+2. Fixed some known interface errors.
+3. Fixed an issue that prevented some types of MCP servers from working.
+__________________________________________________
+
 Version V2.1.1 2026/07/18
 
 Changes

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -73,7 +74,9 @@ namespace WordOllama.lib
 
         private const int HandshakeTimeoutMs = 15000;
         private const int ToolCallTimeoutMs = 120000;
-        private const string ProtocolVersion = "2025-11-25";
+        // 2025-03-26 is the broadest deployed Streamable HTTP baseline. Servers
+        // may negotiate another supported version in the initialize response.
+        private const string ProtocolVersion = "2025-03-26";
 
         public string ServerName => _serverName;
         public bool IsConnected => _transportKind == McpTransportKind.Stdio
@@ -428,6 +431,11 @@ namespace WordOllama.lib
 
         private HttpClient CreateHttpClient()
         {
+            // VSTO runs inside WINWORD.EXE, where another add-in or legacy
+            // machine policy may leave ServicePointManager on an older TLS set.
+            // This MCP endpoint and most modern HTTPS services require TLS 1.2.
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
             var client = new HttpClient(new HttpClientHandler
             {
                 AllowAutoRedirect = false
@@ -577,9 +585,63 @@ namespace WordOllama.lib
             string body = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(body))
                 return new JObject();
+
+            // Some reverse proxies strip or rewrite Content-Type. Accept an SSE
+            // payload by shape as well as by media type.
+            if (LooksLikeSse(body))
+            {
+                JObject matched = null;
+                foreach (string data in ExtractSseDataBlocks(body))
+                {
+                    if (string.IsNullOrWhiteSpace(data)) continue;
+                    var message = JObject.Parse(data);
+                    if (IsClientResponse(message, id))
+                    {
+                        matched = message;
+                        break;
+                    }
+                    await HandleServerMessageAsync(message);
+                }
+                if (matched != null)
+                    return matched;
+                throw new IOException($"HTTP MCP response did not contain response id {id}.");
+            }
+
             var json = JObject.Parse(body);
             await HandleServerMessageAsync(json);
             return json;
+        }
+
+        private static bool LooksLikeSse(string body)
+        {
+            string trimmed = body?.TrimStart();
+            return trimmed != null &&
+                   (trimmed.StartsWith("data:", StringComparison.OrdinalIgnoreCase) ||
+                    trimmed.StartsWith("event:", StringComparison.OrdinalIgnoreCase) ||
+                    trimmed.StartsWith("id:", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static IEnumerable<string> ExtractSseDataBlocks(string body)
+        {
+            var dataLines = new List<string>();
+            foreach (string rawLine in (body ?? "").Replace("\r\n", "\n").Split('\n'))
+            {
+                if (rawLine.Length == 0)
+                {
+                    if (dataLines.Count > 0)
+                    {
+                        yield return string.Join("\n", dataLines);
+                        dataLines.Clear();
+                    }
+                    continue;
+                }
+
+                if (rawLine.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+                    dataLines.Add(rawLine.Substring(5).TrimStart());
+            }
+
+            if (dataLines.Count > 0)
+                yield return string.Join("\n", dataLines);
         }
 
         private async Task LegacySseReadLoopAsync(CancellationToken token)
@@ -916,7 +978,7 @@ namespace WordOllama.lib
 
         private void SetError(Exception exception)
         {
-            LastError = exception?.Message ?? "Unknown MCP error";
+            LastError = FlattenExceptionMessages(exception);
             string text = LastError.ToLowerInvariant();
             if (exception is TimeoutException || text.Contains("timeout") || text.Contains("timed out"))
                 LastErrorCategory = "timeout";
@@ -928,6 +990,32 @@ namespace WordOllama.lib
                 LastErrorCategory = "endpoint";
             else
                 LastErrorCategory = "transport";
+        }
+
+        private static string FlattenExceptionMessages(Exception exception)
+        {
+            if (exception == null) return "Unknown MCP error";
+
+            var messages = new List<string>();
+            Exception current = exception;
+            while (current != null)
+            {
+                if (!string.IsNullOrWhiteSpace(current.Message) &&
+                    !messages.Contains(current.Message, StringComparer.OrdinalIgnoreCase))
+                {
+                    messages.Add(current.Message.Trim());
+                }
+
+                if (current is AggregateException aggregate)
+                {
+                    current = aggregate.Flatten().InnerExceptions.FirstOrDefault();
+                    continue;
+                }
+
+                current = current.InnerException;
+            }
+
+            return messages.Count == 0 ? exception.GetType().Name : string.Join(" -> ", messages);
         }
 
         private void FailPendingRequests(Exception exception)

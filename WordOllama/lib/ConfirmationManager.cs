@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using WordOllama.Forms;
 
@@ -15,6 +16,8 @@ namespace WordOllama.lib
 
         // 会话级免打扰（内存中，重启后重置）
         private static readonly HashSet<string> _sessionOptOuts = new HashSet<string>();
+        private static readonly HashSet<string> _sessionExternalPermissions =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>检查指定确认点是否需要弹窗询问。</summary>
         public static bool ShouldPrompt(string key)
@@ -35,7 +38,22 @@ namespace WordOllama.lib
         }
 
         /// <summary>清除所有会话级免打扰。</summary>
-        public static void ClearSessionOptOuts() => _sessionOptOuts.Clear();
+        public static void ClearSessionOptOuts()
+        {
+            _sessionOptOuts.Clear();
+            _sessionExternalPermissions.Clear();
+        }
+
+        public static bool HasExternalPermissionForSession(string permissionKey) =>
+            !string.IsNullOrWhiteSpace(permissionKey) && _sessionExternalPermissions.Contains(permissionKey);
+
+        public static void GrantExternalPermissionForSession(string permissionKey)
+        {
+            if (!string.IsNullOrWhiteSpace(permissionKey))
+                _sessionExternalPermissions.Add(permissionKey);
+        }
+
+        public static void ClearExternalPermissionsForSession() => _sessionExternalPermissions.Clear();
 
         private static bool IsPermanentlyOptedOut(string key)
         {

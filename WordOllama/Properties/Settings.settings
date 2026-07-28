@@ -27,7 +27,7 @@
       <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="LanguageMode" Type="System.String" Scope="User">
-      <Value Profile="(Default)">null</Value>
+      <Value Profile="(Default)">Auto</Value>
     </Setting>
     <Setting Name="isOllamaModelRefresh" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

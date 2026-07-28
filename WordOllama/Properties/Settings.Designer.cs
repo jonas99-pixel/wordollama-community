@@ -121,7 +121,7 @@ namespace WordOllama.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("null")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Auto")]
         public string LanguageMode {
             get {
                 return ((string)(this["LanguageMode"]));

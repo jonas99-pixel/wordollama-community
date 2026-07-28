@@ -18,6 +18,7 @@
          FontFamily="Segoe UI, Microsoft YaHei UI"
          WindowStartupLocation="CenterScreen"
          ShowInTaskbar="False"
+         Deactivated="NewSetting_Deactivated"
          Closing="NewSetting_Closing"
          Title="{local:Loc I18n_SettingsTitle}">
 
@@ -346,7 +347,8 @@
                 </ScrollViewer>
 
                     <Popup x:Name="AddModelPopup" PlacementTarget="{Binding ElementName=AddModelButton}"
-                           Placement="Center" AllowsTransparency="True" PopupAnimation="Fade">
+                           Placement="Center" AllowsTransparency="True" PopupAnimation="Fade"
+                           Opened="NonTopmostPopup_Opened">
                         <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
                                 BorderThickness="1" Padding="24" CornerRadius="12"
                                 Effect="{DynamicResource MaterialDesignShadowDepth3}"
@@ -622,9 +624,13 @@
                                 <DataGridTemplateColumn Header="{local:Loc I18n_Actions}" Width="70">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="🗑" FontSize="14" ToolTip="{local:Loc I18n_Delete}"
+                                            <Button ToolTip="{local:Loc I18n_Delete}"
                                                     Style="{StaticResource MaterialDesignFlatButton}"
-                                                    Click="DeleteSkill_Click" Tag="{Binding FolderPath}"/>
+                                                    Width="38" Height="34" Padding="0"
+                                                    HorizontalAlignment="Center"
+                                                    Click="DeleteSkill_Click" Tag="{Binding FolderPath}">
+                                                <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
+                                            </Button>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -635,28 +641,19 @@
                         <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_McpServersDesc}" Margin="0,0,0,12" TextWrapping="Wrap"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                            <Button Content="{local:Loc I18n_AddServer}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="AddMcpServer_Click"/>
+                            <Button Content="{local:Loc I18n_AddServer}" Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                    Click="AddMcpServer_Click" Margin="0,0,8,0"/>
+                            <Button Content="{local:Loc I18n_ImportMcpJson}" Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Click="ImportMcpJson_Click"/>
                         </StackPanel>
 
                         <DataGrid x:Name="McpServerDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                                   IsReadOnly="True" SelectionMode="Single" Margin="0,0,0,24"
-                                  Style="{StaticResource MaterialDesignDataGrid}" MaxHeight="250">
+                                  Style="{StaticResource MaterialDesignDataGrid}" MaxHeight="250"
+                                  FrozenColumnCount="1" CanUserReorderColumns="False"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="{local:Loc I18n_Name}" Binding="{Binding Name}" Width="120"/>
-                                <DataGridTextColumn Header="{local:Loc I18n_Transport}" Binding="{Binding Transport}" Width="110"/>
-                                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="180"/>
-                                <DataGridTextColumn Header="{local:Loc I18n_Command}" Binding="{Binding Command}" Width="120"/>
-                                <DataGridTextColumn Header="{local:Loc I18n_Args}" Binding="{Binding Args}" Width="*"/>
-                                <DataGridTextColumn Header="{local:Loc I18n_WorkingDirectory}" Binding="{Binding WorkingDirectory}" Width="150"/>
-                                <DataGridTextColumn Header="{local:Loc I18n_McpHealth}" Binding="{Binding ConnectionState}" Width="90"/>
-                                <DataGridTemplateColumn Header="{local:Loc I18n_Enabled}" Width="50">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <CheckBox IsChecked="{Binding Enabled}" Click="ToggleMcpEnabled_Click"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{local:Loc I18n_Actions}" Width="195">
+                                <DataGridTemplateColumn Header="{local:Loc I18n_Actions}" Width="190">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
@@ -666,20 +663,38 @@
                                                 <Button Content="{local:Loc I18n_McpTools}" FontSize="11" ToolTip="{local:Loc I18n_McpToolsTooltip}"
                                                         Style="{StaticResource MaterialDesignFlatButton}"
                                                         Click="ConfigureMcpTools_Click" Tag="{Binding Name}" Margin="0,0,4,0"/>
-                                                <Button Content="✏️" FontSize="11" ToolTip="{local:Loc I18n_EditTooltip}"
+                                                <Button ToolTip="{local:Loc I18n_EditTooltip}"
                                                         Style="{StaticResource MaterialDesignFlatButton}"
-                                                        Click="EditMcpServer_Click" Tag="{Binding Name}" Margin="0,0,4,0"/>
-                                                <Button Content="🗑" FontSize="11" ToolTip="{local:Loc I18n_DeleteTooltip}" Foreground="#FFFD0000"
+                                                        Width="32" Height="30" Padding="0"
+                                                        Click="EditMcpServer_Click" Tag="{Binding Name}" Margin="0,0,4,0">
+                                                    <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16"/>
+                                                </Button>
+                                                <Button ToolTip="{local:Loc I18n_DeleteTooltip}" Foreground="#FFD32F2F"
                                                         Style="{StaticResource MaterialDesignFlatButton}"
-                                                        Click="DeleteMcpServer_Click" Tag="{Binding Name}"/>
+                                                        Width="32" Height="30" Padding="0"
+                                                        Click="DeleteMcpServer_Click" Tag="{Binding Name}">
+                                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16"/>
+                                                </Button>
                                             </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="{local:Loc I18n_Name}" Binding="{Binding Name}" Width="*" MinWidth="90"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_Transport}" Binding="{Binding Transport}" Width="110"/>
+                                <DataGridTextColumn Header="{x:Static properties:Resources.端点Endpoint}" Binding="{Binding DisplayTarget}" Width="2*" MinWidth="140"/>
+                                <DataGridTextColumn Header="{local:Loc I18n_McpHealth}" Binding="{Binding ConnectionState}" Width="90"/>
+                                <DataGridTemplateColumn Header="{local:Loc I18n_Enabled}" Width="55">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding Enabled}" Click="ToggleMcpEnabled_Click"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <Popup x:Name="McpServerPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade" IsOpen="False">
+                        <Popup x:Name="McpServerPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade"
+                               IsOpen="False" Opened="NonTopmostPopup_Opened">
                             <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
                                     BorderThickness="1" Padding="24" CornerRadius="12"
                                     Effect="{DynamicResource MaterialDesignShadowDepth3}">
@@ -712,19 +727,51 @@
                             </Border>
                         </Popup>
 
-                        <Popup x:Name="McpToolPermissionsPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade" IsOpen="False">
+                        <Popup x:Name="McpToolPermissionsPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade"
+                               IsOpen="False" Opened="NonTopmostPopup_Opened">
                             <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
                                     BorderThickness="1" Padding="24" CornerRadius="12"
                                     Effect="{DynamicResource MaterialDesignShadowDepth3}">
                                 <StackPanel Width="420">
                                     <TextBlock Text="{local:Loc I18n_McpTools}" Style="{StaticResource ModernSectionHeader}" Margin="0,0,0,8"/>
                                     <TextBlock Text="{local:Loc I18n_McpToolsDesc}" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                    <CheckBox x:Name="McpSelectAllToolsCheckBox"
+                                              Content="{local:Loc I18n_SelectAllTools}"
+                                              FontWeight="SemiBold"
+                                              Checked="McpSelectAllToolsCheckBox_Checked"
+                                              Unchecked="McpSelectAllToolsCheckBox_Unchecked"
+                                              Margin="0,0,0,12"/>
                                     <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20">
                                         <StackPanel x:Name="McpToolPermissionsPanel"/>
                                     </ScrollViewer>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button Content="{local:Loc I18n_Cancel}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="CancelMcpToolPermissions_Click" Margin="0,0,8,0"/>
                                         <Button Content="{local:Loc I18n_Save}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="SaveMcpToolPermissions_Click"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+
+                        <Popup x:Name="McpImportPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Fade"
+                               IsOpen="False" Opened="NonTopmostPopup_Opened">
+                            <Border Background="{DynamicResource MaterialDesignPaper}" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                    BorderThickness="1" Padding="24" CornerRadius="12"
+                                    Effect="{DynamicResource MaterialDesignShadowDepth3}">
+                                <StackPanel Width="620">
+                                    <TextBlock Text="{local:Loc I18n_ImportMcpJson}" Style="{StaticResource ModernSectionHeader}" Margin="0,0,0,8"/>
+                                    <TextBlock Text="{local:Loc I18n_ImportMcpJsonDesc}" Style="{StaticResource ModernCaption}"
+                                               TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                    <TextBox x:Name="McpImportJsonBox"
+                                             materialDesign:HintAssist.Hint="{local:Loc I18n_ImportMcpJsonHint}"
+                                             AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
+                                             HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                                             FontFamily="Consolas" FontSize="12" MinHeight="300" MaxHeight="430"
+                                             Margin="0,0,0,20"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{local:Loc I18n_Cancel}" Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Click="CancelMcpImport_Click" Margin="0,0,8,0"/>
+                                        <Button Content="{local:Loc I18n_Import}" Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                                Click="ConfirmMcpImport_Click"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -875,6 +922,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="{local:Loc I18n_MarkdownElement}" FontWeight="SemiBold" Margin="0,0,0,6"/>
@@ -900,6 +948,9 @@
 
                             <TextBlock Grid.Row="7" Grid.Column="0" Text="{local:Loc I18n_UnorderedList}" VerticalAlignment="Center" Margin="0,0,0,8"/>
                             <ComboBox Grid.Row="7" Grid.Column="2" x:Name="MdStyleUl" IsEditable="True" Text="List Bullet" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{local:Loc I18n_OrderedList}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                            <ComboBox Grid.Row="8" Grid.Column="2" x:Name="MdStyleOl" IsEditable="True" Text="List Number" Margin="0,0,0,8"/>
                         </Grid>
 
                         <Separator Margin="0,0,0,16"/>
@@ -942,9 +993,23 @@
                     <StackPanel Margin="28,20,60,20">
                         <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{x:Static properties:Resources.Setting_About}" Margin="0,0,0,16"/>
                         <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22">
-                            <Run Text="{x:Static properties:Resources.本插件名称WordOllamaX0aX0a制作者李伯阳北京市隆安广州律师事务所X0aX0a声明X0a1本插件不会收集您的任何数据和个人信息X0a2AI人工智能所生成的内容仅供参考可能存在错误对于任何AI生成的文本本制作者不承担任何责任X0a3本插件完全免费如您在其他地方付费后获取本插件请进行举报X0aX0a如您对本插件有任何建议或疑惑请联系微信LegalLby}"/>
-                            <Run Text="{x:Static properties:Resources.X0aX0a查看使用说明文档}"/>
-                            <Hyperlink NavigateUri="https://wordollama.lslby.com">https://wordollama.lslby.com</Hyperlink>
+                            <Run Text="{local:Loc I18n_AboutLegalNotice}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="14" Margin="0,20,0,0">
+                            <Run Text="{local:Loc I18n_AboutWebsiteLabel}"/>
+                            <Hyperlink NavigateUri="https://www.wordollama.com" RequestNavigate="AboutLink_RequestNavigate">www.wordollama.com</Hyperlink>
+                        </TextBlock>
+                        <TextBlock FontSize="14" Margin="0,8,0,0">
+                            <Run Text="{local:Loc I18n_AboutPersonalWebsiteLabel}"/>
+                            <Hyperlink NavigateUri="https://www.lslby.com" RequestNavigate="AboutLink_RequestNavigate">www.lslby.com</Hyperlink>
+                        </TextBlock>
+                        <TextBlock FontSize="14" Margin="0,8,0,0">
+                            <Run Text="{local:Loc I18n_AboutEmailLabel}"/>
+                            <Hyperlink NavigateUri="mailto:liboyang@lslby.com" RequestNavigate="AboutLink_RequestNavigate">liboyang@lslby.com</Hyperlink>
+                        </TextBlock>
+                        <TextBlock FontSize="14" Margin="0,8,0,0">
+                            <Run Text="{local:Loc I18n_AboutWechatLabel}"/>
+                            <Run Text="legal-lby"/>
                         </TextBlock>
                     </StackPanel>
                 </ScrollViewer>

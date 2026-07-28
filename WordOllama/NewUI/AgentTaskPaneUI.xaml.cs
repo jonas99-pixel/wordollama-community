@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,6 +20,7 @@ using Word = Microsoft.Office.Interop.Word;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Interop;
 
 namespace WordOllama.NewUI
 {
@@ -548,6 +550,7 @@ namespace WordOllama.NewUI
                     _pendingRequirement = null;
                     _pendingImageBase64 = null;
                     _isWaitingForResponse = false;
+                    lib.ConfirmationManager.ClearExternalPermissionsForSession();
                     btnCancelTask.Visibility = Visibility.Collapsed;
                     statusBarCard.Visibility = Visibility.Collapsed;
                     typingIndicator.Visibility = Visibility.Collapsed;
@@ -833,6 +836,28 @@ namespace WordOllama.NewUI
                         UpdateStatusIcon(null);
                         lblStatus.Text = Properties.Resources.Agent_StatusWaiting;
                         ScrollToEnd();
+                    });
+
+                _agent.ExternalPermissionRequested += request =>
+                    Dispatcher.Invoke(() =>
+                    {
+                        string message = UiText.F(
+                            "I18n_AgentPermissionMessage",
+                            request.ToolName,
+                            request.Operation,
+                            request.EffectDescription);
+                        if (!request.AllowSession &&
+                            string.Equals(request.PermissionKey, "execute_command|dangerous", StringComparison.Ordinal))
+                        {
+                            message = UiText.F("I18n_AgentDangerousPermissionMessage", request.Operation);
+                        }
+
+                        var dialog = new AgentPermissionDialog(message, request.AllowSession);
+                        var wordWindow = Process.GetCurrentProcess().MainWindowHandle;
+                        if (wordWindow != IntPtr.Zero)
+                            new WindowInteropHelper(dialog).Owner = wordWindow;
+                        dialog.ShowDialog();
+                        _agent?.SetExternalPermissionDecision(dialog.Decision);
                     });
 
                 // [计划确认] 展示计划并等待用户确认

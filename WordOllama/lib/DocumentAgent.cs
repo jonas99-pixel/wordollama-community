@@ -15,6 +15,22 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace WordOllama.lib
 {
+    public enum AgentPermissionDecision
+    {
+        Deny,
+        AllowOnce,
+        AllowSession
+    }
+
+    public sealed class AgentPermissionRequest
+    {
+        public string PermissionKey { get; set; }
+        public string ToolName { get; set; }
+        public string Operation { get; set; }
+        public string EffectDescription { get; set; }
+        public bool AllowSession { get; set; } = true;
+    }
+
     public class DocumentAgent
     {
         private readonly Func<List<Dictionary<string, string>>, CancellationToken, Task<string>> _callAIChat;
@@ -51,6 +67,7 @@ namespace WordOllama.lib
         // [HITL] Human-in-the-Loop 支持
         private TaskCompletionSource<string> _pendingResponse;
         private string _pendingQuestion;
+        private TaskCompletionSource<AgentPermissionDecision> _pendingPermission;
 
         // [计划确认] Agent 执行前先展示计划
         private TaskCompletionSource<bool> _planConfirmation;
@@ -73,6 +90,9 @@ namespace WordOllama.lib
 
         /// <summary>[HITL] Agent 向用户提问时触发。UI 应显示问题并收集用户回答。</summary>
         public event Action<string> QuestionAsked;
+
+        /// <summary>外部操作需要本地授权时触发。授权由 UI 完成，不进入模型对话。</summary>
+        public event Action<AgentPermissionRequest> ExternalPermissionRequested;
 
         /// <summary>[计划确认] 计划生成后触发，UI 应展示计划并等待用户确认。</summary>
         public event Action<string> PlanReady;
@@ -446,12 +466,16 @@ namespace WordOllama.lib
                         if (IsDangerousCommand(cmd, cmdArgs))
                         {
                             string fullCmd = string.IsNullOrEmpty(cmdArgs) ? cmd : $"{cmd} {cmdArgs}";
-                            string question = AgentToolText.F("I18n_AgentQuestionDangerousCommand", fullCmd);
-                            AskHumanQuestion(question);
                             Log(AgentToolText.F("I18n_AgentLogDangerousCommandPending", fullCmd));
-                            string confirm = await _pendingResponse.Task;
-                            _ct.ThrowIfCancellationRequested();
-                            if (!string.Equals(confirm?.Trim(), "y", StringComparison.OrdinalIgnoreCase) && !string.Equals(confirm?.Trim(), "yes", StringComparison.OrdinalIgnoreCase))
+                            var dangerousDecision = await RequestExternalPermissionAsync(new AgentPermissionRequest
+                            {
+                                PermissionKey = "execute_command|dangerous",
+                                ToolName = "execute_command",
+                                Operation = fullCmd,
+                                EffectDescription = AgentToolText.T("I18n_AgentEffectLocalProcess"),
+                                AllowSession = false
+                            });
+                            if (dangerousDecision == AgentPermissionDecision.Deny)
                             {
                                 toolResult = AgentToolText.F("I18n_AgentResultDangerousCommandDenied", fullCmd);
                                 toolFailed = false;
@@ -698,23 +722,22 @@ namespace WordOllama.lib
                 required &= ~ToolEffect.ExternalMcp;
             if (required == ToolEffect.None) return true;
 
-            bool english = UseEnglish;
-            foreach (ToolEffect effect in new[] { ToolEffect.LocalFileRead, ToolEffect.LocalProcess, ToolEffect.ExternalNetwork, ToolEffect.ExternalMcp })
+            string permissionKey = $"{tool.Name}|{(int)required}";
+            if (ConfirmationManager.HasExternalPermissionForSession(permissionKey))
+                return true;
+
+            var decision = await RequestExternalPermissionAsync(new AgentPermissionRequest
             {
-                if ((required & effect) == 0) continue;
+                PermissionKey = permissionKey,
+                ToolName = tool.Name,
+                Operation = BuildExternalOperation(tool, parameters),
+                EffectDescription = ToolExecutionPolicy.DescribeEffects(required, UseEnglish),
+                AllowSession = true
+            });
 
-                string description = ToolExecutionPolicy.DescribeEffects(effect, english);
-                string operation = BuildExternalOperation(tool, parameters);
-                string question = AgentToolText.F("I18n_AgentQuestionExternalPermission", tool.Name, operation, description);
-                AskHumanQuestion(question);
-                string answer = await _pendingResponse.Task;
-                _ct.ThrowIfCancellationRequested();
-                bool approved = string.Equals(answer?.Trim(), "y", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(answer?.Trim(), "yes", StringComparison.OrdinalIgnoreCase);
-                if (!approved) return false;
-            }
-
-            return true;
+            if (decision == AgentPermissionDecision.AllowSession)
+                ConfirmationManager.GrantExternalPermissionForSession(permissionKey);
+            return decision != AgentPermissionDecision.Deny;
         }
 
         private string BuildExternalOperation(IAgentTool tool, JObject parameters)
@@ -1210,6 +1233,37 @@ namespace WordOllama.lib
             QuestionAsked?.Invoke(question);
         }
 
+        private async Task<AgentPermissionDecision> RequestExternalPermissionAsync(AgentPermissionRequest request)
+        {
+            var tcs = new TaskCompletionSource<AgentPermissionDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _pendingPermission = tcs;
+            ReportStatus(AgentToolText.T("I18n_AgentStatusAwaitingInput"), WorkflowState.WaitingForUser);
+
+            var handler = ExternalPermissionRequested;
+            if (handler == null)
+            {
+                Interlocked.CompareExchange(ref _pendingPermission, null, tcs);
+                return AgentPermissionDecision.Deny;
+            }
+
+            handler.Invoke(request);
+            try
+            {
+                AgentPermissionDecision decision = await tcs.Task;
+                _ct.ThrowIfCancellationRequested();
+                return decision;
+            }
+            finally
+            {
+                Interlocked.CompareExchange(ref _pendingPermission, null, tcs);
+            }
+        }
+
+        public void SetExternalPermissionDecision(AgentPermissionDecision decision)
+        {
+            Interlocked.Exchange(ref _pendingPermission, null)?.TrySetResult(decision);
+        }
+
         /// <summary>
         /// UI 调用此方法提交用户回答，唤醒挂起的主循环。
         /// </summary>
@@ -1224,6 +1278,7 @@ namespace WordOllama.lib
         {
             _pendingQuestion = null;
             Interlocked.Exchange(ref _pendingResponse, null)?.TrySetCanceled();
+            Interlocked.Exchange(ref _pendingPermission, null)?.TrySetCanceled();
             Interlocked.Exchange(ref _planConfirmation, null)?.TrySetCanceled();
         }
 

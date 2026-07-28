@@ -5,7 +5,7 @@ let legacySseResponse = null;
 
 function sendJson(res, message, extraHeaders = {}) {
   res.writeHead(200, {
-    "content-type": "application/json",
+    "content-type": "application/json;charset=UTF-8",
     ...extraHeaders,
   });
   res.end(JSON.stringify(message));
@@ -17,7 +17,7 @@ function responseFor(message) {
       jsonrpc: "2.0",
       id: message.id,
       result: {
-        protocolVersion: "2025-11-25",
+        protocolVersion: "2025-03-26",
         capabilities: { tools: {} },
         serverInfo: { name: "wordollama-http-smoke", version: "1.0.0" },
       },
@@ -94,12 +94,14 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (message.method === "initialize") {
-      sendJson(res, responseFor(message), { "MCP-Session-Id": "smoke-session" });
+      // Stateless Streamable HTTP servers are valid and need not issue a session id.
+      sendJson(res, responseFor(message));
       return;
     }
 
     if (message.method === "tools/call") {
-      res.writeHead(200, { "content-type": "text/event-stream" });
+      // Exercise payload sniffing when a proxy rewrites the SSE media type.
+      res.writeHead(200, { "content-type": "application/octet-stream" });
       writeSse(res, "message", {
         jsonrpc: "2.0",
         id: "server-ping",

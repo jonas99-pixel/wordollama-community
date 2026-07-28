@@ -233,7 +233,9 @@ namespace WordOllama.lib
                         if (!enabled) continue;
 
                         string name = item["name"]?.ToString() ?? "";
-                        string transport = item["transport"]?.ToString() ?? "stdio";
+                        string transport = item["transport"]?.ToString()
+                            ?? item["type"]?.ToString()
+                            ?? "stdio";
                         var kind = ParseTransportKind(transport);
                         string command = item["command"]?.ToString() ?? "";
                         string url = item["url"]?.ToString()
