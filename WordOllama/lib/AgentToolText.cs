@@ -14,7 +14,7 @@ namespace WordOllama.lib
             _currentAgentLanguage = language;
         }
 
-        private static bool UseEnglish => PromptTemplateService.ResolveUseEnglish(
+        internal static bool UseEnglish => PromptTemplateService.ResolveUseEnglish(
             _currentAgentLanguage ?? SharedSettings.LanguageMode,
             null);
 

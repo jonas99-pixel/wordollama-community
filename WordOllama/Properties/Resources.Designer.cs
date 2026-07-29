@@ -1976,6 +1976,15 @@ namespace WordOllama.Properties {
                 return ResourceManager.GetString("强制英文输出", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   查找类似 强制俄语输出 的本地化字符串。
+        /// </summary>
+        public static string 强制俄语输出 {
+            get {
+                return ResourceManager.GetString("强制俄语输出", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   查找类似 强制规范输出语言（实验性） 的本地化字符串。

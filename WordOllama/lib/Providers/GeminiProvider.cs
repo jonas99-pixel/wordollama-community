@@ -453,7 +453,7 @@ namespace WordOllama.lib.Providers
         {
             if (AppConfig.Instance == null) return "";
             string lang = AppConfig.Instance.LanguageMode;
-            if (lang == "Chinese" || lang == "English") return PromptTemplateService.BuildReplyLanguagePrefix(lang).Trim();
+            if (lang == "Chinese" || lang == "English" || lang == "Russian") return PromptTemplateService.BuildReplyLanguagePrefix(lang).Trim();
             return "";
         }
 

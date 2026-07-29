@@ -327,7 +327,7 @@ namespace WordOllama.lib
             return sb.ToString();
         }
 
-        public static string BuildPromptOptimizerPrompt(string userPrompt)
+        public static string BuildPromptOptimizerPrompt(string userPrompt, string responseLanguage)
         {
             var sb = new StringBuilder();
             sb.AppendLine("You are a prompt optimization specialist.");
@@ -337,12 +337,18 @@ namespace WordOllama.lib
             sb.AppendLine("- Add an appropriate role when useful.");
             sb.AppendLine("- Clarify the task, context, constraints, and expected output.");
             sb.AppendLine("- Add a suitable output format when it improves reliability.");
-            sb.AppendLine("- Preserve the user's original intent and language.");
+            sb.AppendLine("- Preserve the user's original intent and language unless a response language is required below.");
             sb.AppendLine("- Adjust the level of detail to the complexity of the task.");
             sb.AppendLine();
             sb.AppendLine("Output rules:");
             sb.AppendLine("- Return only the optimized prompt.");
             sb.AppendLine("- Do not include analysis, explanations, or alternative versions.");
+            if (string.Equals(responseLanguage, "Russian", StringComparison.OrdinalIgnoreCase))
+                sb.AppendLine("- Return the optimized prompt in Russian.");
+            else if (string.Equals(responseLanguage, "Chinese", StringComparison.OrdinalIgnoreCase))
+                sb.AppendLine("- Return the optimized prompt in Chinese.");
+            else if (string.Equals(responseLanguage, "English", StringComparison.OrdinalIgnoreCase))
+                sb.AppendLine("- Return the optimized prompt in English.");
             sb.AppendLine();
             sb.AppendLine("Raw prompt:");
             sb.AppendLine(userPrompt ?? "");
@@ -455,10 +461,14 @@ namespace WordOllama.lib
             string languageMode)
         {
             string resolvedLanguage = ResolveLanguage(languageMode, null);
-            bool useEnglish = string.Equals(resolvedLanguage, "English", StringComparison.OrdinalIgnoreCase);
+            // Russian uses the English internal prompt and tool vocabulary, but all model-generated
+            // content is explicitly constrained to Russian.
+            bool useEnglish = !string.Equals(resolvedLanguage, "Chinese", StringComparison.OrdinalIgnoreCase);
             string langInstruction = string.Equals(resolvedLanguage, "Chinese", StringComparison.OrdinalIgnoreCase)
                 ? "\n- **语言要求**：请始终用中文回复用户。"
-                : useEnglish ? "\n- **Language**: Always respond in English." : "";
+                : string.Equals(resolvedLanguage, "Russian", StringComparison.OrdinalIgnoreCase)
+                    ? "\n- **Language**: Always respond to the user in Russian. All generated document text and the finish message must be in Russian."
+                    : "\n- **Language**: Always respond in English.";
             bool isFullTextLoaded = !string.IsNullOrEmpty(documentSnapshot) && documentSnapshot.Contains("<document>");
             string readingStrategy = isFullTextLoaded
                 ? (useEnglish
@@ -577,6 +587,8 @@ If the task is completed, set action to ""finish"" and done to true."
         {
             if (string.Equals(language, "Chinese", StringComparison.OrdinalIgnoreCase))
                 return "请始终使用中文回复用户，不要切换为英文。\n";
+            if (string.Equals(language, "Russian", StringComparison.OrdinalIgnoreCase))
+                return "Всегда отвечайте пользователю на русском языке. Весь создаваемый текст должен быть на русском языке.\n";
             if (string.Equals(language, "English", StringComparison.OrdinalIgnoreCase))
                 return "Please always reply in English and do not switch to another language.\n";
             return "Please reply in the user's language.\n";
@@ -584,7 +596,7 @@ If the task is completed, set action to ""finish"" and done to true."
 
         /// <summary>
         /// Resolve the response language for the current request.
-        /// Auto mode follows Chinese input instead of treating every non-explicit mode as English.
+        /// Auto mode recognizes Chinese and Russian input instead of treating every non-explicit mode as English.
         /// </summary>
         public static string ResolveLanguage(string languageMode, string inputText)
         {
@@ -592,13 +604,17 @@ If the task is completed, set action to ""finish"" and done to true."
                 return "Chinese";
             if (string.Equals(languageMode, "English", StringComparison.OrdinalIgnoreCase))
                 return "English";
+            if (string.Equals(languageMode, "Russian", StringComparison.OrdinalIgnoreCase))
+                return "Russian";
 
-            return ContainsChineseCharacters(inputText) ? "Chinese" : "English";
+            if (ContainsChineseCharacters(inputText)) return "Chinese";
+            if (ContainsCyrillicCharacters(inputText)) return "Russian";
+            return "English";
         }
 
         public static bool ResolveUseEnglish(string languageMode, string inputText)
         {
-            return string.Equals(ResolveLanguage(languageMode, inputText), "English", StringComparison.OrdinalIgnoreCase);
+            return !string.Equals(ResolveLanguage(languageMode, inputText), "Chinese", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool ContainsChineseCharacters(string text)
@@ -610,6 +626,21 @@ If the task is completed, set action to ""finish"" and done to true."
                 if ((c >= '\u3400' && c <= '\u4DBF') ||
                     (c >= '\u4E00' && c <= '\u9FFF') ||
                     (c >= '\uF900' && c <= '\uFAFF'))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool ContainsCyrillicCharacters(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+
+            foreach (char c in text)
+            {
+                if ((c >= '\u0400' && c <= '\u052F') ||
+                    (c >= '\u2DE0' && c <= '\u2DFF') ||
+                    (c >= '\uA640' && c <= '\uA69F'))
                     return true;
             }
 

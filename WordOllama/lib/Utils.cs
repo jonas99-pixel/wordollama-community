@@ -43,7 +43,10 @@ namespace WordOllama.lib
 
             try
             {
-                string finalPrompt = PromptTemplateService.BuildPromptOptimizerPrompt(userPrompt);
+                string responseLanguage = PromptTemplateService.ResolveLanguage(
+                    AppConfig.Instance?.LanguageMode,
+                    userPrompt);
+                string finalPrompt = PromptTemplateService.BuildPromptOptimizerPrompt(userPrompt, responseLanguage);
                 var response = await Globals.ThisAddIn.GenerateModelSeletor(finalPrompt);
                 if (response != null)
                 {

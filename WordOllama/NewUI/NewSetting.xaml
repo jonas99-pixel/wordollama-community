@@ -67,10 +67,11 @@
 
                         <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.强制规范输出语言实验性}" Margin="0,0,0,12"/>
                         <ComboBox x:Name="LangMode" Style="{StaticResource MaterialDesignComboBox}" FontSize="14" Margin="0,0,0,24">
-                            <ComboBoxItem Content="{x:Static properties:Resources.不强制由AI自行判断}"/>
-                            <ComboBoxItem Content="{x:Static properties:Resources.强制中文输出}"/>
-                            <ComboBoxItem Content="{x:Static properties:Resources.强制英文输出}"/>
-                            <ComboBoxItem Content="{x:Static properties:Resources.同原文语言实验性}"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.不强制由AI自行判断}" Tag=""/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.强制中文输出}" Tag="Chinese"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.强制英文输出}" Tag="English"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.强制俄语输出}" Tag="Russian"/>
+                            <ComboBoxItem Content="{x:Static properties:Resources.同原文语言实验性}" Tag="Auto"/>
                         </ComboBox>
 
                         <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_DefaultOutputMode}" Margin="0,0,0,12"/>
