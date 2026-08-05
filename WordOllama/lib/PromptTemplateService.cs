@@ -466,9 +466,11 @@ namespace WordOllama.lib
             bool useEnglish = !string.Equals(resolvedLanguage, "Chinese", StringComparison.OrdinalIgnoreCase);
             string langInstruction = string.Equals(resolvedLanguage, "Chinese", StringComparison.OrdinalIgnoreCase)
                 ? "\n- **语言要求**：请始终用中文回复用户。"
-                : string.Equals(resolvedLanguage, "Russian", StringComparison.OrdinalIgnoreCase)
-                    ? "\n- **Language**: Always respond to the user in Russian. All generated document text and the finish message must be in Russian."
-                    : "\n- **Language**: Always respond in English.";
+                : string.Equals(resolvedLanguage, "English", StringComparison.OrdinalIgnoreCase)
+                        ? "\n- **Language**: Always respond in English."
+                        : string.Equals(resolvedLanguage, "Russian", StringComparison.OrdinalIgnoreCase)
+                            ? "\n- **Language**: Always respond to the user in Russian. All generated document text and the finish message must be in Russian."
+                            : "\n- **Language**: Reply in the user's language.";
             bool isFullTextLoaded = !string.IsNullOrEmpty(documentSnapshot) && documentSnapshot.Contains("<document>");
             string readingStrategy = isFullTextLoaded
                 ? (useEnglish
@@ -596,7 +598,8 @@ If the task is completed, set action to ""finish"" and done to true."
 
         /// <summary>
         /// Resolve the response language for the current request.
-        /// Auto mode recognizes Chinese and Russian input instead of treating every non-explicit mode as English.
+        /// Auto mode recognizes Chinese and high-confidence Russian input; otherwise it preserves
+        /// the generic instruction to reply in the user's language.
         /// </summary>
         public static string ResolveLanguage(string languageMode, string inputText)
         {
@@ -608,8 +611,8 @@ If the task is completed, set action to ""finish"" and done to true."
                 return "Russian";
 
             if (ContainsChineseCharacters(inputText)) return "Chinese";
-            if (ContainsCyrillicCharacters(inputText)) return "Russian";
-            return "English";
+            if (IsConfidentRussianText(inputText)) return "Russian";
+            return "Auto";
         }
 
         public static bool ResolveUseEnglish(string languageMode, string inputText)
@@ -632,19 +635,47 @@ If the task is completed, set action to ""finish"" and done to true."
             return false;
         }
 
-        private static bool ContainsCyrillicCharacters(string text)
+        private static bool IsConfidentRussianText(string text)
         {
             if (string.IsNullOrEmpty(text)) return false;
 
+            int letterCount = 0;
+            int cyrillicLetterCount = 0;
+            bool containsRussianDistinctiveLetter = false;
+
             foreach (char c in text)
             {
-                if ((c >= '\u0400' && c <= '\u052F') ||
-                    (c >= '\u2DE0' && c <= '\u2DFF') ||
-                    (c >= '\uA640' && c <= '\uA69F'))
-                    return true;
+                if (!char.IsLetter(c)) continue;
+
+                letterCount++;
+                if (!IsCyrillicCharacter(c)) continue;
+
+                cyrillicLetterCount++;
+                if (!IsRussianAlphabetCharacter(c)) return false;
+
+                if (c == '\u044b' || c == '\u042b' ||
+                    c == '\u044d' || c == '\u042d' ||
+                    c == '\u0451' || c == '\u0401')
+                {
+                    containsRussianDistinctiveLetter = true;
+                }
             }
 
-            return false;
+            return cyrillicLetterCount >= 6 &&
+                   cyrillicLetterCount * 100 >= letterCount * 70 &&
+                   containsRussianDistinctiveLetter;
+        }
+
+        private static bool IsCyrillicCharacter(char c)
+        {
+            return (c >= '\u0400' && c <= '\u052F') ||
+                   (c >= '\u2DE0' && c <= '\u2DFF') ||
+                   (c >= '\uA640' && c <= '\uA69F');
+        }
+
+        private static bool IsRussianAlphabetCharacter(char c)
+        {
+            return (c >= '\u0410' && c <= '\u044f') || c == '\u0401' || c == '\u0451';
         }
 
         public static string BuildConnectionTestPrompt()
