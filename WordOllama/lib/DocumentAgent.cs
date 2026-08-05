@@ -175,7 +175,7 @@ namespace WordOllama.lib
         {
             _ct = ct;
             string resolvedLanguage = PromptTemplateService.ResolveLanguage(SharedSettings.LanguageMode, userRequirement);
-            _useEnglish = string.Equals(resolvedLanguage, "English", StringComparison.OrdinalIgnoreCase);
+            _useEnglish = PromptTemplateService.ResolveUseEnglish(SharedSettings.LanguageMode, userRequirement);
             AgentToolText.SetCurrentAgentLanguage(resolvedLanguage);
             IsAgentRunning = true;
             _trackedChangesBatchStarted = false;
