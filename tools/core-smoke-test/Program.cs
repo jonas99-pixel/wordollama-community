@@ -97,6 +97,48 @@ internal static class Program
         Assert(batchPrompt.Contains("\"id\":\"1\"") && batchPrompt.Contains("\"id\":\"2\""),
             "review batch prompt preserves item identifiers");
 
+        Assert(PromptTemplateService.ResolveLanguage("Chinese", "This is Russian: Это русский текст") == "Chinese",
+            "explicit Chinese language mode takes precedence");
+        Assert(PromptTemplateService.ResolveLanguage("English", "这是中文文本") == "English",
+            "explicit English language mode takes precedence");
+        Assert(PromptTemplateService.ResolveLanguage("Russian", "Hello world") == "Russian",
+            "explicit Russian language mode takes precedence");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "这是中文文本") == "Chinese",
+            "Auto detects Chinese text");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "Это русский текст") == "Russian",
+            "Auto detects high-confidence Russian text");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "Hello world") == "Auto",
+            "Auto preserves the user's language for English text");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "Привет") == "Auto",
+            "Auto does not treat short ambiguous Cyrillic text as Russian");
+
+        Assert(!PromptTemplateService.ResolveUseEnglish("Chinese", "这是中文文本"),
+            "Chinese uses the Chinese internal prompt path");
+        Assert(PromptTemplateService.ResolveUseEnglish("English", "Hello world"),
+            "English uses the English internal prompt path");
+        Assert(PromptTemplateService.ResolveUseEnglish("Russian", "Это русский текст"),
+            "Russian uses the English internal prompt path");
+        Assert(PromptTemplateService.ResolveUseEnglish("Auto", "Привет"),
+            "Auto uses the English internal prompt path");
+
+        string chineseAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("", "", 0, "", "Chinese");
+        string englishAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("", "", 0, "", "English");
+        string russianAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("", "", 0, "", "Russian");
+        string autoAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("", "", 0, "", "Auto");
+        Assert(chineseAgentPrompt.Contains("你是一个强大的微软 Word AI 智能助理") &&
+               chineseAgentPrompt.Contains("请始终用中文回复用户"),
+            "Chinese Agent prompt uses Chinese internals and response instruction");
+        Assert(englishAgentPrompt.Contains("You are a powerful Microsoft Word AI Assistant") &&
+               englishAgentPrompt.Contains("Always respond in English"),
+            "English Agent prompt uses English internals and response instruction");
+        Assert(russianAgentPrompt.Contains("You are a powerful Microsoft Word AI Assistant") &&
+               !russianAgentPrompt.Contains("你是一个强大的微软 Word AI 智能助理") &&
+               russianAgentPrompt.Contains("Always respond to the user in Russian"),
+            "Russian Agent prompt uses English internals and Russian response instruction");
+        Assert(autoAgentPrompt.Contains("You are a powerful Microsoft Word AI Assistant") &&
+               autoAgentPrompt.Contains("Reply in the user's language"),
+            "Auto Agent prompt uses English internals and a neutral response instruction");
+
         Assert(McpToolManager.ParseTransportKind("streamable-http") == McpTransportKind.StreamableHttp, "streamable HTTP transport is parsed");
         Assert(McpToolManager.ParseTransportKind("legacy-sse") == McpTransportKind.Sse, "legacy SSE transport is parsed");
         var environment = McpToolManager.ParseEnvironment(JToken.Parse("{\"TOKEN\":\"value\"}"));
