@@ -398,14 +398,7 @@ namespace WordOllama.NewUI
                 ChatGPTMode.IsChecked = true;
             }
 
-            // 设置语言模式
-            LangMode.SelectedIndex = SharedSettings.LanguageMode switch
-            {
-                "Chinese" => 1,
-                "English" => 2,
-                "Auto" => 3,
-                _ => 0,
-            };
+            SelectLanguageMode(SharedSettings.LanguageMode);
 
             SelectDefaultOutputMode(SharedSettings.DefaultPromptOutputMode);
 
@@ -1665,6 +1658,8 @@ namespace WordOllama.NewUI
                 SharedSettings.AIMode = "ChatGPT";
             }
 
+            SharedSettings.LanguageMode = (LangMode.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "";
+
 
 
             // Ollama
@@ -1730,6 +1725,21 @@ namespace WordOllama.NewUI
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
             SetSettingsDirty(false);
             return true;
+        }
+
+        private void SelectLanguageMode(string languageMode)
+        {
+            string target = languageMode?.Trim() ?? "";
+            foreach (ComboBoxItem item in LangMode.Items)
+            {
+                if (string.Equals(item.Tag?.ToString() ?? "", target, StringComparison.OrdinalIgnoreCase))
+                {
+                    LangMode.SelectedItem = item;
+                    return;
+                }
+            }
+
+            LangMode.SelectedIndex = 0;
         }
 
         private bool ValidateSettings(out string message)

@@ -119,6 +119,41 @@ internal static class Program
                translationPrompt.Contains("defined legal terms"),
             "translation prompt includes source language and terminology scheme");
 
+        Assert(PromptTemplateService.ResolveLanguage("Chinese", "This is Russian: Это русский текст") == "Chinese",
+            "explicit Chinese language mode takes precedence");
+        Assert(PromptTemplateService.ResolveLanguage("English", "这是中文文本") == "English",
+            "explicit English language mode takes precedence");
+        Assert(PromptTemplateService.ResolveLanguage("Russian", "Hello world") == "Russian",
+            "explicit Russian language mode takes precedence");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "这是中文文本") == "Chinese",
+            "Auto detects Chinese text");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "Это русский текст") == "Russian",
+            "Auto detects high-confidence Russian text");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "Hello world") == "Auto",
+            "Auto preserves the user's language for English text");
+        Assert(PromptTemplateService.ResolveLanguage("Auto", "Привет") == "Auto",
+            "Auto does not treat short ambiguous Cyrillic text as Russian");
+
+        Assert(!PromptTemplateService.ResolveUseEnglish("Chinese", "这是中文文本"),
+            "Chinese uses the Chinese internal prompt path");
+        Assert(PromptTemplateService.ResolveUseEnglish("English", "Hello world"),
+            "English uses the English internal prompt path");
+        Assert(PromptTemplateService.ResolveUseEnglish("Russian", "Это русский текст"),
+            "Russian uses the English internal prompt path");
+        Assert(PromptTemplateService.ResolveUseEnglish("Auto", "Привет"),
+            "Auto uses the English internal prompt path");
+
+        string russianAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("", "", 0, "", "Russian");
+        string autoAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("", "", 0, "", "Auto");
+        Assert(russianAgentPrompt.Contains("You are WordOllama") &&
+               !russianAgentPrompt.Contains("Microsoft Word AI Assistant") &&
+               russianAgentPrompt.Contains("Always respond to the user in Russian"),
+            "Russian Agent prompt preserves the WordOllama identity and Russian response instruction");
+        Assert(autoAgentPrompt.Contains("You are WordOllama") &&
+               !autoAgentPrompt.Contains("Microsoft Word AI Assistant") &&
+               autoAgentPrompt.Contains("Reply in the user's language"),
+            "Auto Agent prompt preserves the WordOllama identity and a neutral response instruction");
+
         Assert(McpToolManager.ParseTransportKind("streamable-http") == McpTransportKind.StreamableHttp, "streamable HTTP transport is parsed");
         Assert(McpToolManager.ParseTransportKind("legacy-sse") == McpTransportKind.Sse, "legacy SSE transport is parsed");
         var environment = McpToolManager.ParseEnvironment(JToken.Parse("{\"TOKEN\":\"value\"}"));

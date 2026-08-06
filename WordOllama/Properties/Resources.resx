@@ -625,6 +625,9 @@
   <data name="强制英文输出" xml:space="preserve">
     <value>强制英文输出</value>
   </data>
+  <data name="强制俄语输出" xml:space="preserve">
+    <value>强制俄语输出</value>
+  </data>
   <data name="同原文语言实验性" xml:space="preserve">
     <value>同原文语言（实验性）</value>
   </data>

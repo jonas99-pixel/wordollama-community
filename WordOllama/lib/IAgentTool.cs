@@ -113,7 +113,7 @@ namespace WordOllama.lib
             {
                 string effects = ToolExecutionPolicy.DescribeEffects(
                     ToolExecutionPolicy.GetEffects(tool),
-                    SharedSettings.LanguageMode == "English");
+                    AgentToolText.UseEnglish);
                 sb.AppendLine($"{i}. {tool.Description} [Effects: {effects}]");
                 i++;
             }

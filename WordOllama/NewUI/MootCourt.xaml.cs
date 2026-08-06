@@ -49,7 +49,7 @@ namespace WordOllama.NewUI
 
         private async Task MootIt()
         {
-            bool english = string.Equals(SharedSettings.LanguageMode, "English", StringComparison.OrdinalIgnoreCase);
+            bool english = PromptTemplateService.ResolveUseEnglish(SharedSettings.LanguageMode, docText.Text);
             string DocType;
 
             if (IndictmentRadio.IsChecked == true)
