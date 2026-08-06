@@ -2948,4 +2948,41 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_RevisionCount" xml:space="preserve"><value>共 {0} 项修订</value></data>
   <data name="I18n_AgentToolDesc_create_skill" xml:space="preserve"><value>把成功流程整理成可复用的本地 Skill；不得包含文档正文、密钥、个人信息或完整对话。</value></data>
   <data name="I18n_AgentToolDesc_fetch_url" xml:space="preserve"><value>安全读取公开 HTTPS 网页文本，阻止本地/私有地址、不安全类型、过多重定向和超大响应。</value></data>
+  <data name="I18n_TranslationSourceLanguage" xml:space="preserve"><value>输入语言</value></data>
+  <data name="I18n_TranslationTargetLanguage" xml:space="preserve"><value>输出语言</value></data>
+  <data name="I18n_TranslationAutoDetect" xml:space="preserve"><value>自动检测</value></data>
+  <data name="I18n_SwapLanguages" xml:space="preserve"><value>交换语言和文本</value></data>
+  <data name="I18n_TranslationScheme" xml:space="preserve"><value>术语或风格方案</value></data>
+  <data name="I18n_OptionalCollapsed" xml:space="preserve"><value>可选 · 默认折叠</value></data>
+  <data name="I18n_ManageSchemes" xml:space="preserve"><value>删除当前方案</value></data>
+  <data name="I18n_TranslationRequirementHint" xml:space="preserve"><value>例如：使用正式法律术语；固定译名；保持产品名不翻译</value></data>
+  <data name="I18n_TranslationSchemeNameHint" xml:space="preserve"><value>我的方案名称</value></data>
+  <data name="I18n_SaveMyScheme" xml:space="preserve"><value>保存方案</value></data>
+  <data name="I18n_UseAsDefaultScheme" xml:space="preserve"><value>下次默认使用当前方案</value></data>
+  <data name="I18n_TranslationSourceText" xml:space="preserve"><value>原文</value></data>
+  <data name="I18n_TranslationResult" xml:space="preserve"><value>译文</value></data>
+  <data name="I18n_LoadSelection" xml:space="preserve"><value>载入选区</value></data>
+  <data name="I18n_Clear" xml:space="preserve"><value>清空</value></data>
+  <data name="I18n_TranslationSourcePlaceholder" xml:space="preserve"><value>输入文字，或在 Word 中框选文字后载入……</value></data>
+  <data name="I18n_TranslationOutputPlaceholder" xml:space="preserve"><value>译文会显示在这里，并且可以继续编辑……</value></data>
+  <data name="I18n_ComparisonMode" xml:space="preserve"><value>对照模式</value></data>
+  <data name="I18n_ComparisonModeHint" xml:space="preserve"><value>按段落交替输出原文和译文</value></data>
+  <data name="I18n_StartTranslation" xml:space="preserve"><value>开始翻译</value></data>
+  <data name="I18n_Translating" xml:space="preserve"><value>正在翻译……</value></data>
+  <data name="I18n_TranslationReady" xml:space="preserve"><value>翻译完成，可以继续编辑译文。</value></data>
+  <data name="I18n_TranslationSchemeNameRequired" xml:space="preserve"><value>请先填写方案名称。</value></data>
+  <data name="I18n_TranslationSchemeSaved" xml:space="preserve"><value>翻译方案已保存。</value></data>
+  <data name="I18n_TranslationSchemeDeleted" xml:space="preserve"><value>自定义翻译方案已删除。</value></data>
+  <data name="I18n_TranslationSelectCustomScheme" xml:space="preserve"><value>内置方案不能删除。请选择一个自定义方案。</value></data>
+  <data name="I18n_TranslationDeleteSchemeConfirm" xml:space="preserve"><value>确定删除当前自定义翻译方案吗？</value></data>
+  <data name="I18n_TranslationBuiltInScheme" xml:space="preserve"><value>内置方案</value></data>
+  <data name="I18n_TranslationBuiltInInstruction" xml:space="preserve"><value>忠实传达原意，使用自然流畅的目标语言，并保持人名、数字、引文、编号和专业术语一致。</value></data>
+  <data name="I18n_TranslationLegalScheme" xml:space="preserve"><value>法律文书</value></data>
+  <data name="I18n_TranslationLegalInstruction" xml:space="preserve"><value>使用正式、准确且一致的法律术语；保留条款编号、定义词、义务强度和法律效果，不擅自弱化或强化原文。</value></data>
+  <data name="I18n_TranslationAcademicScheme" xml:space="preserve"><value>学术写作</value></data>
+  <data name="I18n_TranslationAcademicInstruction" xml:space="preserve"><value>采用严谨、客观的学术表达；保持专业概念、引文、公式和参考文献格式一致，避免口语化。</value></data>
+  <data name="I18n_TranslationBusinessScheme" xml:space="preserve"><value>商务沟通</value></data>
+  <data name="I18n_TranslationBusinessInstruction" xml:space="preserve"><value>使用清晰、专业而自然的商务语气；保持品牌名、职位、日期、金额和行动要求准确。</value></data>
+  <data name="I18n_TranslationTechnicalScheme" xml:space="preserve"><value>技术文档</value></data>
+  <data name="I18n_TranslationTechnicalInstruction" xml:space="preserve"><value>保持 API、代码、变量、命令、路径和产品名称不变；统一技术术语，优先采用行业通行译法。</value></data>
 </root>

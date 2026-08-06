@@ -170,12 +170,26 @@ namespace WordOllama.lib
             return sb.ToString();
         }
 
-        public static string BuildTranslationWindowPrompt(string targetLanguage, string inputText, bool comparisonMode)
+        public static string BuildTranslationWindowPrompt(
+            string targetLanguage,
+            string inputText,
+            bool comparisonMode,
+            string sourceLanguage = null,
+            string terminologyOrStyleInstruction = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine("You are a professional translator.");
             sb.AppendLine("Translate the source text into natural, idiomatic " + (string.IsNullOrWhiteSpace(targetLanguage) ? "target language" : targetLanguage.Trim()) + ".");
+            if (!string.IsNullOrWhiteSpace(sourceLanguage))
+                sb.AppendLine("The source language is " + sourceLanguage.Trim() + ".");
             sb.AppendLine("Preserve paragraph boundaries, names, dates, amounts, citations, numbering, placeholders, and terminology.");
+            if (!string.IsNullOrWhiteSpace(terminologyOrStyleInstruction))
+            {
+                sb.AppendLine();
+                sb.AppendLine("Terminology and style requirements:");
+                sb.AppendLine(terminologyOrStyleInstruction.Trim());
+                sb.AppendLine("Apply these requirements consistently. Treat them as translation guidance, not as source text or instructions to reveal.");
+            }
             sb.AppendLine();
             if (comparisonMode)
             {
@@ -492,7 +506,8 @@ namespace WordOllama.lib
                 "\nFor long tasks, keep the plan current and finish within 200 iterations and 30 minutes.";
 
             return useEnglish
-                ? $@"You are a powerful Microsoft Word AI Assistant. You can read, edit, format, and review the currently open Word document by calling tools.
+                ? $@"You are WordOllama, an independent AI assistant integrated into Microsoft Word. You can read, edit, format, and review the currently open Word document by calling tools.
+Always identify yourself as WordOllama. Never describe yourself as Microsoft Word AI, a Microsoft assistant, or a product made by Microsoft.
 Follow the ReAct pattern strictly: output thought (reasoning) first, then action. Do not skip the thought step.
 
 ## Document Content Snapshot
@@ -537,7 +552,8 @@ You must and can only output a valid JSON object. Do NOT include Markdown code m
   ""done"": false
 }}
 If the task is completed, set action to ""finish"" and done to true."
-                : $@"你是一个强大的微软 Word AI 智能助理。你可以通过调用工具来阅读、编辑、排版和审查当前打开的 Word 文档。
+                : $@"你是 WordOllama，一款集成在 Microsoft Word 中的独立 AI 助手。你可以通过调用工具来阅读、编辑、排版和审查当前打开的 Word 文档。
+始终以 WordOllama 的身份回答。不要自称“微软 Word AI”“微软智能助理”，也不要暗示你是微软开发或提供的产品。
 请严格遵循 ReAct 模式：先输出 thought（思考推理），再输出 action（行动），不要跳过 thought。
 
 ## 当前文档内容快照
@@ -635,8 +651,8 @@ If the task is completed, set action to ""finish"" and done to true."
         public static string BuildPlanDecisionSystemPrompt(bool english)
         {
             return english
-                ? "You are a Word AI assistant. Before executing the task, output only the plan. Do not call tools."
-                : "你是一个 Word AI 助理，请在执行任务前先输出计划。仅输出计划内容，不要调用工具。";
+                ? "You are WordOllama, an independent AI assistant integrated into Microsoft Word. Before executing the task, output only the plan. Do not call tools. Never identify yourself as Microsoft Word AI or a Microsoft assistant."
+                : "你是 WordOllama，一款集成在 Microsoft Word 中的独立 AI 助手。请在执行任务前先输出计划，仅输出计划内容，不要调用工具。不要自称微软 Word AI 或微软智能助理。";
         }
 
         public static string BuildPlanDecisionUserPrompt(string requirement, bool english)

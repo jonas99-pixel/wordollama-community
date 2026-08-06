@@ -248,6 +248,12 @@ namespace WordOllama.NewUI
             return source is UIElement element && element.IsKeyboardFocusWithin;
         }
 
+        private async void OptimizeTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            await Utils.OptimizeTextBoxAsync(button?.Tag as TextBox, button);
+        }
+
         private void SetSettingsDirty(bool dirty)
         {
             // Collection refreshes can raise routed control events without a user edit.
@@ -1779,6 +1785,12 @@ namespace WordOllama.NewUI
         {
             foreach (UserMemoryItem item in MemoryItemsGrid.SelectedItems.Cast<UserMemoryItem>().ToList()) MemoryItems.Remove(item);
             SetSettingsDirty(true);
+        }
+
+        private void DeleteMemoryRow_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.Tag is UserMemoryItem item && MemoryItems.Remove(item))
+                SetSettingsDirty(true);
         }
 
         private void DeleteAllMemory_Click(object sender, RoutedEventArgs e)

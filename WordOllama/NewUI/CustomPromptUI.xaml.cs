@@ -259,6 +259,25 @@ namespace WordOllama.NewUI
             view.SortDescriptions.Add(new SortDescription(nameof(CustomPrompt.LastUsedAt), ListSortDirection.Descending));
         }
 
+        private async void OptimizeTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            await Utils.OptimizeTextBoxAsync(button?.Tag as TextBox, button);
+        }
+
+        private async void OptimizeCustomPrompt_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (!(button?.DataContext is CustomPrompt prompt)) return;
+            button.IsEnabled = false;
+            try
+            {
+                string optimized = await Utils.PromptOptimizer(prompt.Prompt);
+                if (!string.IsNullOrWhiteSpace(optimized)) prompt.Prompt = optimized;
+            }
+            finally { button.IsEnabled = true; }
+        }
+
         private void ImportPrompts_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog { Filter = "JSON (*.json)|*.json" };

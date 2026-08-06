@@ -11,7 +11,7 @@ namespace WordOllama.NewUI
         {
             InitializeComponent();
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
-            VersionText.Text = ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}" : "v2.0.1.0";
+            VersionText.Text = ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}" : "v2.2.0";
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)

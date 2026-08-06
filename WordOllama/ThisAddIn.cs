@@ -76,6 +76,7 @@ namespace WordOllama
 
             // 关闭所有由 HybridWindowManager 托管的 WPF 窗口，防止进程残留
             try { HybridWindowManager.CloseAllWindows(); } catch { }
+            UiThread.DisposeOfficeThread();
 
             try
             {
@@ -92,6 +93,7 @@ namespace WordOllama
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
+            UiThread.InitializeOfficeThread();
             // UI resources must be resolved before any runtime windows or controls are created.
             // Chinese Word uses zh-CN; every other Word UI language falls back to English.
             UiCulture.Initialize(Application);
@@ -739,10 +741,10 @@ namespace WordOllama
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI工作中;
+            SetRibbonAiStatus(WordOllama.Properties.Resources.AI工作中);
             if (!DocumentAgent.IsAgentRunning)
             {
-                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
+                ShowRibbonNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
                 ShowAgentNotification(WordOllama.Properties.Resources.AI开始工作了请稍等);
             }
             string responseLanguage = PromptTemplateService.ResolveLanguage(
@@ -810,13 +812,13 @@ namespace WordOllama
             }
             catch (Exception ex)
             {
-                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
+                ShowRibbonNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
                 string message = ex.Message;
                 return message;
             }
             finally
             {
-                Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI空闲中;
+                SetRibbonAiStatus(WordOllama.Properties.Resources.AI空闲中);
             }
         }
 
@@ -827,9 +829,9 @@ namespace WordOllama
         /// </summary>
         public async Task<string> GenerateModelSeletorChat(List<Dictionary<string, string>> chatHistory)
         {
-            Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI工作中;
+            SetRibbonAiStatus(WordOllama.Properties.Resources.AI工作中);
             if (!DocumentAgent.IsAgentRunning)
-                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
+                ShowRibbonNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
 
             try
             {
@@ -854,12 +856,12 @@ namespace WordOllama
             }
             catch (Exception ex)
             {
-                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
-                return AgentToolText.F("I18n_AgentResultApiError", ex.Message);
+                ShowRibbonNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
+                throw;
             }
             finally
             {
-                Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI空闲中;
+                SetRibbonAiStatus(WordOllama.Properties.Resources.AI空闲中);
             }
         }
 
@@ -874,9 +876,9 @@ namespace WordOllama
             JArray tools,
             CancellationToken ct)
         {
-            Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI工作中;
+            SetRibbonAiStatus(WordOllama.Properties.Resources.AI工作中);
             if (!DocumentAgent.IsAgentRunning)
-                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
+                ShowRibbonNotification(WordOllama.Properties.Resources.AI开始工作了请稍等, 2000);
 
             try
             {
@@ -901,13 +903,27 @@ namespace WordOllama
             }
             catch (Exception ex)
             {
-                Globals.Ribbons.Ribbon1.ShowNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
-                return AgentToolText.F("I18n_AgentResultApiError", ex.Message);
+                ShowRibbonNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
+                throw;
             }
             finally
             {
-                Globals.Ribbons.Ribbon1.AIStatus.Label = WordOllama.Properties.Resources.AI空闲中;
+                SetRibbonAiStatus(WordOllama.Properties.Resources.AI空闲中);
             }
+        }
+
+        private static void SetRibbonAiStatus(string label)
+        {
+            UiThread.RunOfficeSync(() =>
+            {
+                if (Globals.Ribbons?.Ribbon1?.AIStatus != null)
+                    Globals.Ribbons.Ribbon1.AIStatus.Label = label;
+            });
+        }
+
+        private static void ShowRibbonNotification(string message, int duration, ToolTipIcon icon = ToolTipIcon.Info)
+        {
+            UiThread.RunOfficeSync(() => Globals.Ribbons?.Ribbon1?.ShowNotification(message, duration, icon));
         }
 
         private async Task<string> ExecuteProviderChatWithRetryAsync(

@@ -167,7 +167,20 @@ namespace WordOllama.NewUI
 
         private async void OptimizationButton_Click(object sender, RoutedEventArgs e)
         {
-            PromptBox.Text = await Utils.PromptOptimizer(PromptBox.Text);
+            await Utils.OptimizeTextBoxAsync(PromptBox, sender as Button);
+        }
+
+        private async void OptimizeTemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (!(button?.DataContext is ModPromptTemplate template)) return;
+            button.IsEnabled = false;
+            try
+            {
+                string optimized = await Utils.PromptOptimizer(template.Prompt);
+                if (!string.IsNullOrWhiteSpace(optimized)) template.Prompt = optimized;
+            }
+            finally { button.IsEnabled = true; }
         }
 
         private void DeleteTemplateButton_Click(object sender, RoutedEventArgs e)

@@ -1,15 +1,11 @@
-Development build 2026/08/05
+Version V2.2.0 2026/08/06
 
 Changes
-1. Added durable Agent goals, 30-minute/200-iteration budgets, run metrics, source cards, and safe web fetching.
-2. Added per-task workspaces, bounded Python/Node execution, and parameter-specific permissions for external capabilities.
-3. Added automatic memory, output preferences, and a separate memory model, with memory review and editing in Settings.
-4. Added one-click Skill creation after Agent tasks, plus /make-skill and the create_skill tool.
-5. Added a first-run setup assistant and full model capability checks for chat, streaming, and native tool calls.
-6. Added search, favorites, recent usage, import, and export to My Instructions.
-7. Added an interactive document-comparison review window for locating, accepting, or rejecting individual revisions.
-8. Added per-model reasoning effort settings, complete Chinese/English UI resources, and expanded core smoke coverage.
-9. Fixed Agent bulk accept/reject touching existing revisions, shifted Diff targets after paragraph edits, stale asynchronous selection application, and silent table-row fallback on invalid indexes.
+1. Expanded Agent capabilities for long-running tasks, citations, memory, Skills, MCP, and local tools.
+2. Added first-run setup, model capability checks, per-model reasoning effort, and improved bilingual settings.
+3. Improved review, document comparison, and precise tracked editing, with broader Word formatting, page, and table operations.
+4. Upgraded My Instructions and Free Translation with instruction management, terminology or style schemes, and more Optimize Prompt entry points.
+5. Refined the Agent and translation interfaces and fixed cross-thread errors, revision safety issues, duplicate results, and misplaced change targets.
 __________________________________________________
 
 Version V2.1.2 2026/07/29

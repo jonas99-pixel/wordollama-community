@@ -18,7 +18,11 @@ namespace WordOllama.lib
 
         public static void ApplyTheme(ResourceDictionary resources)
         {
+            if (resources == null) return;
             var theme = resources.GetTheme();
+            // Some WPF hosts initialize controls before an application-level theme exists.
+            // The control's bundled resources are still usable, so avoid failing construction.
+            if (theme == null) return;
             if (AppConfig.Instance.ThemeType == "Dark")
             {
                 theme.SetBaseTheme(BaseTheme.Dark);

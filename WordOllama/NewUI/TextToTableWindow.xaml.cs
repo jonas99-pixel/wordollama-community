@@ -149,6 +149,25 @@ namespace WordOllama.NewUI
             MessageBox.Show(WordOllama.Properties.Resources.模板已保存, WordOllama.Properties.Resources.提示, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private async void OptimizeTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            await Utils.OptimizeTextBoxAsync(button?.Tag as TextBox, button);
+        }
+
+        private async void OptimizeTemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (!(button?.DataContext is TableTemplate template)) return;
+            button.IsEnabled = false;
+            try
+            {
+                string optimized = await Utils.PromptOptimizer(template.Prompt);
+                if (!string.IsNullOrWhiteSpace(optimized)) template.Prompt = optimized;
+            }
+            finally { button.IsEnabled = true; }
+        }
+
         // 表格数据结构
         private class TableResponse
         {

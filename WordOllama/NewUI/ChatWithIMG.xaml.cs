@@ -141,7 +141,7 @@ namespace WordOllama.NewUI
 
         private async void OptimizationButton_Click(object sender, RoutedEventArgs e)
         {
-            txtPrompt.Text = await Utils.PromptOptimizer(txtPrompt.Text);
+            await Utils.OptimizeTextBoxAsync(txtPrompt, sender as Button);
         }
 
         private void Copy_Btn_Click(object sender, RoutedEventArgs e)

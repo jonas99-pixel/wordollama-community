@@ -112,6 +112,13 @@ internal static class Program
         Assert(batchPrompt.Contains("\"id\":\"1\"") && batchPrompt.Contains("\"id\":\"2\""),
             "review batch prompt preserves item identifiers");
 
+        string translationPrompt = PromptTemplateService.BuildTranslationWindowPrompt(
+            "English", "示例文本", false, "Chinese", "Use the defined legal terms consistently.");
+        Assert(translationPrompt.Contains("The source language is Chinese") &&
+               translationPrompt.Contains("Terminology and style requirements") &&
+               translationPrompt.Contains("defined legal terms"),
+            "translation prompt includes source language and terminology scheme");
+
         Assert(McpToolManager.ParseTransportKind("streamable-http") == McpTransportKind.StreamableHttp, "streamable HTTP transport is parsed");
         Assert(McpToolManager.ParseTransportKind("legacy-sse") == McpTransportKind.Sse, "legacy SSE transport is parsed");
         var environment = McpToolManager.ParseEnvironment(JToken.Parse("{\"TOKEN\":\"value\"}"));
@@ -145,6 +152,8 @@ internal static class Program
         Assert(externalRegistry.GetTool("write_workspace_file") != null, "isolated workspace writes can be explicitly enabled");
         Assert(ToolExecutionPolicy.GetEffects(externalRegistry.GetTool("write_workspace_file")) == ToolEffect.LocalFileWrite,
             "workspace writes require a distinct local file write permission");
+        Assert(!ToolExecutionPolicy.RequiresWordCom(ToolExecutionPolicy.GetEffects(externalRegistry.GetTool("write_workspace_file"))),
+            "workspace writes never enter the Word COM tracked-changes path");
         Assert(ToolExecutionPolicy.RequiresExternalToolPermission(externalRegistry.GetTool("fetch_url")),
             "safe web fetch still requires explicit external-network permission");
         Assert(externalRegistry.GetTool("run_python") != null && externalRegistry.GetTool("run_node") != null,
@@ -156,6 +165,13 @@ internal static class Program
         string agentPrompt = PromptTemplateService.BuildAgentSystemPrompt("<document></document>", "tools", 1, "skills", "English", "Finish the contract review", "\nOutput preferences:\nConcise");
         Assert(agentPrompt.Contains("Durable Task Goal") && agentPrompt.Contains("Finish the contract review") && agentPrompt.Contains("Output preferences"),
             "Agent goal and memory context are injected");
+        Assert(agentPrompt.Contains("You are WordOllama") && !agentPrompt.Contains("Microsoft Word AI Assistant"),
+            "English Agent identity is WordOllama rather than Microsoft Word AI");
+        string chineseAgentPrompt = PromptTemplateService.BuildAgentSystemPrompt("<document></document>", "tools", 1, "skills", "Chinese");
+        Assert(chineseAgentPrompt.Contains("你是 WordOllama") && !chineseAgentPrompt.Contains("微软 Word AI 智能助理"),
+            "Chinese Agent identity is WordOllama rather than Microsoft Word AI");
+        Assert(PromptTemplateService.BuildPlanDecisionSystemPrompt(false).Contains("你是 WordOllama"),
+            "planning prompt keeps the WordOllama identity");
 
         Console.WriteLine("Core smoke test passed.");
     }

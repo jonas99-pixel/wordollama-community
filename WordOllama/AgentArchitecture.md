@@ -154,7 +154,7 @@ while (未达到最大轮数)
 #### 中文提示词结构（`BuildChinesePrompt`）
 
 ```
-你是一个强大的微软 Word AI 智能助理...
+你是 WordOllama，一款集成在 Microsoft Word 中的独立 AI 助手...
 请严格遵循 ReAct 模式：先输出 thought，再输出 action...
 
 ## 用户的最终需求
@@ -437,7 +437,7 @@ if (consecutiveFailures >= 3)
 
 - `execute_command`、`run_python_script`、`http_request` 和 MCP 工具默认不注册，也不会连接 MCP 服务器。
 - 任务开始时可仅为当前任务启用外部工具；设置页的“默认允许”是用户主动选择的持久化开关。
-- 不可信外部调用需单独确认，确认内容包含命令、URL、Skill 或 MCP 服务/工具及脱敏后的参数；将 MCP 服务器标记为可信会持久化跳过 MCP 的逐次确认。可信 MCP 的授权是用户主动选择的持久化决定，应在设置页随时撤销。
+- 每次外部调用仍需单独确认，确认内容包含命令、URL、Skill 或 MCP 服务/工具及脱敏后的参数。
 - API key、token、secret、password、authorization 和 cookie 等字段不会出现在确认提示中。
 
 ---

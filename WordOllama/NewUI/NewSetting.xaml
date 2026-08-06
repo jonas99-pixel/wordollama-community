@@ -145,9 +145,17 @@
                             <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{local:Loc I18n_MemorySettings}" Margin="0,0,0,8"/>
                             <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_MemorySettingsDesc}" TextWrapping="Wrap" Margin="0,0,0,20"/>
                             <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_OutputPreference}"/>
-                            <TextBox x:Name="OutputPreferenceBox" Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="{local:Loc I18n_OutputPreferenceHint}"
-                                     AcceptsReturn="True" TextWrapping="Wrap" MinHeight="100" MaxHeight="180" Margin="0,8,0,20"/>
+                            <Grid Margin="0,8,0,20">
+                                <TextBox x:Name="OutputPreferenceBox" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         materialDesign:HintAssist.Hint="{local:Loc I18n_OutputPreferenceHint}"
+                                         AcceptsReturn="True" TextWrapping="Wrap" MinHeight="100" MaxHeight="180"
+                                         Padding="12,8,42,8"/>
+                                <Button Style="{StaticResource PromptOptimizeIconButton}"
+                                        ToolTip="{local:Loc I18n_OptimizePrompt}"
+                                        Tag="{Binding ElementName=OutputPreferenceBox}" Click="OptimizeTextBox_Click">
+                                    <materialDesign:PackIcon Kind="AutoFix" Width="16" Height="16"/>
+                                </Button>
+                            </Grid>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                                 <StackPanel Width="360">
                                     <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_AutoMemory}"/>
@@ -172,6 +180,20 @@
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{local:Loc I18n_MemoryItems}" Binding="{Binding Content, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                                     <DataGridTextColumn Header="{local:Loc I18n_UpdatedAt}" Binding="{Binding UpdatedAt}" IsReadOnly="True" Width="150"/>
+                                    <DataGridTemplateColumn Width="52" IsReadOnly="True">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button ToolTip="{local:Loc I18n_Delete}"
+                                                        Style="{StaticResource PromptOptimizeIconButton}"
+                                                        Width="28" Height="28" Margin="0"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                        Foreground="#FFD32F2F"
+                                                        Tag="{Binding}" Click="DeleteMemoryRow_Click">
+                                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16"/>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">

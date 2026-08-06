@@ -33,6 +33,30 @@ namespace WordOllama.lib
 
     public static class Utils
     {
+        public static async Task<bool> OptimizeTextBoxAsync(TextBox textBox, Button trigger = null)
+        {
+            if (textBox == null) return false;
+            string original = textBox.Text;
+            if (trigger != null) trigger.IsEnabled = false;
+            try
+            {
+                string optimized = await PromptOptimizer(original);
+                if (string.IsNullOrWhiteSpace(optimized)) return false;
+                UiThread.RunSync(textBox, () =>
+                {
+                    textBox.Text = optimized;
+                    textBox.CaretIndex = textBox.Text.Length;
+                    textBox.Focus();
+                });
+                return true;
+            }
+            finally
+            {
+                if (trigger != null)
+                    UiThread.RunSync(trigger, () => trigger.IsEnabled = true);
+            }
+        }
+
         public static async Task<string> PromptOptimizer(string userPrompt)
         {
             if (string.IsNullOrWhiteSpace(userPrompt))

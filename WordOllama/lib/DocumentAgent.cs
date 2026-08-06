@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
-using System.Windows.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WordOllama.lib.Tools;
@@ -39,7 +38,6 @@ namespace WordOllama.lib
         private CancellationToken _ct;
         private Word.Document _doc;
         private Word.Application _app;
-        private Dispatcher _mainDispatcher;
 
         // 工具调用能力探测：true = API 支持原生 tool calling，false = 降级到 JSON ReAct
         private bool _supportsToolCalling = true;
@@ -206,31 +204,30 @@ namespace WordOllama.lib
             _supportsToolCalling = !UnsupportedToolCallingProfiles.Contains(GetToolCallingProfileKey());
             try
             {
-            _app = Globals.ThisAddIn.Application;
-            _doc = _app.ActiveDocument;
+            UiThread.RunOfficeSync(() =>
+            {
+                _app = Globals.ThisAddIn.Application;
+                _doc = _app.ActiveDocument;
+            });
             _taskUndoRecordStarted = false;
             _taskUndoRecordFinalized = false;
             _taskUndoAfterXml = null;
-            _taskDocumentIdentity = GetDocumentIdentity(_doc);
+            _taskDocumentIdentity = UiThread.RunOfficeSync(() => GetDocumentIdentity(_doc));
             _preRevisionFingerprints.Clear();
             _taskRevisionLocators.Clear();
             _taskRevisionIsolationSafe = true;
             _revisionBaselineCaptured = false;
-
-            // Capture the UI dispatcher so COM operations stay on Word's main thread.
-            _mainDispatcher = System.Windows.Application.Current?.Dispatcher
-                ?? Dispatcher.FromThread(Thread.CurrentThread);
 
             if (!resumeFromCheckpoint)
             {
                 _completedMilestones.Clear();
 
                 // [上下文注入] 自动生成文档快照 — 小文档喂全文，大文档喂骨架
-                _documentSnapshot = BuildDocumentSnapshot(_doc);
+                _documentSnapshot = UiThread.RunOfficeSync(() => BuildDocumentSnapshot(_doc));
                 Log(AgentToolText.F("I18n_AgentLogSnapshotLoaded", _documentSnapshot.Length));
 
                 // [快照对比] 执行前保存段落快照
-                _preSnapshot = CaptureDocumentSnapshot();
+                _preSnapshot = UiThread.RunOfficeSync(CaptureDocumentSnapshot);
                 DiffChanges = null;
                 Log(AgentToolText.F("I18n_AgentLogDiffSnapshotSaved", _preSnapshot.Count));
 
@@ -238,16 +235,19 @@ namespace WordOllama.lib
                 string selectionHint = "";
                 try
                 {
-                    string selText = _app.Selection.Text?.Trim();
-                    if (!string.IsNullOrEmpty(selText) && selText.Length > 2 && selText.Length < 5000)
+                    selectionHint = UiThread.RunOfficeSync(() =>
                     {
+                        string selText = _app.Selection.Text?.Trim();
+                        if (string.IsNullOrEmpty(selText) || selText.Length <= 2 || selText.Length >= 5000)
+                            return "";
                         int selStart = _app.Selection.Start;
                         int selParaIndex = GetParagraphIndexAtPosition(_doc, selStart);
                         string selPreview = selText.Length > 200 ? selText.Substring(0, 200) + "..." : selText;
-                        selectionHint = PromptTemplateService.BuildSelectionHint(
+                        string hint = PromptTemplateService.BuildSelectionHint(
                             selParaIndex, selPreview, UseEnglish);
                         Log(AgentToolText.F("I18n_AgentLogSelectionDetected", selParaIndex));
-                    }
+                        return hint;
+                    });
                 }
                 catch { /* Selection 操作失败不影响主流程 */ }
 
@@ -279,8 +279,11 @@ namespace WordOllama.lib
             else
             {
                 // [Checkpoint 恢复] 重新生成文档快照（文档可能已变）
-                _documentSnapshot = BuildDocumentSnapshot(_doc);
-                _preSnapshot = CaptureDocumentSnapshot();
+                UiThread.RunOfficeSync(() =>
+                {
+                    _documentSnapshot = BuildDocumentSnapshot(_doc);
+                    _preSnapshot = CaptureDocumentSnapshot();
+                });
                 DiffChanges = null;
 
                 // 重建 system prompt（第 0 条始终是 system）
@@ -295,10 +298,13 @@ namespace WordOllama.lib
 
             // Re-anchor immediately before execution. Planning can take time and the
             // user may have edited the document while reviewing the plan.
-            _preSnapshot = CaptureDocumentSnapshot();
-            _preRevisionFingerprints = CaptureRevisionFingerprintCounts();
-            _taskDocumentIdentity = GetDocumentIdentity(_doc);
-            BeginTaskUndoRecord();
+            UiThread.RunOfficeSync(() =>
+            {
+                _preSnapshot = CaptureDocumentSnapshot();
+                _preRevisionFingerprints = CaptureRevisionFingerprintCounts();
+                _taskDocumentIdentity = GetDocumentIdentity(_doc);
+                BeginTaskUndoRecord();
+            });
 
             string taskCompleteMsg = null;
             int currentIteration = 0;
@@ -610,10 +616,13 @@ namespace WordOllama.lib
             ReportStatus(Properties.Resources.Agent_StatusDone, WorkflowState.Completed);
 
             // [快照对比] 执行完毕后计算变更
-            RestoreTrackedChangesMode();
-            FinalizeTaskUndoRecord();
-            CaptureTaskRevisionLocators();
-            try { ComputeDiff(); } catch { /* diff 不应影响主流程 */ }
+            UiThread.RunOfficeSync(() =>
+            {
+                RestoreTrackedChangesMode();
+                FinalizeTaskUndoRecord();
+                CaptureTaskRevisionLocators();
+                try { ComputeDiff(); } catch { /* diff 不应影响主流程 */ }
+            });
 
             // [Checkpoint] 任务正常完成，清除断点
             ClearCheckpoint();
@@ -624,8 +633,22 @@ namespace WordOllama.lib
             }
             finally
             {
-                RestoreTrackedChangesMode();
-                FinalizeTaskUndoRecord();
+                // ExecuteAsync resumes on whichever synchronization context the model/provider
+                // completes on. Never let final cleanup touch Word RCWs from that thread, and do
+                // not allow a cleanup failure to hide the original Agent exception.
+                try
+                {
+                    UiThread.RunOfficeSync(() =>
+                    {
+                        RestoreTrackedChangesMode();
+                        FinalizeTaskUndoRecord();
+                    });
+                }
+                catch (Exception cleanupException)
+                {
+                    DebugLogger.Log("Agent.Cleanup", cleanupException.ToString());
+                    System.Diagnostics.Debug.WriteLine(cleanupException);
+                }
                 // [Checkpoint] 清理断点（取消/异常情况下也清除，避免残留）
                 ClearCheckpoint();
                 IsAgentRunning = false;
@@ -686,15 +709,7 @@ namespace WordOllama.lib
             if (!ToolExecutionPolicy.RequiresWordCom(effects))
                 return await Task.Run(() => ExecuteToolCore(action, parameters, tool), _ct);
 
-            // 使用 Application.Current.Dispatcher（始终指向主线程），
-            // 回退到构造函数中捕获的 _mainDispatcher
-            var dispatcher = System.Windows.Application.Current?.Dispatcher ?? _mainDispatcher;
-            if (dispatcher != null && !dispatcher.CheckAccess())
-            {
-                return (string)dispatcher.Invoke(new Func<string>(() => ExecuteToolCore(action, parameters, tool)));
-            }
-
-            return ExecuteToolCore(action, parameters, tool);
+            return UiThread.RunOfficeSync(() => ExecuteToolCore(action, parameters, tool));
         }
 
         /// <summary>实际执行工具 — 在主线程上执行 COM 操作，处理修订模式。</summary>
@@ -707,11 +722,13 @@ namespace WordOllama.lib
                 if (tool != null)
                 {
                     bool isWriteTool = tool.IsWriteOperation;
-                    if (isWriteTool)
+                    bool writesWordDocument = isWriteTool &&
+                        ToolExecutionPolicy.RequiresWordCom(ToolExecutionPolicy.GetEffects(tool));
+                    if (writesWordDocument)
                         EnsureTrackedChangesForTask();
 
                     string result = tool.Execute(parameters, _doc, _app);
-                    if (isWriteTool)
+                    if (writesWordDocument)
                     {
                         result += AgentToolText.T("I18n_AgentResultTrackedChanges");
                     }
@@ -758,10 +775,7 @@ namespace WordOllama.lib
 
             try
             {
-                if (_mainDispatcher != null && !_mainDispatcher.CheckAccess())
-                    _mainDispatcher.Invoke(restore);
-                else
-                    restore();
+                UiThread.RunOfficeSync(restore);
             }
             catch
             {

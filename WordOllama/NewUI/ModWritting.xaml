@@ -156,6 +156,18 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="44">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource PromptOptimizeIconButton}"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
+                                                ToolTip="{local:Loc I18n_OptimizePrompt}"
+                                                Click="OptimizeTemplateButton_Click">
+                                            <materialDesign:PackIcon Kind="AutoFix" Width="16" Height="16"/>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>

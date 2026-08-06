@@ -62,11 +62,18 @@
                                   materialDesign:HintAssist.Hint="{x:Static properties:Resources.选择模板}"
                                   Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,12"
                                   SelectionChanged="TemplateComboBox_SelectionChanged"/>
-                        <TextBox Grid.Row="1" x:Name="RequirementTextBox"
-                                 TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                                 AcceptsReturn="True"
-                                 materialDesign:HintAssist.Hint="{x:Static properties:Resources.在此输入格式内容等需求可选}"
-                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        <Grid Grid.Row="1">
+                            <TextBox x:Name="RequirementTextBox"
+                                     TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                     AcceptsReturn="True" Padding="12,8,42,8"
+                                     materialDesign:HintAssist.Hint="{x:Static properties:Resources.在此输入格式内容等需求可选}"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                            <Button Style="{StaticResource PromptOptimizeIconButton}"
+                                    ToolTip="{local:Loc I18n_OptimizePrompt}"
+                                    Tag="{Binding ElementName=RequirementTextBox}" Click="OptimizeTextBox_Click">
+                                <materialDesign:PackIcon Kind="AutoFix" Width="16" Height="16"/>
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
 
@@ -143,6 +150,18 @@
                                              VerticalScrollBarVisibility="Auto" Height="100"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="44">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource PromptOptimizeIconButton}"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
+                                            ToolTip="{local:Loc I18n_OptimizePrompt}"
+                                            Click="OptimizeTemplateButton_Click">
+                                        <materialDesign:PackIcon Kind="AutoFix" Width="16" Height="16"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>

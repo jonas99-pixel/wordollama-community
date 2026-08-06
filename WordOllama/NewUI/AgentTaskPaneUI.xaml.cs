@@ -56,9 +56,11 @@ namespace WordOllama.NewUI
         private string _pastedImageBase64;
 
         // ========== 步骤卡片缓存 ==========
-        private int _stepCounter = 0;
         private string _bufferedThought = null;
         private string _bufferedAction = null;
+        private ChatItem _executionProcessItem;
+        private ChatItem _finalAnswerItem;
+        private int _executionProcessEntryCount;
         private readonly bool _reviewOnly;
 
         private sealed class ReviewParagraphUnit
@@ -147,8 +149,18 @@ namespace WordOllama.NewUI
                     return;
                 }
                 var theme = Resources.GetTheme();
-                theme.SetBaseTheme(SharedSettings.themeType == "Dark" ? BaseTheme.Dark : BaseTheme.Light);
+                bool dark = SharedSettings.themeType == "Dark";
+                theme.SetBaseTheme(dark ? BaseTheme.Dark : BaseTheme.Light);
                 Resources.SetTheme(theme);
+                Resources["AgentUserBubbleBrush"] = new SolidColorBrush(dark
+                    ? Color.FromRgb(0x32, 0x36, 0x3F)
+                    : Color.FromRgb(0xE9, 0xEC, 0xF3));
+                Resources["AgentUserBubbleForegroundBrush"] = new SolidColorBrush(dark
+                    ? Color.FromRgb(0xF4, 0xF4, 0xF5)
+                    : Color.FromRgb(0x20, 0x21, 0x24));
+                Resources["AgentProcessBackgroundBrush"] = new SolidColorBrush(dark
+                    ? Color.FromRgb(0x25, 0x27, 0x2B)
+                    : Color.FromRgb(0xF3, 0xF4, 0xF6));
             }
             catch { }
         }
@@ -536,17 +548,21 @@ namespace WordOllama.NewUI
                 case "clear":
                     // 清空窗口显示，但保留 Agent 内部对话上下文
                     _chatItems.Clear();
-                    _stepCounter = 0;
                     _bufferedThought = null;
                     _bufferedAction = null;
+                    _executionProcessItem = null;
+                    _finalAnswerItem = null;
+                    _executionProcessEntryCount = 0;
                     break;
 
                 case "newchat":
                     // 清空窗口 + 重置 Agent
                     _chatItems.Clear();
-                    _stepCounter = 0;
                     _bufferedThought = null;
                     _bufferedAction = null;
+                    _executionProcessItem = null;
+                    _finalAnswerItem = null;
+                    _executionProcessEntryCount = 0;
                     _agent?.CancelPendingInteractions();
                     _cts?.Cancel();
                     _agent = null;
@@ -629,8 +645,7 @@ namespace WordOllama.NewUI
                 _isWaitingForResponse = false;
                 _agent.SetUserResponse(text);
 
-                // 添加气泡提示 Agent 正在继续
-                AddAgentBubble(Properties.Resources.Agent_AnswerReceived);
+                AppendExecutionProcess(Properties.Resources.Agent_AnswerReceived);
                 return;
             }
 
@@ -643,7 +658,7 @@ namespace WordOllama.NewUI
                 _cts?.Cancel();
 
                 // 标记被中断
-                AddAgentBubble(Properties.Resources.Agent_Interrupted);
+                AppendExecutionProcess(Properties.Resources.Agent_Interrupted);
 
                 // 显示用户新需求气泡（含粘贴图片）
                 var userItem = new ChatItem { MessageType = ChatMessageType.User, Message = text };
@@ -685,14 +700,25 @@ namespace WordOllama.NewUI
 
         private async void ExecuteAgent(string requirement)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                _ = Dispatcher.BeginInvoke(new Action(() => ExecuteAgent(requirement)));
+                return;
+            }
+
             if (_isRunning) return;
             _isRunning = true;
             _cts = new CancellationTokenSource();
+            // Capture WPF-owned values before the first await. Provider and MCP continuations
+            // are not required to return to this control's Dispatcher.
+            string agentGoal = txtAgentGoal.Text;
 
             // 重置步骤卡片计数器
-            _stepCounter = 0;
             _bufferedThought = null;
             _bufferedAction = null;
+            _executionProcessItem = null;
+            _finalAnswerItem = null;
+            _executionProcessEntryCount = 0;
             _agentSources.Clear();
             sourcesExpander.Visibility = Visibility.Collapsed;
             btnMakeSkill.Visibility = Visibility.Collapsed;
@@ -736,7 +762,7 @@ namespace WordOllama.NewUI
                 if (mcpManager != null && mcpManager.ServerCount > 0)
                 {
                     _agent.SetMcpManager(mcpManager);
-                    RefreshAgentApiDocumentation();
+                    Dispatcher.Invoke(RefreshAgentApiDocumentation);
                 }
 
                 // [Checkpoint] 断点恢复检测
@@ -755,7 +781,7 @@ namespace WordOllama.NewUI
                         {
                             requirement = originalReq;
                             resumeCheckpoint = true;
-                            AddAgentBubble(UiText.T("I18n_UiCheckpointResuming"));
+                            AppendExecutionProcess(UiText.T("I18n_UiCheckpointResuming"));
                         }
                     }
                 }
@@ -787,10 +813,8 @@ namespace WordOllama.NewUI
                         // 👀 观察 → 合并为一张步骤卡片
                         if (msg.StartsWith("👀") && _bufferedAction != null)
                         {
-                            _stepCounter++;
-                            string stepTitle = UiText.F("I18n_UiAgentStep", _stepCounter);
                             string combined = $"{_bufferedThought}\n{_bufferedAction}\n{msg}";
-                            AddAgentBubble(combined, ChatMessageType.StepGroup, stepTitle);
+                            AppendExecutionProcess(combined);
                             _bufferedThought = null;
                             _bufferedAction = null;
                             UpdateStatusBarFromLog(msg);
@@ -798,9 +822,13 @@ namespace WordOllama.NewUI
                             return;
                         }
 
-                        // === 非步骤消息（🚀 ⚠️ ✅ 🤖 等）：直接显示 ===
+                        // === 非步骤消息：错误和提问单独显示，其余并入执行过程。 ===
                         FlushStepBuffer();
-                        AddAgentBubble(msg);
+                        ChatMessageType messageType = DetectMessageType(msg);
+                        if (messageType == ChatMessageType.Error || messageType == ChatMessageType.Question)
+                            AddAgentBubble(msg, messageType);
+                        else
+                            AppendExecutionProcess(msg);
                         UpdateStatusBarFromLog(msg);
                         ScrollToEnd();
                     });
@@ -809,7 +837,7 @@ namespace WordOllama.NewUI
                 _agent.ResultReady += summary =>
                     Dispatcher.Invoke(() =>
                     {
-                        AddAgentBubble(summary);
+                        SetFinalAnswer(summary);
                         AddReviewIssues(ParseIssuesFromText(summary, "Agent"));
                         UpdateStatusIcon(false);
                         lblStatus.Text = Properties.Resources.Agent_StatusDone;
@@ -852,8 +880,7 @@ namespace WordOllama.NewUI
                     Dispatcher.Invoke(() =>
                     {
                         _isWaitingForResponse = true;
-                        AddAgentBubble(string.Format(Properties.Resources.Agent_AskLog, question));
-                        AddAgentBubble(Properties.Resources.Agent_AskPrompt);
+                        AddAgentBubble(question, ChatMessageType.Question);
                         UpdateStatusIcon(null);
                         lblStatus.Text = Properties.Resources.Agent_StatusWaiting;
                         ScrollToEnd();
@@ -895,23 +922,25 @@ namespace WordOllama.NewUI
                         ScrollToEnd();
                     });
 
-                await _agent.ExecuteAsync(requirement, _cts.Token, resumeCheckpoint, txtAgentGoal.Text);
+                await _agent.ExecuteAsync(requirement, _cts.Token, resumeCheckpoint, agentGoal);
             }
             catch (OperationCanceledException)
             {
                 SetWorkflowStatus(WorkflowState.Cancelled, Properties.Resources.Agent_Cancelled);
                 Dispatcher.Invoke(() =>
                 {
-                    AddAgentBubble(Properties.Resources.Agent_Cancelled);
+                    AddAgentBubble(Properties.Resources.Agent_Cancelled, ChatMessageType.System);
                 });
                 _agent?.CancelPendingInteractions();
             }
             catch (Exception ex)
             {
+                DebugLogger.Log("Agent.Error", ex.ToString());
+                System.Diagnostics.Debug.WriteLine(ex);
                 SetWorkflowStatus(WorkflowState.Failed, string.Format(Properties.Resources.Agent_Error, ex.Message));
                 Dispatcher.Invoke(() =>
                 {
-                    AddAgentBubble(string.Format(Properties.Resources.Agent_Error, ex.Message));
+                    AddAgentBubble(string.Format(Properties.Resources.Agent_Error, ex.Message), ChatMessageType.Error);
                 });
                 // 立即隐藏状态栏，不等 finally（异常可能已破坏正常流程）
                 Dispatcher.Invoke(() =>
@@ -984,6 +1013,60 @@ namespace WordOllama.NewUI
             });
         }
 
+        /// <summary>
+        /// 将过程日志汇入单个默认折叠的条目，避免每次状态变化都生成一张卡片。
+        /// </summary>
+        private void AppendExecutionProcess(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+
+            if (_executionProcessItem != null && !_chatItems.Contains(_executionProcessItem))
+            {
+                _executionProcessItem = null;
+                _executionProcessEntryCount = 0;
+            }
+
+            _executionProcessEntryCount++;
+            if (_executionProcessItem == null)
+            {
+                _executionProcessItem = new ChatItem
+                {
+                    MessageType = ChatMessageType.StepGroup,
+                    Message = message.Trim(),
+                    ShowAgentLabel = ShouldShowAgentLabel(),
+                    StepTitle = $"{UiText.AgentExecutionDetails} · {_executionProcessEntryCount}",
+                    IsCollapsible = true,
+                    IsExpanded = false
+                };
+                _chatItems.Add(_executionProcessItem);
+                return;
+            }
+
+            _executionProcessItem.Message = string.Concat(
+                _executionProcessItem.Message?.TrimEnd(), "\n\n", message.Trim());
+            _executionProcessItem.StepTitle = $"{UiText.AgentExecutionDetails} · {_executionProcessEntryCount}";
+        }
+
+        /// <summary>每次 Agent 运行只保留一个无边框的最终回答。</summary>
+        private void SetFinalAnswer(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            if (_finalAnswerItem == null)
+            {
+                _finalAnswerItem = new ChatItem
+                {
+                    MessageType = ChatMessageType.Result,
+                    Message = message.Trim(),
+                    ShowAgentLabel = ShouldShowAgentLabel()
+                };
+                _chatItems.Add(_finalAnswerItem);
+            }
+            else
+            {
+                _finalAnswerItem.Message = message.Trim();
+            }
+        }
+
         private bool ShouldShowAgentLabel()
         {
             return _chatItems.Count == 0 || _chatItems[_chatItems.Count - 1].IsUser;
@@ -1006,12 +1089,12 @@ namespace WordOllama.NewUI
         {
             if (_bufferedThought != null)
             {
-                AddAgentBubble(_bufferedThought, ChatMessageType.Thought);
+                AppendExecutionProcess(_bufferedThought);
                 _bufferedThought = null;
             }
             if (_bufferedAction != null)
             {
-                AddAgentBubble(_bufferedAction, ChatMessageType.Action);
+                AppendExecutionProcess(_bufferedAction);
                 _bufferedAction = null;
             }
         }
@@ -1023,6 +1106,12 @@ namespace WordOllama.NewUI
             if (msg.StartsWith("💭")) return ChatMessageType.Thought;
             if (msg.StartsWith("🔧")) return ChatMessageType.Action;
             if (msg.StartsWith("⚠️") || msg.StartsWith("🚫") || msg.StartsWith("❌"))
+                return ChatMessageType.Error;
+            if (msg.StartsWith("异常", StringComparison.OrdinalIgnoreCase) ||
+                msg.StartsWith("错误", StringComparison.OrdinalIgnoreCase) ||
+                msg.StartsWith("Error", StringComparison.OrdinalIgnoreCase) ||
+                msg.StartsWith("Exception", StringComparison.OrdinalIgnoreCase) ||
+                msg.StartsWith("[API", StringComparison.OrdinalIgnoreCase))
                 return ChatMessageType.Error;
             if (msg.StartsWith("🤖")) return ChatMessageType.Question;
             if (msg.StartsWith("🎉") || msg.StartsWith("✅")) return ChatMessageType.Result;
@@ -1123,6 +1212,9 @@ namespace WordOllama.NewUI
             Dispatcher.Invoke(() =>
             {
                 _chatItems.Clear();
+                _executionProcessItem = null;
+                _finalAnswerItem = null;
+                _executionProcessEntryCount = 0;
             });
         }
 
@@ -1131,8 +1223,9 @@ namespace WordOllama.NewUI
         {
             Dispatcher.Invoke(() =>
             {
-                AddAgentBubble("");
-                ScrollToEnd();
+                _executionProcessItem = null;
+                _finalAnswerItem = null;
+                _executionProcessEntryCount = 0;
             });
         }
 
@@ -1141,7 +1234,11 @@ namespace WordOllama.NewUI
         {
             Dispatcher.Invoke(() =>
             {
-                AddAgentBubble(message);
+                ChatMessageType type = DetectMessageType(message);
+                if (type == ChatMessageType.Error || type == ChatMessageType.Question)
+                    AddAgentBubble(message, type);
+                else
+                    AppendExecutionProcess(message);
                 ScrollToEnd();
             });
         }
@@ -1151,7 +1248,7 @@ namespace WordOllama.NewUI
         {
             Dispatcher.Invoke(() =>
             {
-                AddAgentBubble(message);
+                SetFinalAnswer(message);
                 ScrollToEnd();
             });
         }
@@ -1215,6 +1312,12 @@ namespace WordOllama.NewUI
         {
             _editSuggestions.Clear();
             UpdateSuggestionEmptyState();
+        }
+
+        private async void OptimizeTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            await Utils.OptimizeTextBoxAsync(button?.Tag as TextBox, button);
         }
 
         private void BtnSaveWritingProfile_Click(object sender, RoutedEventArgs e)
@@ -2598,7 +2701,12 @@ namespace WordOllama.NewUI
     {
         public ChatMessageType MessageType { get; set; }
         public bool ShowAgentLabel { get; set; }
-        public string StepTitle { get; set; }
+        private string _stepTitle;
+        public string StepTitle
+        {
+            get => _stepTitle;
+            set { _stepTitle = value; OnPropertyChanged(nameof(StepTitle)); }
+        }
 
         /// <summary>兼容旧版属性：User 消息。</summary>
         public bool IsUser => MessageType == ChatMessageType.User;
@@ -2658,7 +2766,8 @@ namespace WordOllama.NewUI
     /// 将 ChatMessageType 转换为对应的颜色笔刷或可见性。
     /// ConverterParameter:
     ///   "SystemVisible" → 仅 System 类型为 Visible，其余 Collapsed
-    ///   "NonSystemVisible" → 非 System 类型为 Visible，System 为 Collapsed
+    ///   "PlainVisible" → Result/Question 为 Visible
+    ///   "CardVisible" → Error/Plan 为 Visible
     ///   其他值或不传 → 返回类型对应的颜色笔刷
     /// </summary>
     public class MessageTypeToBrushConverter : IValueConverter
@@ -2672,8 +2781,10 @@ namespace WordOllama.NewUI
                 if (param == "NonSystemVisible") return isSystem ? Visibility.Collapsed : Visibility.Visible;
                 if (param == "PlanVisible") return (value is ChatMessageType pt && pt == ChatMessageType.Plan) ? Visibility.Visible : Visibility.Collapsed;
                 if (param == "StepVisible") return (value is ChatMessageType st && st == ChatMessageType.StepGroup) ? Visibility.Visible : Visibility.Collapsed;
-                if (param == "NonStepVisible") return (value is ChatMessageType nst && nst != ChatMessageType.StepGroup && nst != ChatMessageType.System) ? Visibility.Visible : Visibility.Collapsed;
-                if (param == "ResultVisible") return (value is ChatMessageType rt && rt == ChatMessageType.Result) ? Visibility.Visible : Visibility.Collapsed;
+                if (param == "PlainVisible") return (value is ChatMessageType plain &&
+                    (plain == ChatMessageType.Result || plain == ChatMessageType.Question)) ? Visibility.Visible : Visibility.Collapsed;
+                if (param == "CardVisible") return (value is ChatMessageType card &&
+                    (card == ChatMessageType.Error || card == ChatMessageType.Plan)) ? Visibility.Visible : Visibility.Collapsed;
             }
 
             // 返回颜色笔刷

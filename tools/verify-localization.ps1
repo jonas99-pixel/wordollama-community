@@ -20,7 +20,7 @@ $missingBase = @($englishKeys | Where-Object { $_ -cnotin $baseKeys })
 
 $xamlKeys = @(
     Get-ChildItem -LiteralPath (Join-Path $ProjectRoot 'WordOllama') -Recurse -Filter *.xaml |
-        Select-String -Pattern '\{local:Loc\s+(I18n_[A-Za-z0-9_]+)' -AllMatches -CaseSensitive |
+        Select-String -Pattern '\{[A-Za-z][A-Za-z0-9]*:Loc\s+(I18n_[A-Za-z0-9_]+)' -AllMatches -CaseSensitive |
         ForEach-Object { $_.Matches | ForEach-Object { $_.Groups[1].Value } }
 ) | Sort-Object -Unique -CaseSensitive
 $missingXaml = @($xamlKeys | Where-Object { $_ -cnotin $baseKeys })

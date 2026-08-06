@@ -2939,4 +2939,41 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_RevisionCount" xml:space="preserve"><value>{0} revisions</value></data>
   <data name="I18n_AgentToolDesc_create_skill" xml:space="preserve"><value>Turn a successful workflow into a reusable local Skill without document text, secrets, personal data, or raw conversation history.</value></data>
   <data name="I18n_AgentToolDesc_fetch_url" xml:space="preserve"><value>Safely fetch public HTTPS text while blocking local/private addresses, unsafe types, excessive redirects, and oversized responses.</value></data>
+  <data name="I18n_TranslationSourceLanguage" xml:space="preserve"><value>Input language</value></data>
+  <data name="I18n_TranslationTargetLanguage" xml:space="preserve"><value>Output language</value></data>
+  <data name="I18n_TranslationAutoDetect" xml:space="preserve"><value>Auto detect</value></data>
+  <data name="I18n_SwapLanguages" xml:space="preserve"><value>Swap languages and text</value></data>
+  <data name="I18n_TranslationScheme" xml:space="preserve"><value>Terminology or style scheme</value></data>
+  <data name="I18n_OptionalCollapsed" xml:space="preserve"><value>Optional · collapsed by default</value></data>
+  <data name="I18n_ManageSchemes" xml:space="preserve"><value>Delete current scheme</value></data>
+  <data name="I18n_TranslationRequirementHint" xml:space="preserve"><value>For example: use formal legal terms; enforce preferred translations; keep product names untranslated</value></data>
+  <data name="I18n_TranslationSchemeNameHint" xml:space="preserve"><value>My scheme name</value></data>
+  <data name="I18n_SaveMyScheme" xml:space="preserve"><value>Save scheme</value></data>
+  <data name="I18n_UseAsDefaultScheme" xml:space="preserve"><value>Use the current scheme by default next time</value></data>
+  <data name="I18n_TranslationSourceText" xml:space="preserve"><value>Source</value></data>
+  <data name="I18n_TranslationResult" xml:space="preserve"><value>Translation</value></data>
+  <data name="I18n_LoadSelection" xml:space="preserve"><value>Load selection</value></data>
+  <data name="I18n_Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="I18n_TranslationSourcePlaceholder" xml:space="preserve"><value>Enter text, or select text in Word and load it here…</value></data>
+  <data name="I18n_TranslationOutputPlaceholder" xml:space="preserve"><value>The translation appears here and remains editable…</value></data>
+  <data name="I18n_ComparisonMode" xml:space="preserve"><value>Comparison mode</value></data>
+  <data name="I18n_ComparisonModeHint" xml:space="preserve"><value>Alternate each source paragraph with its translation</value></data>
+  <data name="I18n_StartTranslation" xml:space="preserve"><value>Translate</value></data>
+  <data name="I18n_Translating" xml:space="preserve"><value>Translating…</value></data>
+  <data name="I18n_TranslationReady" xml:space="preserve"><value>Translation complete. You can continue editing it.</value></data>
+  <data name="I18n_TranslationSchemeNameRequired" xml:space="preserve"><value>Enter a scheme name first.</value></data>
+  <data name="I18n_TranslationSchemeSaved" xml:space="preserve"><value>Translation scheme saved.</value></data>
+  <data name="I18n_TranslationSchemeDeleted" xml:space="preserve"><value>Custom translation scheme deleted.</value></data>
+  <data name="I18n_TranslationSelectCustomScheme" xml:space="preserve"><value>Built-in schemes cannot be deleted. Select a custom scheme.</value></data>
+  <data name="I18n_TranslationDeleteSchemeConfirm" xml:space="preserve"><value>Delete the current custom translation scheme?</value></data>
+  <data name="I18n_TranslationBuiltInScheme" xml:space="preserve"><value>Built-in scheme</value></data>
+  <data name="I18n_TranslationBuiltInInstruction" xml:space="preserve"><value>Preserve the original meaning in natural target-language prose and keep names, numbers, citations, numbering, and terminology consistent.</value></data>
+  <data name="I18n_TranslationLegalScheme" xml:space="preserve"><value>Legal documents</value></data>
+  <data name="I18n_TranslationLegalInstruction" xml:space="preserve"><value>Use formal, precise, and consistent legal terminology. Preserve clause numbering, defined terms, obligation strength, and legal effect without weakening or strengthening the source.</value></data>
+  <data name="I18n_TranslationAcademicScheme" xml:space="preserve"><value>Academic writing</value></data>
+  <data name="I18n_TranslationAcademicInstruction" xml:space="preserve"><value>Use rigorous, objective academic language. Keep technical concepts, citations, formulas, and reference formatting consistent and avoid colloquialisms.</value></data>
+  <data name="I18n_TranslationBusinessScheme" xml:space="preserve"><value>Business communication</value></data>
+  <data name="I18n_TranslationBusinessInstruction" xml:space="preserve"><value>Use clear, professional, and natural business language. Preserve brand names, titles, dates, amounts, and requested actions accurately.</value></data>
+  <data name="I18n_TranslationTechnicalScheme" xml:space="preserve"><value>Technical documentation</value></data>
+  <data name="I18n_TranslationTechnicalInstruction" xml:space="preserve"><value>Keep APIs, code, variables, commands, paths, and product names unchanged. Use consistent terminology and established industry translations.</value></data>
 </root>

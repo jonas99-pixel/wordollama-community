@@ -211,7 +211,7 @@ namespace WordOllama.NewUI
 
         private async void OptimizationButton_Click(object sender, RoutedEventArgs e)
         {
-            promptTextBox.Text = await Utils.PromptOptimizer(promptTextBox.Text);
+            await Utils.OptimizeTextBoxAsync(promptTextBox, sender as Button);
         }
 
         private void OpenPopup_Click(object sender, RoutedEventArgs e)
