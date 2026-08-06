@@ -10,6 +10,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Windows.Data;
+using Microsoft.Win32;
 using WordOllama.lib;
 
 namespace WordOllama.NewUI
@@ -58,7 +60,11 @@ namespace WordOllama.NewUI
                 {
                     Name = prompt.Name,
                     Prompt = prompt.Prompt,
-                    Function = GetOriginalFunction((string)prompt.Function) // 显式转换为 string
+                    Function = GetOriginalFunction((string)prompt.Function),
+                    Id = prompt.Id == null ? Guid.NewGuid().ToString("N") : (string)prompt.Id,
+                    Favorite = prompt.Favorite != null && (bool)prompt.Favorite,
+                    LastUsedAt = prompt.LastUsedAt == null ? null : (DateTime?)prompt.LastUsedAt,
+                    UseCount = prompt.UseCount == null ? 0 : (int)prompt.UseCount
                 }));
             }
             else
@@ -225,12 +231,51 @@ namespace WordOllama.NewUI
                     Name = prompt.Name,
                     Prompt = prompt.Prompt,
                     Function = prompt.GetTransformedFunction()
+                    , Id = prompt.Id
+                    , Favorite = prompt.Favorite
+                    , LastUsedAt = prompt.LastUsedAt
+                    , UseCount = prompt.UseCount
                 }).ToList();
 
             string json = JsonConvert.SerializeObject(transformedPrompts, Formatting.Indented);
             Directory.CreateDirectory(Path.GetDirectoryName(jsonFilePath));
             File.WriteAllText(jsonFilePath, json);
 
+        }
+
+        private void PromptSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = PromptSearchBox.Text?.Trim() ?? "";
+            ICollectionView view = CollectionViewSource.GetDefaultView(CustomPrompts);
+            view.Filter = item =>
+            {
+                if (string.IsNullOrWhiteSpace(query)) return true;
+                var prompt = item as CustomPrompt;
+                return (prompt?.Name?.IndexOf(query, StringComparison.OrdinalIgnoreCase) ?? -1) >= 0 ||
+                       (prompt?.Prompt?.IndexOf(query, StringComparison.OrdinalIgnoreCase) ?? -1) >= 0;
+            };
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription(nameof(CustomPrompt.Favorite), ListSortDirection.Descending));
+            view.SortDescriptions.Add(new SortDescription(nameof(CustomPrompt.LastUsedAt), ListSortDirection.Descending));
+        }
+
+        private void ImportPrompts_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog { Filter = "JSON (*.json)|*.json" };
+            if (dialog.ShowDialog() != true) return;
+            var imported = JsonConvert.DeserializeObject<List<CustomPrompt>>(File.ReadAllText(dialog.FileName)) ?? new List<CustomPrompt>();
+            foreach (CustomPrompt prompt in imported.Where(p => !string.IsNullOrWhiteSpace(p.Name) && !string.IsNullOrWhiteSpace(p.Prompt)))
+            {
+                CustomPrompt existing = CustomPrompts.FirstOrDefault(p => string.Equals(p.Name, prompt.Name, StringComparison.OrdinalIgnoreCase));
+                if (existing == null) CustomPrompts.Add(prompt);
+                else { existing.Prompt = prompt.Prompt; existing.Function = GetOriginalFunction(prompt.Function); existing.Favorite = prompt.Favorite; }
+            }
+        }
+
+        private void ExportPrompts_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog { Filter = "JSON (*.json)|*.json", FileName = "WordOllama-prompts.json" };
+            if (dialog.ShowDialog() == true) File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(CustomPrompts, Formatting.Indented));
         }
 
         private void GetPromptTextLength_And_SetHelperText(object sender, TextChangedEventArgs e)
@@ -263,6 +308,10 @@ namespace WordOllama.NewUI
 
     public class CustomPrompt : INotifyPropertyChanged
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString("N");
+        public bool Favorite { get; set; }
+        public DateTime? LastUsedAt { get; set; }
+        public int UseCount { get; set; }
         private string _name;
         public string Name
         {

@@ -140,6 +140,9 @@ namespace WordOllama.lib.Tools
     /// </summary>
     public class TableInsertRowTool : IAgentTool
     {
+        public static bool IsValidAfterRow(int afterRow, int rowCount) =>
+            afterRow >= 1 && afterRow <= rowCount;
+
         public string Name => "table_insert_row";
         public string Description => AgentToolText.Description(Name);
         public bool IsWriteOperation => true;
@@ -170,14 +173,14 @@ namespace WordOllama.lib.Tools
                 if (parameters["after_row"] != null)
                 {
                     int afterRow = parameters["after_row"].Value<int>();
-                    if (afterRow >= 1 && afterRow <= table.Rows.Count)
+                    if (IsValidAfterRow(afterRow, table.Rows.Count))
                     {
                         table.Rows[afterRow].Select();
                         app.Selection.InsertRowsBelow(1);
                     }
                     else
                     {
-                        table.Rows.Add(ref missing);
+                        return AgentToolText.F("I18n_AgentResultTableRowOutOfRange", afterRow, table.Rows.Count);
                     }
                 }
                 else

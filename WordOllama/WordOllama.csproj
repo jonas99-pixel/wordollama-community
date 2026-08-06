@@ -227,6 +227,9 @@
     <Compile Include="lib\AgentToolText.cs" />
     <Compile Include="lib\WorkflowStatus.cs" />
     <Compile Include="lib\DiagnosticsService.cs" />
+    <Compile Include="lib\UserMemoryStore.cs" />
+    <Compile Include="lib\AgentSourceExtractor.cs" />
+    <Compile Include="lib\ProviderCapabilityProbe.cs" />
       <Compile Include="lib\ProviderCompatibility.cs" />
       <Compile Include="lib\ProviderRequestPolicy.cs" />
       <Compile Include="lib\SecretProtector.cs" />
@@ -253,7 +256,9 @@
     <Compile Include="lib\Tools\LegalTools.cs" />
     <Compile Include="lib\Tools\AskHumanTool.cs" />
     <Compile Include="lib\Tools\ReadSkillTool.cs" />
+    <Compile Include="lib\Tools\CreateSkillTool.cs" />
     <Compile Include="lib\Tools\ExternalTools.cs" />
+    <Compile Include="lib\Tools\SafeWebAndWorkspaceTools.cs" />
     <Compile Include="lib\Tools\InsertImageTool.cs" />
     <Compile Include="lib\Tools\PageLayoutTools.cs" />
     <Compile Include="lib\Tools\TableOperations.cs" />
@@ -524,6 +529,20 @@
     </Page>
     <Compile Include="NewUI\AgentPermissionDialog.xaml.cs">
       <DependentUpon>AgentPermissionDialog.xaml</DependentUpon>
+    </Compile>
+    <Page Include="NewUI\ComparisonReviewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\ComparisonReviewWindow.xaml.cs">
+      <DependentUpon>ComparisonReviewWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="NewUI\SetupAssistantWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="NewUI\SetupAssistantWindow.xaml.cs">
+      <DependentUpon>SetupAssistantWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="NewUI\DiffReviewWindow.xaml">
       <SubType>Designer</SubType>

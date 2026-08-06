@@ -74,4 +74,64 @@ namespace WordOllama.lib
             return revisedText.TrimEnd('\r', '\a') + suffix;
         }
     }
+
+    /// <summary>
+    /// Aligns paragraph snapshots with a real line diff so an insertion near the
+    /// beginning of a document does not make every following paragraph look modified.
+    /// </summary>
+    public static class DocumentDiffPlanner
+    {
+        public static List<DiffChange> CreateChanges(
+            IReadOnlyList<string> original,
+            IReadOnlyList<string> revised)
+        {
+            original = original ?? Array.Empty<string>();
+            revised = revised ?? Array.Empty<string>();
+            var changes = new List<DiffChange>();
+            var result = new Differ().CreateLineDiffs(
+                string.Join("\n", original),
+                string.Join("\n", revised),
+                ignoreWhitespace: false,
+                ignoreCase: false);
+
+            foreach (var block in result.DiffBlocks)
+            {
+                int paired = Math.Min(block.DeleteCountA, block.InsertCountB);
+                for (int i = 0; i < paired; i++)
+                {
+                    changes.Add(new DiffChange
+                    {
+                        Type = "修改",
+                        ParagraphIndex = block.InsertStartB + i + 1,
+                        PostParagraphIndex = block.InsertStartB + i + 1,
+                        OldText = original[block.DeleteStartA + i],
+                        NewText = revised[block.InsertStartB + i]
+                    });
+                }
+
+                for (int i = paired; i < block.DeleteCountA; i++)
+                {
+                    changes.Add(new DiffChange
+                    {
+                        Type = "删除",
+                        ParagraphIndex = block.DeleteStartA + i + 1,
+                        PostParagraphIndex = block.InsertStartB + paired + 1,
+                        OldText = original[block.DeleteStartA + i]
+                    });
+                }
+
+                for (int i = paired; i < block.InsertCountB; i++)
+                {
+                    changes.Add(new DiffChange
+                    {
+                        Type = "新增",
+                        ParagraphIndex = block.InsertStartB + i + 1,
+                        PostParagraphIndex = block.InsertStartB + i + 1,
+                        NewText = revised[block.InsertStartB + i]
+                    });
+                }
+            }
+            return changes;
+        }
+    }
 }

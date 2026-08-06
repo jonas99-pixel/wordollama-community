@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 using System.Windows.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -74,9 +75,22 @@ namespace WordOllama.lib
         private string _currentPlan;
 
         // [快照对比] 执行前文档快照
-        private Dictionary<int, string> _preSnapshot;
+        private List<string> _preSnapshot;
         private bool _trackedChangesBatchStarted;
         private bool _trackRevisionsEnabledByAgent;
+        private bool _taskUndoRecordStarted;
+        private bool _taskUndoRecordFinalized;
+        private string _taskUndoAfterXml;
+        private string _taskDocumentIdentity;
+        private Dictionary<string, int> _preRevisionFingerprints = new Dictionary<string, int>(StringComparer.Ordinal);
+        private List<RevisionLocator> _taskRevisionLocators = new List<RevisionLocator>();
+        private bool _taskRevisionIsolationSafe;
+        private bool _revisionBaselineCaptured;
+        private readonly Dictionary<string, AgentSource> _sources = new Dictionary<string, AgentSource>(StringComparer.OrdinalIgnoreCase);
+        private DateTime _startedAt;
+        private int _toolCallCount;
+        private int _toolFailureCount;
+        private string _goal = "";
         /// <summary>执行完成后可通过此属性获取变更列表。</summary>
         public List<DiffChange> DiffChanges { get; private set; }
 
@@ -85,6 +99,8 @@ namespace WordOllama.lib
         public event Action<int, int> ProgressChanged;
         public event Action<string> LogEntry;
         public event Action<string> ResultReady;
+        public event Action<AgentSource> SourceDiscovered;
+        public event Action<AgentRunMetrics> MetricsChanged;
 
         public WorkflowStatus WorkflowStatus => _workflowStatus;
 
@@ -131,6 +147,7 @@ namespace WordOllama.lib
                 "WordAgentSkills");
             _skillManager.LoadSkills(skillsPath);
             _toolRegistry.Register(new Tools.ReadSkillTool(_skillManager));
+            _toolRegistry.Register(new Tools.CreateSkillTool(_skillManager));
 
             // [HITL] 注册 ask_human 工具
             _toolRegistry.Register(new Tools.AskHumanTool());
@@ -171,9 +188,15 @@ namespace WordOllama.lib
         /// </summary>
         public JArray GetToolSchemas() => _toolRegistry.BuildToolSchemas();
 
-        public async Task ExecuteAsync(string userRequirement, CancellationToken ct = default, bool resumeFromCheckpoint = false)
+        public async Task ExecuteAsync(string userRequirement, CancellationToken ct = default, bool resumeFromCheckpoint = false, string goal = null)
         {
             _ct = ct;
+            _goal = (goal ?? "").Trim();
+            _startedAt = DateTime.UtcNow;
+            _toolCallCount = 0;
+            _toolFailureCount = 0;
+            _sources.Clear();
+            AgentWorkspaceManager.BeginSession();
             string resolvedLanguage = PromptTemplateService.ResolveLanguage(SharedSettings.LanguageMode, userRequirement);
             _useEnglish = string.Equals(resolvedLanguage, "English", StringComparison.OrdinalIgnoreCase);
             AgentToolText.SetCurrentAgentLanguage(resolvedLanguage);
@@ -185,6 +208,14 @@ namespace WordOllama.lib
             {
             _app = Globals.ThisAddIn.Application;
             _doc = _app.ActiveDocument;
+            _taskUndoRecordStarted = false;
+            _taskUndoRecordFinalized = false;
+            _taskUndoAfterXml = null;
+            _taskDocumentIdentity = GetDocumentIdentity(_doc);
+            _preRevisionFingerprints.Clear();
+            _taskRevisionLocators.Clear();
+            _taskRevisionIsolationSafe = true;
+            _revisionBaselineCaptured = false;
 
             // Capture the UI dispatcher so COM operations stay on Word's main thread.
             _mainDispatcher = System.Windows.Application.Current?.Dispatcher
@@ -262,17 +293,25 @@ namespace WordOllama.lib
                 Log(AgentToolText.F("I18n_AgentLogResumed", _completedMilestones.Count));
             }
 
+            // Re-anchor immediately before execution. Planning can take time and the
+            // user may have edited the document while reviewing the plan.
+            _preSnapshot = CaptureDocumentSnapshot();
+            _preRevisionFingerprints = CaptureRevisionFingerprintCounts();
+            _taskDocumentIdentity = GetDocumentIdentity(_doc);
+            BeginTaskUndoRecord();
+
             string taskCompleteMsg = null;
             int currentIteration = 0;
             var recentActions = new List<(string Action, string Params)>(); // 循环检测
             int consecutiveFailures = 0;
             const int maxConsecutiveFailures = 3;
 
-            while (_maxIterations == 0 || currentIteration < _maxIterations)
+            while ((_maxIterations == 0 || currentIteration < _maxIterations) && DateTime.UtcNow - _startedAt < TimeSpan.FromMinutes(30))
             {
                 _ct.ThrowIfCancellationRequested();
                 currentIteration++;
                 ProgressChanged?.Invoke(currentIteration, _maxIterations == 0 ? 0 : _maxIterations);
+                PublishMetrics(currentIteration);
                 ReportStatus(string.Format(Properties.Resources.Agent_StatusRound, currentIteration, _maxIterations == 0 ? "" : $"/{_maxIterations}"), WorkflowState.Thinking);
 
                 // [错误升级] 连续失败超过阈值时主动询问用户
@@ -488,6 +527,7 @@ namespace WordOllama.lib
                     {
                         // 执行工具 — 强制在主线程执行以保证 COM 线程安全
                         toolResult = await ExecuteToolSafeAsync(decision.Action, decision.Params, tool);
+                        _toolCallCount++;
                         toolFailed =
                             toolResult.StartsWith("[错误]") ||
                             toolResult.StartsWith("[执行异常]") ||
@@ -502,7 +542,10 @@ namespace WordOllama.lib
 
                 // 连续失败计数
                 if (toolFailed)
+                {
                     consecutiveFailures++;
+                    _toolFailureCount++;
+                }
                 else
                 {
                     consecutiveFailures = 0;
@@ -537,6 +580,7 @@ namespace WordOllama.lib
                 if (shortParams.Length > 100) shortParams = shortParams.Substring(0, 100) + "...";
 
                 string observationContent = PromptTemplateService.BuildToolObservation(decision.Action, toolResult, UseEnglish);
+                PublishSources(decision.Action, toolResult);
                 _chatHistory.Add(new Dictionary<string, string> {
                     { "role", "user" },
                     { "content", observationContent }
@@ -558,25 +602,34 @@ namespace WordOllama.lib
 
             if (taskCompleteMsg == null)
             {
-                taskCompleteMsg = Properties.Resources.Agent_MaxIterReached;
+                taskCompleteMsg = DateTime.UtcNow - _startedAt >= TimeSpan.FromMinutes(30)
+                    ? (UseEnglish ? "The 30-minute task budget was reached. Work completed so far has been preserved." : "已达到 30 分钟任务预算，当前完成结果已保留。")
+                    : Properties.Resources.Agent_MaxIterReached;
             }
 
             ReportStatus(Properties.Resources.Agent_StatusDone, WorkflowState.Completed);
 
             // [快照对比] 执行完毕后计算变更
+            RestoreTrackedChangesMode();
+            FinalizeTaskUndoRecord();
+            CaptureTaskRevisionLocators();
             try { ComputeDiff(); } catch { /* diff 不应影响主流程 */ }
 
             // [Checkpoint] 任务正常完成，清除断点
             ClearCheckpoint();
 
             ResultReady?.Invoke(taskCompleteMsg);
+            PublishMetrics(currentIteration);
+            UserMemoryStore.QueueSuccessfulTask(userRequirement, _callAIChat);
             }
             finally
             {
                 RestoreTrackedChangesMode();
+                FinalizeTaskUndoRecord();
                 // [Checkpoint] 清理断点（取消/异常情况下也清除，避免残留）
                 ClearCheckpoint();
                 IsAgentRunning = false;
+                AgentWorkspaceManager.EndSession();
             }
         }
 
@@ -591,7 +644,31 @@ namespace WordOllama.lib
                 _toolRegistry.BuildToolDescriptions(),
                 _toolRegistry.GetAllTools().Count(),
                 _skillManager.GetSkillCatalog(),
-                PromptTemplateService.ResolveLanguage(SharedSettings.LanguageMode, requirement));
+                PromptTemplateService.ResolveLanguage(SharedSettings.LanguageMode, requirement),
+                _goal,
+                UserMemoryStore.BuildPromptContext("agent"));
+        }
+
+        private void PublishSources(string tool, string content)
+        {
+            foreach (AgentSource source in AgentSourceExtractor.Extract(tool, content))
+            {
+                if (_sources.ContainsKey(source.Url)) continue;
+                _sources[source.Url] = source;
+                SourceDiscovered?.Invoke(source);
+            }
+        }
+
+        private void PublishMetrics(int iteration)
+        {
+            MetricsChanged?.Invoke(new AgentRunMetrics
+            {
+                Iteration = iteration,
+                ToolCalls = _toolCallCount,
+                ToolFailures = _toolFailureCount,
+                Sources = _sources.Count,
+                Elapsed = DateTime.UtcNow - _startedAt
+            });
         }
         #region COM thread safety — marshal operations to the main thread
 
@@ -675,6 +752,8 @@ namespace WordOllama.lib
             {
                 if (_trackRevisionsEnabledByAgent && _doc != null)
                     _doc.TrackRevisions = false;
+                _trackedChangesBatchStarted = false;
+                _trackRevisionsEnabledByAgent = false;
             };
 
             try
@@ -717,12 +796,12 @@ namespace WordOllama.lib
                 return false;
 
             ToolEffect required = ToolExecutionPolicy.GetEffects(tool)
-                & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp | ToolEffect.LocalFileRead);
+                & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp | ToolEffect.LocalFileRead | ToolEffect.LocalFileWrite);
             if (tool is McpToolWrapper trustedMcp && trustedMcp.IsTrusted)
                 required &= ~ToolEffect.ExternalMcp;
             if (required == ToolEffect.None) return true;
 
-            string permissionKey = $"{tool.Name}|{(int)required}";
+            string permissionKey = BuildPermissionKey(tool.Name, required, parameters);
             if (ConfirmationManager.HasExternalPermissionForSession(permissionKey))
                 return true;
 
@@ -738,6 +817,16 @@ namespace WordOllama.lib
             if (decision == AgentPermissionDecision.AllowSession)
                 ConfirmationManager.GrantExternalPermissionForSession(permissionKey);
             return decision != AgentPermissionDecision.Deny;
+        }
+
+        private static string BuildPermissionKey(string toolName, ToolEffect effects, JObject parameters)
+        {
+            string canonical = parameters == null ? "{}" : parameters.ToString(Formatting.None);
+            using (var sha = SHA256.Create())
+            {
+                string hash = Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(canonical)));
+                return toolName + "|" + (int)effects + "|" + hash;
+            }
         }
 
         private string BuildExternalOperation(IAgentTool tool, JObject parameters)
@@ -1451,29 +1540,199 @@ namespace WordOllama.lib
 
         #endregion
 
+        #region Task-scoped undo and revisions
+
+        private const int MaxUndoSnapshotCharacters = 8_000_000;
+
+        private void BeginTaskUndoRecord()
+        {
+            try
+            {
+                Word.UndoRecord undo = _app?.UndoRecord;
+                if (undo == null || undo.IsRecordingCustomRecord || undo.CustomRecordLevel > 0) return;
+                undo.StartCustomRecord("WordOllama Agent");
+                _taskUndoRecordStarted = true;
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Log("Agent.Undo", "Custom undo record unavailable: " + ex.Message);
+            }
+        }
+
+        private void FinalizeTaskUndoRecord()
+        {
+            if (!_taskUndoRecordStarted || _taskUndoRecordFinalized) return;
+            try
+            {
+                _app?.UndoRecord?.EndCustomRecord();
+                _taskUndoRecordFinalized = true;
+                string xml = _doc?.WordOpenXML;
+                if (!string.IsNullOrEmpty(xml) && xml.Length <= MaxUndoSnapshotCharacters)
+                    _taskUndoAfterXml = xml;
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Log("Agent.Undo", "Custom undo record finalization failed: " + ex.Message);
+                _taskUndoAfterXml = null;
+            }
+            finally
+            {
+                _taskUndoRecordStarted = false;
+            }
+        }
+
+        private static string GetDocumentIdentity(Word.Document document)
+        {
+            if (document == null) return "";
+            try { return document.FullName ?? document.Name ?? ""; }
+            catch { try { return document.Name ?? ""; } catch { return ""; } }
+        }
+
+        private Dictionary<string, int> CaptureRevisionFingerprintCounts()
+        {
+            var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+            try
+            {
+                for (int i = 1; i <= _doc.Revisions.Count; i++)
+                {
+                    string fingerprint = RevisionFingerprint(_doc.Revisions[i]);
+                    counts[fingerprint] = counts.TryGetValue(fingerprint, out int value) ? value + 1 : 1;
+                }
+                _revisionBaselineCaptured = true;
+            }
+            catch (Exception ex)
+            {
+                _revisionBaselineCaptured = false;
+                DebugLogger.Log("Agent.Revisions", "Baseline capture failed: " + ex.Message);
+            }
+            return counts;
+        }
+
+        private void CaptureTaskRevisionLocators()
+        {
+            _taskRevisionLocators.Clear();
+            var remaining = new Dictionary<string, int>(_preRevisionFingerprints, StringComparer.Ordinal);
+            try
+            {
+                for (int i = 1; i <= _doc.Revisions.Count; i++)
+                {
+                    Word.Revision revision = _doc.Revisions[i];
+                    string fingerprint = RevisionFingerprint(revision);
+                    if (remaining.TryGetValue(fingerprint, out int count) && count > 0)
+                    {
+                        remaining[fingerprint] = count - 1;
+                        continue;
+                    }
+                    _taskRevisionLocators.Add(new RevisionLocator
+                    {
+                        Fingerprint = fingerprint,
+                        Start = revision.Range.Start,
+                        End = revision.Range.End
+                    });
+                }
+                _taskRevisionIsolationSafe = _revisionBaselineCaptured && !remaining.Values.Any(value => value > 0);
+            }
+            catch (Exception ex)
+            {
+                _taskRevisionLocators.Clear();
+                _taskRevisionIsolationSafe = false;
+                DebugLogger.Log("Agent.Revisions", "Task revision capture failed: " + ex.Message);
+            }
+        }
+
+        private static string RevisionFingerprint(Word.Revision revision)
+        {
+            string text = "";
+            string format = "";
+            long ticks = 0;
+            try { text = NormalizeSnapshotText(revision.Range?.Text); } catch { }
+            try { format = revision.FormatDescription ?? ""; } catch { }
+            try { ticks = revision.Date.ToUniversalTime().Ticks; } catch { }
+            string value = (int)revision.Type + "\u001f" + (revision.Author ?? "") + "\u001f" +
+                ticks + "\u001f" + format + "\u001f" + text;
+            using (var sha = SHA256.Create())
+                return Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(value)));
+        }
+
+        private List<RevisionCandidate> ResolveTaskRevisions()
+        {
+            var candidates = new List<RevisionCandidate>();
+            for (int i = 1; i <= _doc.Revisions.Count; i++)
+            {
+                Word.Revision revision = _doc.Revisions[i];
+                candidates.Add(new RevisionCandidate
+                {
+                    Revision = revision,
+                    Fingerprint = RevisionFingerprint(revision),
+                    Start = revision.Range.Start
+                });
+            }
+
+            var resolved = new List<RevisionCandidate>();
+            foreach (RevisionLocator locator in _taskRevisionLocators)
+            {
+                RevisionCandidate match = candidates
+                    .Where(item => !item.Used && string.Equals(item.Fingerprint, locator.Fingerprint, StringComparison.Ordinal))
+                    .OrderBy(item => Math.Abs(item.Start - locator.Start))
+                    .FirstOrDefault();
+                if (match == null) continue;
+                match.Used = true;
+                match.Locator = locator;
+                resolved.Add(match);
+            }
+            return resolved;
+        }
+
+        private void EnsureTaskSnapshotCurrent()
+        {
+            if (!_taskUndoRecordFinalized || string.IsNullOrEmpty(_taskUndoAfterXml) || _doc == null ||
+                !string.Equals(GetDocumentIdentity(_doc), _taskDocumentIdentity, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(AgentToolText.T("I18n_DiffTaskUndoUnavailable"));
+            string current = _doc.WordOpenXML;
+            if (!string.Equals(current, _taskUndoAfterXml, StringComparison.Ordinal))
+                throw new InvalidOperationException(AgentToolText.T("I18n_DiffTaskDocumentChanged"));
+        }
+
+        private sealed class RevisionLocator
+        {
+            public string Fingerprint { get; set; }
+            public int Start { get; set; }
+            public int End { get; set; }
+        }
+
+        private sealed class RevisionCandidate
+        {
+            public Word.Revision Revision { get; set; }
+            public RevisionLocator Locator { get; set; }
+            public string Fingerprint { get; set; }
+            public int Start { get; set; }
+            public bool Used { get; set; }
+        }
+
+        #endregion
+
         #region [快照对比] Document Snapshot & Diff
 
         /// <summary>
         /// 捕获当前文档所有段落的文本快照。
         /// </summary>
-        private Dictionary<int, string> CaptureDocumentSnapshot()
+        private List<string> CaptureDocumentSnapshot()
         {
-            var snapshot = new Dictionary<int, string>();
+            var snapshot = new List<string>();
             try
             {
                 string[] paragraphs = ReadDocumentText(_doc)
                     .Split(new[] { '\r' }, StringSplitOptions.None);
                 int paragraphCount = Math.Min(_doc.Paragraphs.Count, paragraphs.Length);
                 for (int i = 1; i <= paragraphCount; i++)
-                {
-                    string text = paragraphs[i - 1].Trim('\a');
-                    if (!string.IsNullOrWhiteSpace(text))
-                        snapshot[i] = text;
-                }
+                    snapshot.Add(NormalizeSnapshotText(paragraphs[i - 1]));
             }
             catch { /* 快照失败不影响主流程 */ }
             return snapshot;
         }
+
+        private static string NormalizeSnapshotText(string text) =>
+            (text ?? "").TrimEnd('\r', '\a');
 
         /// <summary>
         /// 对比执行前后的文档快照，生成变更列表。
@@ -1482,24 +1741,10 @@ namespace WordOllama.lib
         {
             try
             {
-                var changes = new List<DiffChange>();
                 var postSnapshot = CaptureDocumentSnapshot();
-
-                // 查找被修改或删除的段落
-                foreach (var kvp in _preSnapshot)
-                {
-                    if (!postSnapshot.TryGetValue(kvp.Key, out var newText))
-                        changes.Add(new DiffChange { Type = "删除", ParagraphIndex = kvp.Key, OldText = kvp.Value });
-                    else if (newText != kvp.Value)
-                        changes.Add(new DiffChange { Type = "修改", ParagraphIndex = kvp.Key, OldText = kvp.Value, NewText = newText });
-                }
-
-                // 查找新增的段落
-                foreach (var kvp in postSnapshot)
-                {
-                    if (!_preSnapshot.ContainsKey(kvp.Key))
-                        changes.Add(new DiffChange { Type = "新增", ParagraphIndex = kvp.Key, NewText = kvp.Value });
-                }
+                var changes = DocumentDiffPlanner.CreateChanges(_preSnapshot, postSnapshot);
+                foreach (DiffChange change in changes)
+                    AttachDiffAnchor(change);
 
                 DiffChanges = changes;
 
@@ -1509,13 +1754,118 @@ namespace WordOllama.lib
             catch { /* diff 不应影响主流程 */ }
         }
 
+        private void AttachDiffAnchor(DiffChange change)
+        {
+            if (change == null || _doc == null) return;
+            try
+            {
+                int postIndex = Math.Max(1, change.PostParagraphIndex);
+                if (change.Type == "删除")
+                {
+                    int position = postIndex <= _doc.Paragraphs.Count
+                        ? _doc.Paragraphs[postIndex].Range.Start
+                        : Math.Max(0, _doc.Content.End - 1);
+                    change.AnchorRange = _doc.Range(position, position);
+                }
+                else if (postIndex <= _doc.Paragraphs.Count)
+                {
+                    change.AnchorRange = _doc.Paragraphs[postIndex].Range.Duplicate;
+                }
+                change.AnchorStart = change.AnchorRange?.Start ?? 0;
+            }
+            catch { change.AnchorRange = null; }
+        }
+
+        private Word.Range ResolveDiffRange(DiffChange change, bool requireCurrentText)
+        {
+            if (change == null || _doc == null) return null;
+            if (change.Type == "删除") return change.AnchorRange;
+            string expected = NormalizeSnapshotText(change.NewText);
+            try
+            {
+                if (change.AnchorRange != null &&
+                    string.Equals(NormalizeSnapshotText(change.AnchorRange.Text), expected, StringComparison.Ordinal))
+                    return change.AnchorRange;
+            }
+            catch { }
+
+            Word.Range closest = null;
+            int distance = int.MaxValue;
+            for (int i = 1; i <= _doc.Paragraphs.Count; i++)
+            {
+                Word.Range candidate = null;
+                try
+                {
+                    candidate = _doc.Paragraphs[i].Range;
+                    if (!string.Equals(NormalizeSnapshotText(candidate.Text), expected, StringComparison.Ordinal))
+                        continue;
+                    int candidateDistance = Math.Abs(candidate.Start - change.AnchorStart);
+                    if (candidateDistance >= distance) continue;
+                    Word.Range previous = closest;
+                    closest = candidate.Duplicate;
+                    ComHelper.ReleaseCom(ref previous);
+                    distance = candidateDistance;
+                }
+                finally { ComHelper.ReleaseCom(ref candidate); }
+            }
+            if (closest != null)
+            {
+                ReleaseDiffAnchor(change);
+                change.AnchorRange = closest;
+                change.AnchorStart = closest.Start;
+                return closest;
+            }
+            if (requireCurrentText)
+                throw new InvalidOperationException(AgentToolText.T("I18n_DiffTargetChanged"));
+            return change.AnchorRange;
+        }
+
+        private static string PreserveParagraphSuffix(string original, string replacement) =>
+            TextDiffService.PreserveStructuralSuffix(original ?? "", replacement ?? "");
+
+        private static void ReleaseDiffAnchor(DiffChange change)
+        {
+            if (change?.AnchorRange == null) return;
+            Word.Range range = change.AnchorRange;
+            change.AnchorRange = null;
+            ComHelper.ReleaseCom(ref range);
+        }
+
+        private void ReleaseAllDiffAnchors()
+        {
+            foreach (DiffChange change in DiffChanges ?? new List<DiffChange>())
+                ReleaseDiffAnchor(change);
+        }
+
+        private void CompleteDiffReview()
+        {
+            ReleaseAllDiffAnchors();
+            _taskRevisionLocators.Clear();
+            _taskUndoAfterXml = null;
+            if (DiffChanges != null) DiffChanges.Clear();
+        }
+
+        public void DiscardDiffReview(IEnumerable<DiffChange> changes)
+        {
+            foreach (DiffChange change in changes ?? Enumerable.Empty<DiffChange>())
+                ReleaseDiffAnchor(change);
+        }
+
         /// <summary>
         /// 接受或拒绝所有修订。
         /// UI 在 DiffReviewWindow 中调用。
         /// </summary>
         public void AcceptAllRevisions()
         {
-            try { _doc?.Revisions.AcceptAll(); } catch { }
+            EnsureTaskSnapshotCurrent();
+            if (!_taskRevisionIsolationSafe)
+                throw new InvalidOperationException(AgentToolText.T("I18n_DiffTaskRevisionUnavailable"));
+            List<RevisionCandidate> revisions = ResolveTaskRevisions();
+            if (revisions.Count != _taskRevisionLocators.Count)
+                throw new InvalidOperationException(AgentToolText.T("I18n_DiffTaskRevisionUnavailable"));
+            foreach (RevisionCandidate item in revisions.OrderByDescending(item => item.Start))
+                item.Revision.Accept();
+            CompleteDiffReview();
         }
 
         /// <summary>
@@ -1523,7 +1873,10 @@ namespace WordOllama.lib
         /// </summary>
         public void RejectAllRevisions()
         {
-            try { _doc?.Revisions.RejectAll(); } catch { }
+            EnsureTaskSnapshotCurrent();
+            if (!_doc.Undo(1))
+                throw new InvalidOperationException(AgentToolText.T("I18n_DiffTaskUndoUnavailable"));
+            CompleteDiffReview();
         }
 
         /// <summary>接受单处变更（修改→应用新文本，新增/删除→保留现状）。</summary>
@@ -1531,14 +1884,14 @@ namespace WordOllama.lib
         {
             try
             {
-                if (change.Type == "修改" && change.ParagraphIndex <= _doc.Paragraphs.Count)
-                {
-                    var range = _doc.Paragraphs[change.ParagraphIndex].Range;
-                    range.Text = change.NewText;
-                }
-                // "新增"/"删除" 已存在于文档中，无需额外操作
+                Word.Range range = ResolveDiffRange(change, requireCurrentText: change.Type != "删除");
+                List<RevisionCandidate> revisions = ResolveTaskRevisionsForRange(range);
+                foreach (RevisionCandidate item in revisions.OrderByDescending(item => item.Start))
+                    item.Revision.Accept();
+                RemoveResolvedRevisionLocators(revisions);
+                ReleaseDiffAnchor(change);
             }
-            catch { }
+            catch { throw; }
         }
 
         /// <summary>拒绝单处变更（修改→恢复旧文本，新增→删除段落，删除→重新插入）。</summary>
@@ -1546,22 +1899,55 @@ namespace WordOllama.lib
         {
             try
             {
-                if (change.Type == "修改" && change.ParagraphIndex <= _doc.Paragraphs.Count)
+                Word.Range range = ResolveDiffRange(change, requireCurrentText: change.Type != "删除");
+                List<RevisionCandidate> revisions = ResolveTaskRevisionsForRange(range);
+                if (revisions.Count > 0)
                 {
-                    var range = _doc.Paragraphs[change.ParagraphIndex].Range;
-                    range.Text = change.OldText;
+                    foreach (RevisionCandidate item in revisions.OrderByDescending(item => item.Start))
+                        item.Revision.Reject();
+                    RemoveResolvedRevisionLocators(revisions);
+                    ReleaseDiffAnchor(change);
+                    return;
                 }
-                else if (change.Type == "新增" && change.ParagraphIndex <= _doc.Paragraphs.Count)
+                if (change.Type == "修改" && range != null)
                 {
-                    var range = _doc.Paragraphs[change.ParagraphIndex].Range;
+                    range.Text = PreserveParagraphSuffix(range.Text, change.OldText);
+                }
+                else if (change.Type == "新增" && range != null)
+                {
                     range.Text = "";
                 }
                 else if (change.Type == "删除")
                 {
-                    RestoreDeletedParagraph(change);
+                    string text = (change.OldText ?? "").TrimEnd('\r', '\a');
+                    range?.InsertBefore(text + "\r");
                 }
+                ReleaseDiffAnchor(change);
             }
-            catch { }
+            catch { throw; }
+        }
+
+        private List<RevisionCandidate> ResolveTaskRevisionsForRange(Word.Range range)
+        {
+            if (range == null) return new List<RevisionCandidate>();
+            int start = range.Start;
+            int end = Math.Max(start, range.End);
+            return ResolveTaskRevisions().Where(item =>
+            {
+                int revisionEnd;
+                try { revisionEnd = item.Revision.Range.End; }
+                catch { revisionEnd = item.Start; }
+                return item.Start <= end + 1 && revisionEnd >= start - 1;
+            }).ToList();
+        }
+
+        private void RemoveResolvedRevisionLocators(IEnumerable<RevisionCandidate> revisions)
+        {
+            foreach (RevisionCandidate item in revisions ?? Enumerable.Empty<RevisionCandidate>())
+                if (item.Locator != null) _taskRevisionLocators.Remove(item.Locator);
+            // An individual review action creates a newer Word undo entry, so the
+            // original one-step task undo is intentionally no longer offered.
+            _taskUndoAfterXml = null;
         }
 
         /// <summary>应用用户修改后的自定义文本（仅修改类型）。</summary>
@@ -1569,36 +1955,19 @@ namespace WordOllama.lib
         {
             try
             {
-                if (change.Type == "修改" && change.ParagraphIndex <= _doc.Paragraphs.Count)
+                if (change.Type == "修改")
                 {
-                    var range = _doc.Paragraphs[change.ParagraphIndex].Range;
-                    range.Text = customText;
+                    Word.Range range = ResolveDiffRange(change, requireCurrentText: true);
+                    List<RevisionCandidate> revisions = ResolveTaskRevisionsForRange(range);
+                    foreach (RevisionCandidate item in revisions.OrderByDescending(item => item.Start))
+                        item.Revision.Reject();
+                    RemoveResolvedRevisionLocators(revisions);
+                    if (range != null)
+                        range.Text = PreserveParagraphSuffix(range.Text, customText);
+                    ReleaseDiffAnchor(change);
                 }
             }
-            catch { }
-        }
-
-        private void RestoreDeletedParagraph(DiffChange change)
-        {
-            int idx = change.ParagraphIndex;
-            string text = (change.OldText ?? "").TrimEnd('\r', '\a');
-            if (string.IsNullOrEmpty(text)) return;
-            try
-            {
-                if (idx <= 1)
-                {
-                    _doc.Paragraphs[1].Range.InsertBefore(text + "\r");
-                }
-                else if (idx > _doc.Paragraphs.Count)
-                {
-                    _doc.Paragraphs[_doc.Paragraphs.Count].Range.InsertAfter("\r" + text);
-                }
-                else
-                {
-                    _doc.Paragraphs[idx].Range.InsertBefore(text + "\r");
-                }
-            }
-            catch { }
+            catch { throw; }
         }
 
         #endregion
@@ -1654,6 +2023,7 @@ namespace WordOllama.lib
                         _completedMilestones.Add(m);
 
                 requirement = cp.UserRequirement ?? "";
+                _goal = cp.Goal ?? "";
                 if (string.Equals(path, legacyPath, StringComparison.OrdinalIgnoreCase))
                 {
                     WriteProtectedCheckpoint(cp);
@@ -1677,6 +2047,7 @@ namespace WordOllama.lib
                     CompletedMilestones = new List<string>(_completedMilestones),
                     CurrentIteration = iteration,
                     UserRequirement = requirement,
+                    Goal = _goal,
                     SavedAt = DateTime.Now
                 };
                 WriteProtectedCheckpoint(cp);
@@ -1716,6 +2087,10 @@ namespace WordOllama.lib
         public int ParagraphIndex { get; set; }
         public string OldText { get; set; }
         public string NewText { get; set; }
+        internal int PostParagraphIndex { get; set; }
+        internal int AnchorStart { get; set; }
+        [JsonIgnore]
+        internal Word.Range AnchorRange { get; set; }
 
         /// <summary>仅修改类型的 NewText 可编辑。</summary>
         public bool IsReadOnly => Type != "修改";
@@ -1742,6 +2117,16 @@ namespace WordOllama.lib
         public int CurrentIteration { get; set; }
         public string UserRequirement { get; set; }
         public DateTime SavedAt { get; set; }
+        public string Goal { get; set; }
+    }
+
+    public sealed class AgentRunMetrics
+    {
+        public int Iteration { get; set; }
+        public int ToolCalls { get; set; }
+        public int ToolFailures { get; set; }
+        public int Sources { get; set; }
+        public TimeSpan Elapsed { get; set; }
     }
 
     public class AgentDecision

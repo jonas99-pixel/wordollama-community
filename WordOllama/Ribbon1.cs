@@ -191,11 +191,39 @@ namespace WordOllama
                     return;
                 }
 
+                if (!ConfirmSelectionStillSafe(doc, selectionRange, selectedText))
+                    return;
                 ApplyPromptResult(selectionRange, result, outputMode);
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(WordOllama.Properties.Resources.遇到错误 + ex.Message);
+            }
+        }
+
+        private bool ConfirmSelectionStillSafe(Word.Document sourceDocument, Word.Range sourceRange, string originalText)
+        {
+            try
+            {
+                Word.Document active = Globals.ThisAddIn.Application.ActiveDocument;
+                if (active == null || sourceDocument == null ||
+                    !string.Equals(active.FullName, sourceDocument.FullName, StringComparison.OrdinalIgnoreCase))
+                {
+                    System.Windows.MessageBox.Show(Loc.T("I18n_UiSelectionDocumentChanged"));
+                    return false;
+                }
+                if (string.Equals(sourceRange?.Text ?? "", originalText ?? "", StringComparison.Ordinal))
+                    return true;
+                return System.Windows.MessageBox.Show(
+                    Loc.T("I18n_UiOriginalChangedPrompt"),
+                    Loc.T("I18n_Warning"),
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Warning) == System.Windows.MessageBoxResult.Yes;
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show(Loc.T("I18n_UiSelectionDocumentChanged"));
+                return false;
             }
         }
 
@@ -577,6 +605,7 @@ namespace WordOllama
 
             string func = prompt.Function;
             string func_prompt = prompt.Prompt;
+            CustomPromptManager.MarkUsed(prompt.Id);
 
             if (string.IsNullOrEmpty(func) || string.IsNullOrEmpty(func_prompt))
             {

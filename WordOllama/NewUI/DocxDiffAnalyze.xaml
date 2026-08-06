@@ -75,10 +75,14 @@
                 <ComboBoxItem Content="{local:Loc I18n_PartyD}"/>
             </ComboBox>
 
-            <Button x:Name="BtnCompare" Content="{local:Loc I18n_StartCompareAnalyze}" Grid.Row="1"
-                    Style="{StaticResource MaterialDesignRaisedButton}"
-                    Click="BtnCompare_Click" Margin="0,4,0,0"
-                    HorizontalAlignment="Left"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Button x:Name="BtnCompare" Content="{local:Loc I18n_StartCompareAnalyze}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Click="BtnCompare_Click" Margin="0,4,8,0"/>
+                <Button x:Name="BtnInteractiveCompare" Content="{local:Loc I18n_InteractiveCompare}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Click="BtnInteractiveCompare_Click" Margin="0,4,0,0"/>
+            </StackPanel>
 
             <TextBlock x:Name="lblStatus" Grid.Row="2" Margin="0,16,0,0"
                        Text="{local:Loc I18n_DocxDiffWarning}"

@@ -6,6 +6,7 @@ using System.Reflection;
 using Newtonsoft.Json.Linq;
 using WordOllama.lib;
 using WordOllama.lib.Providers;
+using WordOllama.lib.Tools;
 
 internal static class Program
 {
@@ -83,8 +84,22 @@ internal static class Program
         var edits = TextDiffService.CreateEdits("Payment is due in 30 days.", "Payment is due in 15 business days.");
         Assert(ApplyEdits("Payment is due in 30 days.", edits) == "Payment is due in 15 business days.",
             "character diff applies only focused text edits");
+        string complexOriginal = "If you already have your text and content. WPS AI can also help you improve it. Whether you need it shorter, I've got you covered.";
+        string complexRevised = "If you already have your text and content ready, WPS AI can step in to help. Whether you need more detail or a new format, I've got you covered.";
+        Assert(ApplyEdits(complexOriginal, TextDiffService.CreateEdits(complexOriginal, complexRevised)) == complexRevised,
+            "multiple precise edits reconstruct the displayed result exactly");
         Assert(TextDiffService.PreserveStructuralSuffix("Clause text\r", "Revised clause") == "Revised clause\r",
             "paragraph marker is preserved during precise replacement");
+        var paragraphChanges = DocumentDiffPlanner.CreateChanges(
+            new[] { "First", "Second", "Third" },
+            new[] { "Inserted", "First", "Second", "Third" });
+        Assert(paragraphChanges.Count == 1 && paragraphChanges[0].Type == "新增" && paragraphChanges[0].ParagraphIndex == 1,
+            "paragraph insertion does not misclassify all following paragraphs as modified");
+        var deletionChanges = DocumentDiffPlanner.CreateChanges(
+            new[] { "First", "Remove", "Last" },
+            new[] { "First", "Last" });
+        Assert(deletionChanges.Count == 1 && deletionChanges[0].Type == "删除" && deletionChanges[0].ParagraphIndex == 2,
+            "paragraph deletion keeps the original location without shifting later paragraphs");
 
         string batchPrompt = PromptTemplateService.BuildReviewSuggestionBatchPrompt(
             new[]
@@ -105,6 +120,9 @@ internal static class Program
 
         Assert(ToolExecutionPolicy.GetEffects(registry.GetTool("search_text")) == ToolEffect.DocumentRead, "read-only tool policy");
         Assert(ToolExecutionPolicy.GetEffects(registry.GetTool("replace_paragraph")) == ToolEffect.DocumentWrite, "write tool policy");
+        Assert(TableInsertRowTool.IsValidAfterRow(1, 3) && TableInsertRowTool.IsValidAfterRow(3, 3) &&
+            !TableInsertRowTool.IsValidAfterRow(0, 3) && !TableInsertRowTool.IsValidAfterRow(4, 3),
+            "table row insertion rejects invalid indexes instead of silently appending");
         Assert(registry.GetTool("format_paragraph") != null, "formatting tools are compiled and registered");
         Assert(registry.GetTool("page_setup") != null, "page layout tools are compiled and registered");
         Assert(registry.GetTool("read_table") != null, "table tools are compiled and registered");
@@ -121,6 +139,23 @@ internal static class Program
         Assert(externalRegistry.GetTool("grep") != null, "local file search can be explicitly enabled");
         Assert((ToolExecutionPolicy.GetEffects(externalRegistry.GetTool("grep")) & ToolEffect.LocalFileRead) != 0,
             "local file search requires local file permission");
+        Assert(externalRegistry.GetTool("fetch_url") != null, "safe HTTPS fetch can be explicitly enabled");
+        Assert(externalRegistry.GetTool("list_workspace_files") != null, "isolated workspace listing can be explicitly enabled");
+        Assert(externalRegistry.GetTool("read_workspace_file") != null, "isolated workspace reads can be explicitly enabled");
+        Assert(externalRegistry.GetTool("write_workspace_file") != null, "isolated workspace writes can be explicitly enabled");
+        Assert(ToolExecutionPolicy.GetEffects(externalRegistry.GetTool("write_workspace_file")) == ToolEffect.LocalFileWrite,
+            "workspace writes require a distinct local file write permission");
+        Assert(ToolExecutionPolicy.RequiresExternalToolPermission(externalRegistry.GetTool("fetch_url")),
+            "safe web fetch still requires explicit external-network permission");
+        Assert(externalRegistry.GetTool("run_python") != null && externalRegistry.GetTool("run_node") != null,
+            "bounded workspace runtimes can be explicitly enabled");
+
+        var sources = AgentSourceExtractor.Extract("search", "{\"title\":\"Example\",\"url\":\"https://example.com/a\"}");
+        Assert(sources.Count == 1 && sources[0].Url == "https://example.com/a", "external sources are extracted and deduplicated");
+
+        string agentPrompt = PromptTemplateService.BuildAgentSystemPrompt("<document></document>", "tools", 1, "skills", "English", "Finish the contract review", "\nOutput preferences:\nConcise");
+        Assert(agentPrompt.Contains("Durable Task Goal") && agentPrompt.Contains("Finish the contract review") && agentPrompt.Contains("Output preferences"),
+            "Agent goal and memory context are injected");
 
         Console.WriteLine("Core smoke test passed.");
     }

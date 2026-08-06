@@ -108,5 +108,21 @@ namespace WordOllama.NewUI
                 lblStatus.Text = Loc.T("I18n_DocxDiffComplete");
             }
         }
+
+        private void BtnInteractiveCompare_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Path1TextBox.Text) || string.IsNullOrWhiteSpace(Path2TextBox.Text))
+            {
+                MessageBox.Show(Loc.T("I18n_DocxDiffSelectDocsError"));
+                return;
+            }
+            try
+            {
+                Word.Document comparison = Globals.ThisAddIn.OpenInteractiveComparison(Path1TextBox.Text, Path2TextBox.Text);
+                new ComparisonReviewWindow(comparison).Show();
+                Close();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, Loc.T("I18n_Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
     }
 }

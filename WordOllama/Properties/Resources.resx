@@ -2306,6 +2306,10 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_CopiedArticle" xml:space="preserve">
     <value>✅ 已复制：{0}</value>
   </data>
+  <data name="I18n_DiffTaskUndoUnavailable" xml:space="preserve"><value>无法安全撤销本次 Agent 任务；任务级撤销记录不可用。文档原有修订未被处理。</value></data>
+  <data name="I18n_DiffTaskDocumentChanged" xml:space="preserve"><value>Agent 完成后文档又发生了变化。为避免撤销用户的新修改，已停止此操作。</value></data>
+  <data name="I18n_DiffTaskRevisionUnavailable" xml:space="preserve"><value>无法准确定位本次 Agent 创建的全部修订。为保护文档原有修订，已停止接受操作。</value></data>
+  <data name="I18n_DiffTargetChanged" xml:space="preserve"><value>此变更对应的文本已经移动或再次修改，无法安全应用。</value></data>
   <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>停止生成</value></data>
   <data name="I18n_DefaultOutputMode" xml:space="preserve">
     <value>默认输出方式</value>
@@ -2456,6 +2460,8 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_UiCommented" xml:space="preserve"><value>已批注</value></data>
   <data name="I18n_UiApplySuggestionFailed" xml:space="preserve"><value>应用建议失败：{0}</value></data>
   <data name="I18n_UiOriginalChangedPrompt" xml:space="preserve"><value>原文似乎已经被修改。是否仍然把建议应用到当前位置？</value></data>
+  <data name="I18n_UiSelectionDocumentChanged" xml:space="preserve"><value>生成期间活动文档发生了变化，已停止应用结果。请回到原文档后重新执行。</value></data>
+  <data name="I18n_Warning" xml:space="preserve"><value>警告</value></data>
   <data name="I18n_UiIssueCount" xml:space="preserve"><value>审查问题 {0} 条</value></data>
   <data name="I18n_UiAgentRunningReview" xml:space="preserve"><value>当前 Agent 正在执行，请稍后再启动审查。</value></data>
   <data name="I18n_UiSelectTextFirst" xml:space="preserve"><value>请先选择需要审查的文本。</value></data>
@@ -2573,6 +2579,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_AgentEffectLocalProcess" xml:space="preserve"><value>启动本地程序</value></data>
   <data name="I18n_AgentEffectExternalMcp" xml:space="preserve"><value>调用 MCP 服务器</value></data>
   <data name="I18n_AgentEffectLocalFileRead" xml:space="preserve"><value>读取当前文档目录或 Skill 目录中的本地文件</value></data>
+  <data name="I18n_AgentEffectLocalFileWrite" xml:space="preserve"><value>写入 Agent 工作区或 Skill 目录中的本地文件</value></data>
   <data name="I18n_AgentCatalogTitle" xml:space="preserve"><value># WordOllama Agent 接口</value></data>
   <data name="I18n_AgentCatalogIntro" xml:space="preserve"><value>这些接口是 Word 操作的安全 Agent 封装。模型只能获得工具名称和 JSON 参数，不会直接接触 Word COM 对象。</value></data>
   <data name="I18n_AgentCatalogContractTitle" xml:space="preserve"><value>## 调用约定</value></data>
@@ -2637,6 +2644,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_AgentResultInsertTableFailed" xml:space="preserve"><value>[错误] 插入表格失败：{0}</value></data>
   <data name="I18n_AgentResultTableIndexOutOfRangeSimple" xml:space="preserve"><value>[错误] 表格索引 {0} 越界。</value></data>
   <data name="I18n_AgentResultTableRowInserted" xml:space="preserve"><value>已在表格 {0} 中插入新行（现有 {1} 行）。</value></data>
+  <data name="I18n_AgentResultTableRowOutOfRange" xml:space="preserve"><value>行号 {0} 超出范围；当前表格共有 {1} 行，未执行插入。</value></data>
   <data name="I18n_AgentResultInsertRowFailed" xml:space="preserve"><value>[错误] 插入行失败：{0}</value></data>
   <data name="I18n_AgentResultCellOutOfRange" xml:space="preserve"><value>[错误] 单元格位置 ({0}, {1}) 越界（表格共 {2} 行 {3} 列）。</value></data>
   <data name="I18n_AgentResultTableCellSet" xml:space="preserve"><value>已设置表格 {0} 第 {1} 行第 {2} 列内容。</value></data>
@@ -2890,4 +2898,54 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_AgentDangerousPermissionMessage" xml:space="preserve"><value>工具：execute_command&#10;危险命令：{0}&#10;此操作可能删除或破坏本地数据，只能逐次批准。</value></data>
   <data name="I18n_OrderedList" xml:space="preserve"><value>有序列表（1.）</value></data>
   <data name="I18n_SelectAllTools" xml:space="preserve"><value>全选工具</value></data>
+  <data name="I18n_MakeSkill" xml:space="preserve"><value>整理为 Skill</value></data>
+  <data name="I18n_MakeSkillRequest" xml:space="preserve"><value>请将刚才成功完成的流程整理为一个可复用的本地 Skill。只保留通用步骤、使用的 Word 工具和关键参数规则；不要包含文档正文、密钥、个人信息或完整对话。请使用 create_skill 保存。</value></data>
+  <data name="I18n_AgentSources" xml:space="preserve"><value>来源与参考链接</value></data>
+  <data name="I18n_AgentGoal" xml:space="preserve"><value>目标</value></data>
+  <data name="I18n_AgentGoalHint" xml:space="preserve"><value>定义一个可能需要多步完成的长期结果</value></data>
+  <data name="I18n_MemorySettings" xml:space="preserve"><value>记忆与输出偏向</value></data>
+  <data name="I18n_MemorySettingsDesc" xml:space="preserve"><value>管理可跨任务使用的长期偏好。自动记忆只在 Agent 成功完成后提取明确且持久的信息，不保存文档正文或敏感数据。</value></data>
+  <data name="I18n_OutputPreference" xml:space="preserve"><value>输出偏向</value></data>
+  <data name="I18n_OutputPreferenceHint" xml:space="preserve"><value>例如：语气简洁克制；优先短段落；保留行业术语；尽量少改原意。</value></data>
+  <data name="I18n_AutoMemory" xml:space="preserve"><value>自动记忆</value></data>
+  <data name="I18n_AutoMemoryDesc" xml:space="preserve"><value>成功任务结束后，保守地提取用户明确表达的长期偏好。</value></data>
+  <data name="I18n_MemoryModel" xml:space="preserve"><value>记忆模型</value></data>
+  <data name="I18n_MemoryItems" xml:space="preserve"><value>记忆条目</value></data>
+  <data name="I18n_NewMemoryHint" xml:space="preserve"><value>新增一条长期偏好或背景</value></data>
+  <data name="I18n_Add" xml:space="preserve"><value>添加</value></data>
+  <data name="I18n_UpdatedAt" xml:space="preserve"><value>更新时间</value></data>
+  <data name="I18n_DeleteSelected" xml:space="preserve"><value>删除所选</value></data>
+  <data name="I18n_DeleteAll" xml:space="preserve"><value>全部删除</value></data>
+  <data name="I18n_DeleteAllMemoryConfirm" xml:space="preserve"><value>确定删除全部记忆吗？此操作不可撤销。</value></data>
+  <data name="I18n_CapabilityProbeResult" xml:space="preserve"><value>能力体检通过 {0}/{1}，耗时 {2} ms。{3}</value></data>
+  <data name="I18n_ModelReasoningEffort" xml:space="preserve"><value>模型推理强度</value></data>
+  <data name="I18n_SetupAssistant" xml:space="preserve"><value>首次配置向导</value></data>
+  <data name="I18n_SetupWelcome" xml:space="preserve"><value>欢迎使用 WordOllama</value></data>
+  <data name="I18n_SetupWelcomeDesc" xml:space="preserve"><value>只需几步即可连接本地或在线模型，并在保存前验证模型能力。</value></data>
+  <data name="I18n_SetupChooseProvider" xml:space="preserve"><value>选择并测试模型服务</value></data>
+  <data name="I18n_SetupOnlineProvider" xml:space="preserve"><value>在线或兼容 API</value></data>
+  <data name="I18n_SetupModel" xml:space="preserve"><value>模型名称</value></data>
+  <data name="I18n_RunCapabilityCheck" xml:space="preserve"><value>运行能力体检</value></data>
+  <data name="I18n_SetupReady" xml:space="preserve"><value>已经可以开始了</value></data>
+  <data name="I18n_SetupReadyDesc" xml:space="preserve"><value>打开 Agent、选择文本进行修改，或在设置中继续配置 MCP、Skills、记忆和输出偏向。</value></data>
+  <data name="I18n_Skip" xml:space="preserve"><value>跳过</value></data>
+  <data name="I18n_Back" xml:space="preserve"><value>上一步</value></data>
+  <data name="I18n_Next" xml:space="preserve"><value>下一步</value></data>
+  <data name="I18n_Finish" xml:space="preserve"><value>完成</value></data>
+  <data name="I18n_SearchPrompts" xml:space="preserve"><value>搜索名称或提示词</value></data>
+  <data name="I18n_Export" xml:space="preserve"><value>导出</value></data>
+  <data name="I18n_RecentUse" xml:space="preserve"><value>最近使用</value></data>
+  <data name="I18n_InteractiveCompare" xml:space="preserve"><value>逐项审阅并应用</value></data>
+  <data name="I18n_ComparisonReview" xml:space="preserve"><value>文档比较审阅</value></data>
+  <data name="I18n_AcceptAll" xml:space="preserve"><value>全部接受</value></data>
+  <data name="I18n_RejectAll" xml:space="preserve"><value>全部拒绝</value></data>
+  <data name="I18n_RevisionType" xml:space="preserve"><value>修订类型</value></data>
+  <data name="I18n_RevisionText" xml:space="preserve"><value>修订内容</value></data>
+  <data name="I18n_Author" xml:space="preserve"><value>作者</value></data>
+  <data name="I18n_Locate" xml:space="preserve"><value>定位</value></data>
+  <data name="I18n_Accept" xml:space="preserve"><value>接受</value></data>
+  <data name="I18n_Reject" xml:space="preserve"><value>拒绝</value></data>
+  <data name="I18n_RevisionCount" xml:space="preserve"><value>共 {0} 项修订</value></data>
+  <data name="I18n_AgentToolDesc_create_skill" xml:space="preserve"><value>把成功流程整理成可复用的本地 Skill；不得包含文档正文、密钥、个人信息或完整对话。</value></data>
+  <data name="I18n_AgentToolDesc_fetch_url" xml:space="preserve"><value>安全读取公开 HTTPS 网页文本，阻止本地/私有地址、不安全类型、过多重定向和超大响应。</value></data>
 </root>

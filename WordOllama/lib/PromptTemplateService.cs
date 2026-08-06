@@ -452,7 +452,9 @@ namespace WordOllama.lib
             string toolDescriptions,
             int toolCount,
             string skillCatalog,
-            string languageMode)
+            string languageMode,
+            string goal = null,
+            string memoryContext = null)
         {
             string resolvedLanguage = ResolveLanguage(languageMode, null);
             bool useEnglish = string.Equals(resolvedLanguage, "English", StringComparison.OrdinalIgnoreCase);
@@ -479,6 +481,15 @@ namespace WordOllama.lib
 - **超长文档先画地图**：如果文档超过 100 段（约 20+ 页），第一步先调用 `build_semantic_map()` 获取全文语义地图，定位感兴趣的区域，再用 `read_large_chunk` 精读目标区域。
 - **减少往返**：尽量在一次 Observation 中获取足够的信息，避免在简单的信息获取上浪费任务轮数。读取时宁可多读也不要少读。
 - **全局思维**：读完全文后再做分析和修改。建立全局术语表和逻辑框架，找出跨段落的矛盾。");
+
+            if (!string.IsNullOrWhiteSpace(goal))
+            {
+                skillCatalog += "\n\n## Durable Task Goal\n" + goal.Trim() +
+                    "\nUse this goal to choose and sequence steps. Explicitly state when it is achieved, or name the concrete blocker.";
+            }
+            if (!string.IsNullOrWhiteSpace(memoryContext)) skillCatalog += memoryContext;
+            skillCatalog += "\n\nWhen web, MCP, or retrieval tools return external URLs, ground factual claims in that evidence and cite the returned URLs. Never invent a source." +
+                "\nFor long tasks, keep the plan current and finish within 200 iterations and 30 minutes.";
 
             return useEnglish
                 ? $@"You are a powerful Microsoft Word AI Assistant. You can read, edit, format, and review the currently open Word document by calling tools.

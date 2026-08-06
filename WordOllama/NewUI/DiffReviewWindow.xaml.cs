@@ -17,6 +17,7 @@ namespace WordOllama.NewUI
             _agent = agent;
             _changes = new ObservableCollection<DiffChange>(changes);
             changeList.ItemsSource = _changes;
+            Closed += (_, __) => _agent.DiscardDiffReview(_changes);
 
             UpdateSummary();
 
@@ -82,9 +83,16 @@ namespace WordOllama.NewUI
         {
             if (sender is FrameworkElement fe && fe.Tag is DiffChange change)
             {
-                _agent.AcceptChange(change);
-                _changes.Remove(change);
-                UpdateSummary();
+                try
+                {
+                    _agent.AcceptChange(change);
+                    _changes.Remove(change);
+                    UpdateSummary();
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(Loc.F("I18n_DiffAcceptError", ex.Message), Loc.T("I18n_Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -92,9 +100,16 @@ namespace WordOllama.NewUI
         {
             if (sender is FrameworkElement fe && fe.Tag is DiffChange change)
             {
-                _agent.RejectChange(change);
-                _changes.Remove(change);
-                UpdateSummary();
+                try
+                {
+                    _agent.RejectChange(change);
+                    _changes.Remove(change);
+                    UpdateSummary();
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(Loc.F("I18n_DiffRejectError", ex.Message), Loc.T("I18n_Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -108,9 +123,16 @@ namespace WordOllama.NewUI
                     MessageBox.Show(Loc.T("I18n_DiffEmptyEditedContent"), Loc.T("I18n_Info"), MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                _agent.ModifyChange(change, change.NewText);
-                _changes.Remove(change);
-                UpdateSummary();
+                try
+                {
+                    _agent.ModifyChange(change, change.NewText);
+                    _changes.Remove(change);
+                    UpdateSummary();
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(Loc.F("I18n_DiffAcceptError", ex.Message), Loc.T("I18n_Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

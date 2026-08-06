@@ -202,14 +202,25 @@
             <TabItem Header="{x:Static properties:Resources.更多}">
                 <Grid Margin="28,20,28,20">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
+                    <Grid Grid.Row="0" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <TextBox x:Name="PromptSearchBox" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 materialDesign:HintAssist.Hint="{local:Loc I18n_SearchPrompts}" TextChanged="PromptSearchBox_TextChanged"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
+                            <Button Content="{local:Loc I18n_Import}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="ImportPrompts_Click" Margin="0,0,6,0"/>
+                            <Button Content="{local:Loc I18n_Export}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="ExportPrompts_Click"/>
+                        </StackPanel>
+                    </Grid>
+
                     <DataGrid x:Name="CustomDataGrid"
                               ItemsSource="{Binding CustomPrompts}"
                               AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                              Style="{DynamicResource MaterialDesignDataGrid}" Grid.Row="0">
+                              Style="{DynamicResource MaterialDesignDataGrid}" Grid.Row="1">
                         <DataGrid.Resources>
                             <Style x:Key="ExpanderStyle" TargetType="Expander">
                                 <Setter Property="Background" Value="Transparent"/>
@@ -217,6 +228,7 @@
                             </Style>
                         </DataGrid.Resources>
                         <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="★" Binding="{Binding Favorite, UpdateSourceTrigger=PropertyChanged}" Width="44"/>
                             <DataGridTextColumn Header="{x:Static properties:Resources.功能名称}" Binding="{Binding Name}" Width="*"/>
                             <DataGridTemplateColumn Header="{x:Static properties:Resources.提示词需要点击格子三次}" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -247,6 +259,7 @@
                                     </Style>
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
+                            <DataGridTextColumn Header="{local:Loc I18n_RecentUse}" Binding="{Binding LastUsedAt}" IsReadOnly="True" Width="140"/>
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -261,7 +274,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <Button Grid.Row="1" Click="AddButton_Click"
+                    <Button Grid.Row="2" Click="AddButton_Click"
                             Style="{StaticResource MaterialDesignRaisedButton}"
                             HorizontalAlignment="Left" Margin="0,16,0,0">
                         <StackPanel Orientation="Horizontal">

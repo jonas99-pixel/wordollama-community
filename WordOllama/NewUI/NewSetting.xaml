@@ -139,6 +139,49 @@
 	                </ScrollViewer>
 	            </TabItem>
 
+                <TabItem Header="{local:Loc I18n_MemorySettings}" HorizontalAlignment="Left">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="28,20,60,20">
+                            <TextBlock Style="{StaticResource ModernSectionHeader}" Text="{local:Loc I18n_MemorySettings}" Margin="0,0,0,8"/>
+                            <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_MemorySettingsDesc}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_OutputPreference}"/>
+                            <TextBox x:Name="OutputPreferenceBox" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     materialDesign:HintAssist.Hint="{local:Loc I18n_OutputPreferenceHint}"
+                                     AcceptsReturn="True" TextWrapping="Wrap" MinHeight="100" MaxHeight="180" Margin="0,8,0,20"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                <StackPanel Width="360">
+                                    <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_AutoMemory}"/>
+                                    <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_AutoMemoryDesc}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <ToggleButton x:Name="AutoMemoryToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" Margin="24,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_MemoryModel}"/>
+                            <ComboBox x:Name="MemoryModelSelector" IsEditable="True" IsTextSearchEnabled="True"
+                                      ItemsSource="{Binding ChatGPTModels}" DisplayMemberPath="ModelName"
+                                      Style="{StaticResource MaterialDesignComboBox}" Margin="0,8,0,20"/>
+                            <Separator Margin="0,0,0,20"/>
+                            <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_MemoryItems}" Margin="0,0,0,8"/>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBox x:Name="MemoryNewBox" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:HintAssist.Hint="{local:Loc I18n_NewMemoryHint}"/>
+                                <Button Grid.Column="1" Content="{local:Loc I18n_Add}" Style="{StaticResource MaterialDesignFlatMidBgButton}" Margin="8,0,0,0" Click="AddMemory_Click"/>
+                            </Grid>
+                            <DataGrid x:Name="MemoryItemsGrid" ItemsSource="{Binding MemoryItems}" AutoGenerateColumns="False"
+                                      CanUserAddRows="False" SelectionMode="Extended" MinHeight="220" MaxHeight="360"
+                                      Style="{StaticResource MaterialDesignDataGrid}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="{local:Loc I18n_MemoryItems}" Binding="{Binding Content, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                                    <DataGridTextColumn Header="{local:Loc I18n_UpdatedAt}" Binding="{Binding UpdatedAt}" IsReadOnly="True" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                                <Button Content="{local:Loc I18n_DeleteSelected}" Style="{StaticResource MaterialDesignOutlinedButton}" Click="DeleteSelectedMemory_Click" Margin="0,0,8,0"/>
+                                <Button Content="{local:Loc I18n_DeleteAll}" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#FFD32F2F" Click="DeleteAllMemory_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
 	            <TabItem Header="{x:Static properties:Resources.Ollama设置}" HorizontalAlignment="Left">
 	                <ScrollViewer VerticalScrollBarVisibility="Auto">
 	                    <StackPanel Margin="28,20,60,20">
@@ -472,6 +515,13 @@
                                      <ComboBoxItem Tag="Auto" Content="{local:Loc I18n_ToolCallingAuto}"/>
                                      <ComboBoxItem Tag="ReAct" Content="{local:Loc I18n_ToolCallingReAct}"/>
                                      <ComboBoxItem Tag="Native" Content="{local:Loc I18n_ToolCallingNative}"/>
+                                 </ComboBox>
+                                 <TextBlock Text="{local:Loc I18n_ModelReasoningEffort}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                 <ComboBox x:Name="PopupReasoningEffort" Style="{StaticResource MaterialDesignComboBox}" Margin="0,0,0,20">
+                                     <ComboBoxItem Tag="none" Content="none"/>
+                                     <ComboBoxItem Tag="low" Content="low"/>
+                                     <ComboBoxItem Tag="medium" Content="medium"/>
+                                     <ComboBoxItem Tag="high" Content="high"/>
                                  </ComboBox>
 
                                  <TextBlock Text="{local:Loc I18n_ModelCapabilities}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>

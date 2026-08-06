@@ -12,7 +12,8 @@ namespace WordOllama.lib
         ExternalNetwork = 4,
         LocalProcess = 8,
         ExternalMcp = 16,
-        LocalFileRead = 32
+        LocalFileRead = 32,
+        LocalFileWrite = 64
     }
 
     public enum AgentExecutionMode
@@ -31,10 +32,14 @@ namespace WordOllama.lib
         {
             if (tool == null) return ToolEffect.None;
 
-            if (tool is ExecuteCommandTool || tool is RunPythonScriptTool)
+            if (tool is ExecuteCommandTool || tool is RunPythonScriptTool || tool is RunWorkspaceCodeTool)
                 return ToolEffect.LocalProcess;
-            if (tool is HttpRequestTool)
+            if (tool is HttpRequestTool || tool is FetchUrlTool)
                 return ToolEffect.ExternalNetwork;
+            if (tool is WriteWorkspaceFileTool || tool is CreateSkillTool)
+                return ToolEffect.LocalFileWrite;
+            if (tool is WorkspaceToolBase)
+                return ToolEffect.LocalFileRead;
             if (tool is McpToolWrapper)
                 return ToolEffect.ExternalMcp;
             if (tool is GrepTool)
@@ -51,7 +56,7 @@ namespace WordOllama.lib
         public static bool RequiresExternalToolPermission(IAgentTool tool)
         {
             if (tool == null) return false;
-            return (GetEffects(tool) & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp | ToolEffect.LocalFileRead)) != 0;
+            return (GetEffects(tool) & (ToolEffect.ExternalNetwork | ToolEffect.LocalProcess | ToolEffect.ExternalMcp | ToolEffect.LocalFileRead | ToolEffect.LocalFileWrite)) != 0;
         }
 
         public static AgentExecutionMode ParseMode(string value)
@@ -74,6 +79,7 @@ namespace WordOllama.lib
             if ((effects & ToolEffect.LocalProcess) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectLocalProcess"));
             if ((effects & ToolEffect.ExternalMcp) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectExternalMcp"));
             if ((effects & ToolEffect.LocalFileRead) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectLocalFileRead"));
+            if ((effects & ToolEffect.LocalFileWrite) != 0) parts.Add(AgentToolText.T("I18n_AgentEffectLocalFileWrite"));
             return string.Join(english ? ", " : "、", parts);
         }
     }

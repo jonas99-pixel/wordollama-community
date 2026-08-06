@@ -32,6 +32,7 @@ namespace WordOllama.NewUI
         private readonly ObservableCollection<ChatItem> _chatItems = new ObservableCollection<ChatItem>();
         private readonly ObservableCollection<ReviewIssue> _reviewIssues = new ObservableCollection<ReviewIssue>();
         private readonly ObservableCollection<EditSuggestionSession> _editSuggestions = new ObservableCollection<EditSuggestionSession>();
+        private readonly ObservableCollection<AgentSource> _agentSources = new ObservableCollection<AgentSource>();
         private WritingProfile _writingProfile;
         private DocumentAgent _agent;
         private CancellationTokenSource _cts;
@@ -82,6 +83,7 @@ namespace WordOllama.NewUI
             chatPanel.ItemsSource = _chatItems;
             issueList.ItemsSource = _reviewIssues;
             suggestionList.ItemsSource = _editSuggestions;
+            sourcesList.ItemsSource = _agentSources;
             txtReviewInstruction.Text = UiText.DefaultReviewInstruction;
             _writingProfile = WritingProfileManager.LoadForDocument(Globals.ThisAddIn?.Application?.ActiveDocument);
             txtWritingProfile.Text = _writingProfile.Instructions ?? "";
@@ -402,6 +404,7 @@ namespace WordOllama.NewUI
             ("/newchat", UiText.T("I18n_UiNewChat"),    "newchat"),
             ("/review", UiText.ReviewSelection,    "review"),
             ("/refreshskills", UiText.T("I18n_UiRefreshSkills"), "refreshskills"),
+            ("/make-skill", UiText.T("I18n_MakeSkill"), "makeskill"),
         };
 
         private string SkillsRootPath => System.IO.Path.Combine(
@@ -566,6 +569,9 @@ namespace WordOllama.NewUI
                     _agent?.RefreshSkills();
                     AddAgentBubble(UiText.F("I18n_UiSkillsReloaded", _skillManager.Count));
                     break;
+                case "makeskill":
+                    PrepareMakeSkillRequest();
+                    break;
             }
         }
 
@@ -687,6 +693,9 @@ namespace WordOllama.NewUI
             _stepCounter = 0;
             _bufferedThought = null;
             _bufferedAction = null;
+            _agentSources.Clear();
+            sourcesExpander.Visibility = Visibility.Collapsed;
+            btnMakeSkill.Visibility = Visibility.Collapsed;
             McpToolManager mcpManager = null;
             bool externalToolsEnabled = SharedSettings.AgentExternalToolsEnabled;
 
@@ -804,6 +813,7 @@ namespace WordOllama.NewUI
                         AddReviewIssues(ParseIssuesFromText(summary, "Agent"));
                         UpdateStatusIcon(false);
                         lblStatus.Text = Properties.Resources.Agent_StatusDone;
+                        btnMakeSkill.Visibility = Visibility.Visible;
                         ScrollToEnd();
 
                         // [快照对比] 有变更时自动弹出审查窗口
@@ -825,6 +835,17 @@ namespace WordOllama.NewUI
                             }
                         }
                     });
+
+                _agent.SourceDiscovered += source => Dispatcher.Invoke(() =>
+                {
+                    _agentSources.Add(source);
+                    sourcesExpander.Visibility = Visibility.Visible;
+                });
+                _agent.MetricsChanged += metrics => Dispatcher.Invoke(() =>
+                {
+                    lblIteration.Text = string.Format("{0} · {1:mm\\:ss} · {2} tools · {3} sources",
+                        metrics.Iteration, metrics.Elapsed, metrics.ToolCalls, metrics.Sources);
+                });
 
                 // [HITL] Agent 提问 → 新气泡
                 _agent.QuestionAsked += question =>
@@ -874,7 +895,7 @@ namespace WordOllama.NewUI
                         ScrollToEnd();
                     });
 
-                await _agent.ExecuteAsync(requirement, _cts.Token, resumeCheckpoint);
+                await _agent.ExecuteAsync(requirement, _cts.Token, resumeCheckpoint, txtAgentGoal.Text);
             }
             catch (OperationCanceledException)
             {
@@ -926,6 +947,23 @@ namespace WordOllama.NewUI
                     _ = Dispatcher.BeginInvoke(new Action(() => ExecuteAgent(pendingRequirement)),
                         System.Windows.Threading.DispatcherPriority.Background);
                 }
+            }
+        }
+
+        private void BtnMakeSkill_Click(object sender, RoutedEventArgs e) => PrepareMakeSkillRequest();
+
+        private void PrepareMakeSkillRequest()
+        {
+            txtInput.Text = UiText.T("I18n_MakeSkillRequest");
+            txtInput.CaretIndex = txtInput.Text.Length;
+            txtInput.Focus();
+        }
+
+        private void AgentSource_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string url && Uri.TryCreate(url, UriKind.Absolute, out Uri uri) && uri.Scheme == Uri.UriSchemeHttps)
+            {
+                try { Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true }); } catch { }
             }
         }
 

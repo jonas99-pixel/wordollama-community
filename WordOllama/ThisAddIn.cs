@@ -59,6 +59,11 @@ namespace WordOllama
         {
             System.Windows.Forms.Application.Idle -= OnStartupIdle;
             try { Globals.Ribbons.Ribbon1.ChangeRibbonLabels(); } catch { }
+            if (!AppConfig.Instance.SetupAssistantCompleted)
+            {
+                try { new SetupAssistantWindow().ShowDialog(); }
+                catch (Exception ex) { DebugLogger.Log("Setup", ex.Message); }
+            }
         }
 
         private void ThisAddIn_Shutdown(object sender, EventArgs e)
@@ -1189,6 +1194,42 @@ namespace WordOllama
             }
 
 
+        }
+
+        public Word.Document OpenInteractiveComparison(string originalPath, string revisedPath)
+        {
+            Word.Document original = null;
+            Word.Document revised = null;
+            try
+            {
+                original = Application.Documents.Open(originalPath, ReadOnly: true, Visible: false);
+                revised = Application.Documents.Open(revisedPath, ReadOnly: true, Visible: false);
+                Word.Document comparison = Application.CompareDocuments(
+                    OriginalDocument: original,
+                    RevisedDocument: revised,
+                    Destination: Word.WdCompareDestination.wdCompareDestinationNew,
+                    Granularity: Word.WdGranularity.wdGranularityWordLevel,
+                    CompareFormatting: true,
+                    CompareCaseChanges: true,
+                    CompareWhitespace: false,
+                    CompareTables: true,
+                    CompareHeaders: true,
+                    CompareFootnotes: true,
+                    CompareTextboxes: true,
+                    CompareFields: true,
+                    CompareComments: true,
+                    CompareMoves: true);
+                original.Close(SaveChanges: false);
+                revised.Close(SaveChanges: false);
+                original = revised = null;
+                comparison.Activate();
+                return comparison;
+            }
+            finally
+            {
+                try { original?.Close(SaveChanges: false); } catch { }
+                try { revised?.Close(SaveChanges: false); } catch { }
+            }
         }
 
         private async Task<string> AnalyzeRevisionWithAI(string originalText, string newText, string whoAmI)

@@ -54,6 +54,7 @@ namespace WordOllama.NewUI
         private HttpClient _httpClient;
         public ObservableCollection<OllamaModelInfo> OllamaModels { get; set; }
         public ObservableCollection<ChatGPTModelInfo> ChatGPTModels { get; set; }
+        public ObservableCollection<UserMemoryItem> MemoryItems { get; set; } = new ObservableCollection<UserMemoryItem>();
 
         public bool KeyVisable;
         public JArray ChatGPTModelsJson;
@@ -342,6 +343,12 @@ namespace WordOllama.NewUI
             LoadChatGPTModels();
             SetChatGPTModelsInvisable();
             ChatGPTModelDetails.ItemsSource = ChatGPTModels;
+            UserMemorySettings memory = UserMemoryStore.Get();
+            MemoryItems.Clear();
+            foreach (UserMemoryItem item in memory.Memories) MemoryItems.Add(item);
+            OutputPreferenceBox.Text = memory.OutputPreference;
+            AutoMemoryToggle.IsChecked = memory.AutoMemory;
+            MemoryModelSelector.Text = memory.MemoryModel;
 
             // Load provider settings
             string currentProvider = SharedSettings.OnlineProviderType;
@@ -703,6 +710,7 @@ namespace WordOllama.NewUI
             public string ModelName { get; set; }
             public string ApiKey { get; set; }
             public string ToolCallingMode { get; set; } = "Auto";
+            public string ReasoningEffort { get; set; } = "high";
             public string LastCapabilityTestStatus { get; set; }
             public DateTime? LastCapabilityTestAt { get; set; }
             public string LastCapabilityTestError { get; set; }
@@ -897,15 +905,9 @@ namespace WordOllama.NewUI
             try
             {
                 var providerInst = ProviderFactory.Create(provider, endpoint, apiKey, model);
-                string response = await providerInst.GenerateAsync(PromptTemplateService.BuildConnectionTestPrompt(), null, 0.0);
-                if (string.IsNullOrWhiteSpace(response) || response.StartsWith("[API 错误]", StringComparison.OrdinalIgnoreCase))
-                {
-                    SetCapabilityTestResult(false, response);
-                }
-                else
-                {
-                    SetCapabilityTestResult(true, null);
-                }
+                CapabilityProbeResult probe = await ProviderCapabilityProbe.RunAsync(providerInst);
+                SetCapabilityTestResult(probe.Success, probe.Success ? null : probe.Summary);
+                ModelConnectionStatus.Text = Loc.F("I18n_CapabilityProbeResult", probe.Passed, probe.Total, probe.LatencyMs, probe.Summary);
             }
             catch (Exception ex)
             {
@@ -987,6 +989,7 @@ namespace WordOllama.NewUI
             ServiceProviderComboBox.SelectedIndex = 0;
             PopupProviderTypeCombo.SelectedIndex = 0; // OpenAI
             PopupToolCallingMode.SelectedIndex = 0;
+            PopupReasoningEffort.SelectedIndex = 3;
             SetCapabilitySelection(ProviderRequestPolicy.GetDefaultCapabilities("OpenAI"));
             ModelConnectionStatus.Text = "";
             _lastCapabilityTestStatus = null;
@@ -1026,6 +1029,7 @@ namespace WordOllama.NewUI
             EndPointTextBox.Text = selectedModel.EndPoint;
             ApiKeyPasswordBox.Password = selectedModel.RealApiKey ?? selectedModel.ApiKey;
             SetToolCallingModeSelection(selectedModel.ToolCallingMode);
+            SetReasoningEffortSelection(selectedModel.ReasoningEffort);
             var storedModel = ChatGPTModelsJson?.OfType<JObject>().FirstOrDefault(model => model["ModelName"]?.ToString() == selectedModel.ModelName);
             SetCapabilitySelection(ProviderRequestPolicy.ReadCapabilities(storedModel?["Capabilities"], pt));
             ModelConnectionStatus.Text = FormatCapabilityTestStatus(selectedModel.LastCapabilityTestStatus, selectedModel.LastCapabilityTestAt, selectedModel.LastCapabilityTestError);
@@ -1103,6 +1107,7 @@ namespace WordOllama.NewUI
                             ApiKey = modelApiKey,
                             RealApiKey = modelApiKey,
                             ToolCallingMode = model["ToolCallingMode"]?.ToString() ?? "Auto"
+                            , ReasoningEffort = model["ReasoningEffort"]?.ToString() ?? "high"
                             , LastCapabilityTestStatus = model["LastCapabilityTestStatus"]?.ToString()
                             , LastCapabilityTestAt = model["LastCapabilityTestAt"]?.ToObject<DateTime?>()
                             , LastCapabilityTestError = model["LastCapabilityTestError"]?.ToString()
@@ -1173,6 +1178,7 @@ namespace WordOllama.NewUI
                             ApiKey = "**********",
                             RealApiKey = modelApiKey,
                             ToolCallingMode = model["ToolCallingMode"]?.ToString() ?? "Auto"
+                            , ReasoningEffort = model["ReasoningEffort"]?.ToString() ?? "high"
                             , LastCapabilityTestStatus = model["LastCapabilityTestStatus"]?.ToString()
                             , LastCapabilityTestAt = model["LastCapabilityTestAt"]?.ToObject<DateTime?>()
                             , LastCapabilityTestError = model["LastCapabilityTestError"]?.ToString()
@@ -1263,6 +1269,7 @@ namespace WordOllama.NewUI
                     { "ApiKey", ApiKeyPasswordBox.Password },
                     { "ProviderType", providerType },
                     { "ToolCallingMode", GetSelectedToolCallingMode() },
+                    { "ReasoningEffort", GetSelectedReasoningEffort() },
                     { "Capabilities", JObject.FromObject(capabilities) }
                 };
                 modelObj["LastCapabilityTestStatus"] = _lastCapabilityTestStatus;
@@ -1282,6 +1289,7 @@ namespace WordOllama.NewUI
                         existing["ApiKey"] = ApiKeyPasswordBox.Password;
                         existing["ProviderType"] = providerType;
                         existing["ToolCallingMode"] = GetSelectedToolCallingMode();
+                        existing["ReasoningEffort"] = GetSelectedReasoningEffort();
                         existing["Capabilities"] = JObject.FromObject(capabilities);
                         existing["LastCapabilityTestStatus"] = _lastCapabilityTestStatus;
                         existing["LastCapabilityTestAt"] = _lastCapabilityTestAt;
@@ -1403,6 +1411,22 @@ namespace WordOllama.NewUI
             return (PopupToolCallingMode.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Auto";
         }
 
+        private string GetSelectedReasoningEffort() =>
+            (PopupReasoningEffort.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "high";
+
+        private void SetReasoningEffortSelection(string effort)
+        {
+            foreach (ComboBoxItem item in PopupReasoningEffort.Items)
+            {
+                if (string.Equals(item.Tag?.ToString(), effort, StringComparison.OrdinalIgnoreCase))
+                {
+                    PopupReasoningEffort.SelectedItem = item;
+                    return;
+                }
+            }
+            PopupReasoningEffort.SelectedIndex = 3;
+        }
+
         private void ApplyModelAsActive(JObject model)
         {
             string providerType = model?["ProviderType"]?.ToString() ?? "OpenAI";
@@ -1433,6 +1457,7 @@ namespace WordOllama.NewUI
             ProviderCapabilityProfile capabilities = ProviderRequestPolicy.ReadCapabilities(model?["Capabilities"], providerType);
             capabilities.ToolCallingMode = model?["ToolCallingMode"]?.ToString() ?? capabilities.ToolCallingMode;
             ProviderRequestPolicy.ApplyActiveCapabilities(capabilities);
+            SharedSettings.ReasoningEffort = model?["ReasoningEffort"]?.ToString() ?? "high";
             LoadActiveProviderSettings(providerType);
             ChatGPTModel.Text = modelName;
             AppConfig.Save();
@@ -1652,6 +1677,14 @@ namespace WordOllama.NewUI
             if (int.TryParse(OnlineContextWindow.Text, out int ctxWindow) && ctxWindow > 0)
                 SharedSettings.OnlineContextWindow = ctxWindow;
 
+            UserMemoryStore.Save(new UserMemorySettings
+            {
+                Memories = MemoryItems.ToList(),
+                OutputPreference = OutputPreferenceBox.Text,
+                AutoMemory = AutoMemoryToggle.IsChecked == true,
+                MemoryModel = MemoryModelSelector.Text
+            });
+
             // 思维链
             SharedSettings.ThinkingEnabled = ThinkingEnabledToggle.IsChecked == true;
             if (ReasoningEffortSelector.SelectedItem is ComboBoxItem effortItem)
@@ -1731,6 +1764,28 @@ namespace WordOllama.NewUI
         private void AgentUnlimitedCheck_Click(object sender, RoutedEventArgs e)
         {
             AgentMaxIterationsBox.IsEnabled = AgentUnlimitedCheck.IsChecked != true;
+        }
+
+        private void AddMemory_Click(object sender, RoutedEventArgs e)
+        {
+            string content = MemoryNewBox.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(content)) return;
+            MemoryItems.Add(new UserMemoryItem { Content = content });
+            MemoryNewBox.Text = "";
+            SetSettingsDirty(true);
+        }
+
+        private void DeleteSelectedMemory_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (UserMemoryItem item in MemoryItemsGrid.SelectedItems.Cast<UserMemoryItem>().ToList()) MemoryItems.Remove(item);
+            SetSettingsDirty(true);
+        }
+
+        private void DeleteAllMemory_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show(Loc.T("I18n_DeleteAllMemoryConfirm"), Loc.T("I18n_MemorySettings"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            MemoryItems.Clear();
+            SetSettingsDirty(true);
         }
 
         private void AgentExecutionModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)

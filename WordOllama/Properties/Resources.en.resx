@@ -2297,6 +2297,10 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_CopiedArticle" xml:space="preserve">
     <value>✅ Copied: {0}</value>
   </data>
+  <data name="I18n_DiffTaskUndoUnavailable" xml:space="preserve"><value>This Agent task cannot be undone safely because its task-level undo record is unavailable. Existing document revisions were not changed.</value></data>
+  <data name="I18n_DiffTaskDocumentChanged" xml:space="preserve"><value>The document changed after the Agent finished. The operation was stopped to avoid undoing newer user edits.</value></data>
+  <data name="I18n_DiffTaskRevisionUnavailable" xml:space="preserve"><value>Not all revisions created by this Agent task can be located safely. Accept was stopped to protect existing document revisions.</value></data>
+  <data name="I18n_DiffTargetChanged" xml:space="preserve"><value>The text for this change has moved or was edited again, so it cannot be applied safely.</value></data>
   <data name="I18n_UiCancelReviewGeneration" xml:space="preserve"><value>Stop generation</value></data>
   <data name="I18n_DefaultOutputMode" xml:space="preserve">
     <value>Default output mode</value>
@@ -2447,6 +2451,8 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_UiCommented" xml:space="preserve"><value>Commented</value></data>
   <data name="I18n_UiApplySuggestionFailed" xml:space="preserve"><value>Failed to apply suggestion: {0}</value></data>
   <data name="I18n_UiOriginalChangedPrompt" xml:space="preserve"><value>The original text appears to have changed. Apply the suggestion to the current location anyway?</value></data>
+  <data name="I18n_UiSelectionDocumentChanged" xml:space="preserve"><value>The active document changed while the result was being generated, so the result was not applied. Return to the original document and run it again.</value></data>
+  <data name="I18n_Warning" xml:space="preserve"><value>Warning</value></data>
   <data name="I18n_UiIssueCount" xml:space="preserve"><value>{0} issues</value></data>
   <data name="I18n_UiAgentRunningReview" xml:space="preserve"><value>Agent is running. Please start review later.</value></data>
   <data name="I18n_UiSelectTextFirst" xml:space="preserve"><value>Please select text to review first.</value></data>
@@ -2564,6 +2570,7 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_AgentEffectLocalProcess" xml:space="preserve"><value>start a local program</value></data>
   <data name="I18n_AgentEffectExternalMcp" xml:space="preserve"><value>call an MCP server</value></data>
   <data name="I18n_AgentEffectLocalFileRead" xml:space="preserve"><value>read local files in the current document or Skill directory</value></data>
+  <data name="I18n_AgentEffectLocalFileWrite" xml:space="preserve"><value>write local files in the Agent workspace or Skill directory</value></data>
   <data name="I18n_AgentCatalogTitle" xml:space="preserve"><value># WordOllama Agent API</value></data>
   <data name="I18n_AgentCatalogIntro" xml:space="preserve"><value>These interfaces are safe Agent wrappers around Word operations. The model receives tool names and JSON arguments, not raw Word COM objects.</value></data>
   <data name="I18n_AgentCatalogContractTitle" xml:space="preserve"><value>## Invocation contract</value></data>
@@ -2628,6 +2635,7 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_AgentResultInsertTableFailed" xml:space="preserve"><value>[Error] Could not insert table: {0}</value></data>
   <data name="I18n_AgentResultTableIndexOutOfRangeSimple" xml:space="preserve"><value>[Error] Table index {0} is out of range.</value></data>
   <data name="I18n_AgentResultTableRowInserted" xml:space="preserve"><value>Inserted a row in table {0}; it now has {1} row(s).</value></data>
+  <data name="I18n_AgentResultTableRowOutOfRange" xml:space="preserve"><value>Row {0} is out of range; the table has {1} row(s). Nothing was inserted.</value></data>
   <data name="I18n_AgentResultInsertRowFailed" xml:space="preserve"><value>[Error] Could not insert row: {0}</value></data>
   <data name="I18n_AgentResultCellOutOfRange" xml:space="preserve"><value>[Error] Cell ({0}, {1}) is out of range; the table has {2} row(s) and {3} column(s).</value></data>
   <data name="I18n_AgentResultTableCellSet" xml:space="preserve"><value>Set the content of table {0}, row {1}, column {2}.</value></data>
@@ -2881,4 +2889,54 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_AgentDangerousPermissionMessage" xml:space="preserve"><value>Tool: execute_command&#10;Dangerous command: {0}&#10;This operation may delete or damage local data and must be approved each time.</value></data>
   <data name="I18n_OrderedList" xml:space="preserve"><value>Ordered list (1.)</value></data>
   <data name="I18n_SelectAllTools" xml:space="preserve"><value>Select all tools</value></data>
+  <data name="I18n_MakeSkill" xml:space="preserve"><value>Make Skill</value></data>
+  <data name="I18n_MakeSkillRequest" xml:space="preserve"><value>Turn the workflow that just succeeded into a reusable local Skill. Keep only general steps, Word tools, and important parameter rules. Do not include document text, secrets, personal data, or raw conversation history. Save it with create_skill.</value></data>
+  <data name="I18n_AgentSources" xml:space="preserve"><value>Sources and reference links</value></data>
+  <data name="I18n_AgentGoal" xml:space="preserve"><value>Goal</value></data>
+  <data name="I18n_AgentGoalHint" xml:space="preserve"><value>Define a durable result that may require multiple steps</value></data>
+  <data name="I18n_MemorySettings" xml:space="preserve"><value>Memory &amp; output preferences</value></data>
+  <data name="I18n_MemorySettingsDesc" xml:space="preserve"><value>Manage durable preferences used across tasks. Automatic memory runs only after a successful Agent task and never stores document text or sensitive data.</value></data>
+  <data name="I18n_OutputPreference" xml:space="preserve"><value>Output preferences</value></data>
+  <data name="I18n_OutputPreferenceHint" xml:space="preserve"><value>For example: concise tone; short paragraphs; preserve domain terms; minimize semantic changes.</value></data>
+  <data name="I18n_AutoMemory" xml:space="preserve"><value>Automatic memory</value></data>
+  <data name="I18n_AutoMemoryDesc" xml:space="preserve"><value>Conservatively extract explicit durable preferences after successful tasks.</value></data>
+  <data name="I18n_MemoryModel" xml:space="preserve"><value>Memory model</value></data>
+  <data name="I18n_MemoryItems" xml:space="preserve"><value>Memory items</value></data>
+  <data name="I18n_NewMemoryHint" xml:space="preserve"><value>Add a durable preference or background item</value></data>
+  <data name="I18n_Add" xml:space="preserve"><value>Add</value></data>
+  <data name="I18n_UpdatedAt" xml:space="preserve"><value>Updated</value></data>
+  <data name="I18n_DeleteSelected" xml:space="preserve"><value>Delete selected</value></data>
+  <data name="I18n_DeleteAll" xml:space="preserve"><value>Delete all</value></data>
+  <data name="I18n_DeleteAllMemoryConfirm" xml:space="preserve"><value>Delete all memories? This cannot be undone.</value></data>
+  <data name="I18n_CapabilityProbeResult" xml:space="preserve"><value>Capability check passed {0}/{1} in {2} ms. {3}</value></data>
+  <data name="I18n_ModelReasoningEffort" xml:space="preserve"><value>Model reasoning effort</value></data>
+  <data name="I18n_SetupAssistant" xml:space="preserve"><value>First-run setup</value></data>
+  <data name="I18n_SetupWelcome" xml:space="preserve"><value>Welcome to WordOllama</value></data>
+  <data name="I18n_SetupWelcomeDesc" xml:space="preserve"><value>Connect a local or online model and verify its capabilities in a few steps.</value></data>
+  <data name="I18n_SetupChooseProvider" xml:space="preserve"><value>Choose and test a model service</value></data>
+  <data name="I18n_SetupOnlineProvider" xml:space="preserve"><value>Online or compatible API</value></data>
+  <data name="I18n_SetupModel" xml:space="preserve"><value>Model name</value></data>
+  <data name="I18n_RunCapabilityCheck" xml:space="preserve"><value>Run capability check</value></data>
+  <data name="I18n_SetupReady" xml:space="preserve"><value>Ready to begin</value></data>
+  <data name="I18n_SetupReadyDesc" xml:space="preserve"><value>Open Agent, transform selected text, or continue configuring MCP, Skills, memory, and output preferences in Settings.</value></data>
+  <data name="I18n_Skip" xml:space="preserve"><value>Skip</value></data>
+  <data name="I18n_Back" xml:space="preserve"><value>Back</value></data>
+  <data name="I18n_Next" xml:space="preserve"><value>Next</value></data>
+  <data name="I18n_Finish" xml:space="preserve"><value>Finish</value></data>
+  <data name="I18n_SearchPrompts" xml:space="preserve"><value>Search names or prompts</value></data>
+  <data name="I18n_Export" xml:space="preserve"><value>Export</value></data>
+  <data name="I18n_RecentUse" xml:space="preserve"><value>Recently used</value></data>
+  <data name="I18n_InteractiveCompare" xml:space="preserve"><value>Review and apply changes</value></data>
+  <data name="I18n_ComparisonReview" xml:space="preserve"><value>Document comparison review</value></data>
+  <data name="I18n_AcceptAll" xml:space="preserve"><value>Accept all</value></data>
+  <data name="I18n_RejectAll" xml:space="preserve"><value>Reject all</value></data>
+  <data name="I18n_RevisionType" xml:space="preserve"><value>Revision type</value></data>
+  <data name="I18n_RevisionText" xml:space="preserve"><value>Revision text</value></data>
+  <data name="I18n_Author" xml:space="preserve"><value>Author</value></data>
+  <data name="I18n_Locate" xml:space="preserve"><value>Locate</value></data>
+  <data name="I18n_Accept" xml:space="preserve"><value>Accept</value></data>
+  <data name="I18n_Reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="I18n_RevisionCount" xml:space="preserve"><value>{0} revisions</value></data>
+  <data name="I18n_AgentToolDesc_create_skill" xml:space="preserve"><value>Turn a successful workflow into a reusable local Skill without document text, secrets, personal data, or raw conversation history.</value></data>
+  <data name="I18n_AgentToolDesc_fetch_url" xml:space="preserve"><value>Safely fetch public HTTPS text while blocking local/private addresses, unsafe types, excessive redirects, and oversized responses.</value></data>
 </root>

@@ -20,6 +20,7 @@ namespace WordOllama.lib
         public string LanguageMode { get; set; } = "Auto";
         public string ThemeType { get; set; } = "Light";
         public string DefaultPromptOutputMode { get; set; } = "Auto";
+        public bool SetupAssistantCompleted { get; set; } = false;
 
         #endregion
 

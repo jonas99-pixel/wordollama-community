@@ -69,6 +69,9 @@
                     <materialDesign:PackIcon Kind="Sparkles" Foreground="{DynamicResource PrimaryHueMidBrush}" Width="18" Height="18"/>
                     <TextBlock x:Name="txtPaneTitle" Text="{x:Static local:UiText.AgentTitle}" Margin="8,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="15"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnMakeSkill" Content="{local:Loc I18n_MakeSkill}" Style="{StaticResource MaterialDesignFlatButton}"
+                        Height="26" FontSize="11" Padding="10,0" Margin="0,0,6,0" Visibility="Collapsed" Click="BtnMakeSkill_Click"/>
                 <Button x:Name="btnCancelTask" Content="{x:Static local:UiText.Stop}" Style="{StaticResource MaterialDesignOutlinedButton}"
                         AutomationProperties.Name="{x:Static local:UiText.Stop}"
                         FocusVisualStyle="{StaticResource ModernFocusRing}"
@@ -76,6 +79,7 @@
                         HorizontalAlignment="Right"
                         Visibility="Collapsed" Click="BtnCancelTask_Click"
                         Foreground="#FF453A" BorderBrush="#FF453A"/>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -261,6 +265,22 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
+                <Expander x:Name="sourcesExpander" Header="{local:Loc I18n_AgentSources}" Visibility="Collapsed"
+                          Margin="10,10,10,4" IsExpanded="False">
+                    <ItemsControl x:Name="sourcesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left"
+                                        Tag="{Binding Url}" Click="AgentSource_Click" Margin="0,2">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Url}" FontSize="10" Opacity="0.6" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
             </StackPanel>
         </ScrollViewer>
                     <!-- 输入区域只属于对话页，避免在问题、审查和工具页重复占用空间。 -->
@@ -269,6 +289,11 @@
                             BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0.5,0,0"
                             Padding="16,12,16,16">
                         <StackPanel>
+                            <Expander Header="{local:Loc I18n_AgentGoal}" Margin="0,0,0,8">
+                                <TextBox x:Name="txtAgentGoal" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         materialDesign:HintAssist.Hint="{local:Loc I18n_AgentGoalHint}"
+                                         TextWrapping="Wrap" MaxHeight="70" Padding="12,8"/>
+                            </Expander>
                             <!-- 粘贴图片预览 -->
                             <Border x:Name="pastePreview" Visibility="Collapsed"
                                     Background="{DynamicResource MaterialDesignCardBackground}"
