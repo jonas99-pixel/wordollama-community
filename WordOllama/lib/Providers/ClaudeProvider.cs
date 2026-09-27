@@ -21,13 +21,17 @@ namespace WordOllama.lib.Providers
         private readonly string _endpoint;
         private readonly string _apiKey;
         private readonly string _modelName;
+        private readonly string _reasoningEffort;
+        private readonly bool _thinkingEnabled;
         private readonly string _authScheme; // "x-api-key" | "Bearer"
 
-        public ClaudeProvider(string endpoint, string apiKey, string modelName)
+        public ClaudeProvider(string endpoint, string apiKey, string modelName, string reasoningEffort = null, bool? thinkingEnabled = null)
         {
             _endpoint = endpoint;
             _apiKey = apiKey;
             _modelName = modelName;
+            _reasoningEffort = reasoningEffort;
+            _thinkingEnabled = thinkingEnabled ?? AppConfig.Instance?.ThinkingEnabled ?? false;
             // Detect auth scheme
             _authScheme = string.IsNullOrEmpty(apiKey) || apiKey.StartsWith("sk-") ? "x-api-key" : "Bearer";
         }
@@ -116,6 +120,10 @@ namespace WordOllama.lib.Providers
 
             foreach (var msg in chatHistory)
             {
+                if (msg.TryGetValue("native", out var native))
+                { messages.Add(new JObject { ["role"] = "assistant", ["content"] = JObject.Parse(native)["raw"].DeepClone() }); continue; }
+                if (msg.TryGetValue("role", out var toolRole) && toolRole == "tool")
+                { messages.Add(new JObject { ["role"] = "user", ["content"] = new JArray(new JObject { ["type"] = "tool_result", ["tool_use_id"] = msg["tool_call_id"], ["content"] = msg["content"] }) }); continue; }
                 string role = msg.ContainsKey("role") ? msg["role"] : "user";
                 string content = msg.ContainsKey("content") ? msg["content"] : "";
 
@@ -173,14 +181,7 @@ namespace WordOllama.lib.Providers
                 if (temperature.HasValue)
                     requestBody["temperature"] = temperature.Value;
 
-                if (AppConfig.Instance.ThinkingEnabled)
-                {
-                    requestBody["thinking"] = new Dictionary<string, object>
-                    {
-                        ["type"] = "enabled",
-                        ["budget_tokens"] = Math.Min(AppConfig.Instance.ChatGPTMaxToken / 2, 16000)
-                    };
-                }
+                ApplyReasoning(requestBody);
 
                 if (tools != null && tools.Count > 0)
                     requestBody["tools"] = ConvertTools(tools);
@@ -237,6 +238,14 @@ namespace WordOllama.lib.Providers
 
                     if (toolUse != null)
                     {
+                        if (DocumentAgent.IsAgentRunning)
+                        {
+                            var calls = new JArray();
+                            foreach (var block in contentArray)
+                                if (block["type"]?.ToString() == "tool_use")
+                                    calls.Add(AgentWireProtocol.Call(block["id"]?.ToString(), block["name"]?.ToString(), block["input"]));
+                            return AgentWireProtocol.Encode("Claude", contentArray, calls);
+                        }
                         string name = toolUse["name"]?.ToString() ?? "";
                         string arguments = (toolUse["input"] as JObject ?? new JObject())
                             .ToString(Formatting.None);
@@ -324,14 +333,7 @@ namespace WordOllama.lib.Providers
                     ["stream"] = true
                 };
 
-                if (AppConfig.Instance.ThinkingEnabled)
-                {
-                    requestBody["thinking"] = new Dictionary<string, object>
-                    {
-                        ["type"] = "enabled",
-                        ["budget_tokens"] = Math.Min(AppConfig.Instance.ChatGPTMaxToken / 2, 16000)
-                    };
-                }
+                ApplyReasoning(requestBody);
 
                 var jsonBody = new StringContent(
                     JsonConvert.SerializeObject(requestBody),
@@ -397,6 +399,22 @@ namespace WordOllama.lib.Providers
                     throw;
                 }
             }
+        }
+
+        private void ApplyReasoning(Dictionary<string, object> body)
+        {
+            string effort = _reasoningEffort ?? AppConfig.Instance.ReasoningEffort;
+            if (!_thinkingEnabled || effort == "default") return;
+            if (effort == "none")
+            {
+                body["thinking"] = new { type = "disabled" };
+                return;
+            }
+            if (effort != "low" && effort != "medium" && effort != "high" && effort != "max")
+                throw new InvalidOperationException("Claude 不支持此强度，请选择 default、low、medium、high 或 max，并测试当前模型。");
+            body.Remove("temperature");
+            body["thinking"] = new { type = "adaptive" };
+            body["output_config"] = new { effort };
         }
 
         private void UpdateThinkingPane(string text)

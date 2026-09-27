@@ -21,14 +21,18 @@ namespace WordOllama.lib.Providers
         private readonly string _endpoint;
         private readonly string _apiKey;
         private readonly string _modelName;
+        private readonly string _reasoningEffort;
+        private readonly bool _thinkingEnabled;
 
         private const string DefaultBase = "https://generativelanguage.googleapis.com/v1beta";
 
-        public GeminiProvider(string endpoint, string apiKey, string modelName)
+        public GeminiProvider(string endpoint, string apiKey, string modelName, string reasoningEffort = null, bool? thinkingEnabled = null)
         {
             _endpoint = endpoint;
             _apiKey = apiKey;
             _modelName = modelName;
+            _reasoningEffort = reasoningEffort;
+            _thinkingEnabled = thinkingEnabled ?? AppConfig.Instance?.ThinkingEnabled ?? false;
         }
 
         public async Task<string> GenerateAsync(string prompt, string imageBase64 = null, double? temperature = null)
@@ -171,6 +175,10 @@ namespace WordOllama.lib.Providers
 
             foreach (var msg in chatHistory)
             {
+                if (msg.TryGetValue("native", out var native))
+                { contents.Add(JObject.Parse(native)["raw"].DeepClone()); continue; }
+                if (msg.TryGetValue("role", out var toolRole) && toolRole == "tool")
+                { contents.Add(new JObject { ["role"] = "user", ["parts"] = new JArray(new JObject { ["functionResponse"] = new JObject { ["name"] = msg["name"], ["response"] = JObject.Parse(msg["content"]) } }) }); continue; }
                 string role = msg.ContainsKey("role") ? msg["role"] : "user";
                 string content = msg.ContainsKey("content") ? msg["content"] : "";
 
@@ -244,11 +252,11 @@ namespace WordOllama.lib.Providers
                 }
 
                 // Generation config
-                var genConfig = new Dictionary<string, object>();
+                var genConfig = new Dictionary<string, object> { ["maxOutputTokens"] = AppConfig.Instance.ChatGPTMaxToken };
                 if (temperature.HasValue)
                     genConfig["temperature"] = temperature.Value;
 
-                if (AppConfig.Instance.ThinkingEnabled)
+                if (_thinkingEnabled && (_reasoningEffort ?? AppConfig.Instance.ReasoningEffort) != "default")
                 {
                     genConfig["thinkingConfig"] = new Dictionary<string, object>
                     {
@@ -302,6 +310,14 @@ namespace WordOllama.lib.Providers
                             {
                                 if (part["functionCall"] is JObject functionCall)
                                 {
+                                    if (DocumentAgent.IsAgentRunning)
+                                    {
+                                        var calls = new JArray();
+                                        foreach (var nativePart in responseParts)
+                                            if (nativePart["functionCall"] is JObject fc)
+                                                calls.Add(AgentWireProtocol.Call(fc["id"]?.ToString() ?? Guid.NewGuid().ToString("N"), fc["name"]?.ToString(), fc["args"]));
+                                        return AgentWireProtocol.Encode("Gemini", result["candidates"][0]["content"], calls);
+                                    }
                                     string name = functionCall["name"]?.ToString() ?? "";
                                     string arguments = (functionCall["args"] as JObject ?? new JObject())
                                         .ToString(Newtonsoft.Json.Formatting.None);
@@ -393,6 +409,11 @@ namespace WordOllama.lib.Providers
                     }
                 };
 
+                var streamConfig = new Dictionary<string, object> { ["maxOutputTokens"] = AppConfig.Instance.ChatGPTMaxToken };
+                if (_thinkingEnabled && (_reasoningEffort ?? AppConfig.Instance.ReasoningEffort) != "default")
+                    streamConfig["thinkingConfig"] = new { thinkingLevel = MapReasoningEffort() };
+                requestData["generationConfig"] = streamConfig;
+
                 string systemInstruction = GetSystemInstruction();
                 if (!string.IsNullOrEmpty(systemInstruction))
                 {
@@ -410,7 +431,8 @@ namespace WordOllama.lib.Providers
                 try
                 {
                     var response = await httpClient.PostAsync(url, jsonBody);
-                    response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                        throw new InvalidOperationException(HandleError(response, await response.Content.ReadAsStringAsync()));
 
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     using (var reader = new StreamReader(stream))
@@ -460,14 +482,14 @@ namespace WordOllama.lib.Providers
         private string MapReasoningEffort()
         {
             // Map OpenAI reasoning_effort values to Gemini thinking levels
-            return AppConfig.Instance.ReasoningEffort switch
+            return (_reasoningEffort ?? AppConfig.Instance.ReasoningEffort) switch
             {
                 "low" => "low",
                 "medium" => "medium",
                 "high" => "high",
-                "xhigh" => "high",
-                "max" => "high",
-                _ => "low"
+                "none" => "minimal",
+                "minimal" => "minimal",
+                _ => throw new InvalidOperationException("Gemini 不支持此强度映射，请选择 default、minimal、low、medium 或 high，并测试当前模型。")
             };
         }
 

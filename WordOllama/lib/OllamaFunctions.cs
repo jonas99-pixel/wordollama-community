@@ -1,4 +1,4 @@
-﻿using WordOllama.lib;
+using WordOllama.lib;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System;
@@ -246,7 +246,7 @@ namespace WordOllama.lib
                 var requestBodyObj = new Dictionary<string, object>
                 {
                     ["model"] = AppConfig.Instance.OllamaModel,
-                    ["messages"] = ChatHistory,
+                    ["messages"] = AgentWireProtocol.OllamaMessages(ChatHistory),
                     ["stream"] = false,
                     ["options"] = new Dictionary<string, double> { { "temperature", AppConfig.Instance.OllamaTemperature } }
                 };
@@ -274,7 +274,7 @@ namespace WordOllama.lib
                         }
                         else
                         {
-                            multiModalMessages.Add(msg.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value));
+                            multiModalMessages.Add(AgentWireProtocol.OllamaMessages(new List<Dictionary<string, string>> { msg })[0]);
                         }
                     }
                     requestBodyObj["messages"] = multiModalMessages;
@@ -302,7 +302,13 @@ namespace WordOllama.lib
                         var toolCalls = responseObject["message"]?["tool_calls"];
                         if (toolCalls != null && toolCalls.HasValues)
                         {
-                            // 只取第一个 tool_call（当前 ReAct 每轮只执行一个工具）
+                            if (DocumentAgent.IsAgentRunning)
+                            {
+                                var calls = new JArray();
+                                foreach (var call in (JArray)toolCalls)
+                                    calls.Add(AgentWireProtocol.Call(Guid.NewGuid().ToString("N"), call["function"]?["name"]?.ToString(), call["function"]?["arguments"]));
+                                return AgentWireProtocol.Encode("Ollama", responseObject["message"], calls);
+                            }
                             var firstCall = toolCalls[0];
                             string funcName = firstCall["function"]?["name"]?.ToString() ?? "";
                             string funcArgs = firstCall["function"]?["arguments"]?.ToString() ?? "{}";
@@ -364,6 +370,7 @@ namespace WordOllama.lib
                         return FormatApiError(response.StatusCode, errorDetail);
                     }
                 }
+                catch (OperationCanceledException) { throw; }
                 catch (Exception) when (!string.IsNullOrEmpty(requestPendingImage))
                 {
                     // 图片导致请求失败（模型不支持视觉），降级重试

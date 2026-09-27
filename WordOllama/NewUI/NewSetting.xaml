@@ -1,4 +1,4 @@
-<Window x:Class="WordOllama.NewUI.NewSetting"
+﻿<Window x:Class="WordOllama.NewUI.NewSetting"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -319,15 +319,15 @@
 
                         <!-- Max Tokens -->
                         <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_OnlineMaxTokens}"/>
-                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_OnlineMaxTokensDesc}" Margin="0,2,0,8"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="单次回复的输出上限；部分模型包含思考 Token。请小于上下文容量，并符合服务端的输出限制。" Margin="0,2,0,8"/>
                         <TextBox x:Name="ChatGPTMaxToken" Style="{DynamicResource MaterialDesignTextBox}"
                                  materialDesign:HintAssist.Hint="{local:Loc I18n_OnlineMaxTokensHint}" FontSize="14" Margin="0,0,0,20"/>
 
-                        <!-- Context Window -->
+<TextBlock Text="输出 Token 参数（OpenAI 兼容）" Margin="0,0,0,4"/><ComboBox x:Name="OutputTokenParameterSelector" SelectedValuePath="Tag" SelectedIndex="0" Margin="0,0,0,12"><ComboBoxItem Tag="auto" Content="自动（按模型名选择）"/><ComboBoxItem Tag="max_tokens" Content="max_tokens"/><ComboBoxItem Tag="max_completion_tokens" Content="max_completion_tokens"/></ComboBox>                        <!-- Context Window -->
                         <TextBlock Style="{StaticResource ModernSubHeader}" Text="{local:Loc I18n_ContextWindow}"/>
-                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_ContextWindowDesc}" Margin="0,2,0,8"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="上下文容量用于估算可保留的对话历史，包含输入和输出；实际限制由服务端决定。" Margin="0,2,0,8"/>
                         <TextBox x:Name="OnlineContextWindow" Style="{DynamicResource MaterialDesignTextBox}"
-                                 materialDesign:HintAssist.Hint="{local:Loc I18n_DefaultContextWindowHint}" FontSize="14" Margin="0,0,0,20"/>
+                                 materialDesign:HintAssist.Hint="{local:Loc I18n_DefaultContextWindowHint}" FontSize="14" Margin="0,0,0,20"/><WrapPanel Margin="0,0,0,8"><Button Content="4k" Tag="OnlineContextWindow|4096" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="8k" Tag="OnlineContextWindow|8192" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="16k" Tag="OnlineContextWindow|16384" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="32k" Tag="OnlineContextWindow|32768" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="64k" Tag="OnlineContextWindow|65536" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="128k" Tag="OnlineContextWindow|131072" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="256k" Tag="OnlineContextWindow|262144" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/></WrapPanel><TextBlock Text="支持整数或 K，例如 240000、128k；1k = 1024。请按服务实际容量填写。" TextWrapping="Wrap" Margin="0,0,0,12"/>
 
                         <!-- Temperature -->
                         <TextBlock Style="{StaticResource ModernSubHeader}" Text="{x:Static properties:Resources.温度设置}"/>
@@ -358,15 +358,18 @@
                             <TextBlock Text="Reasoning Effort" VerticalAlignment="Center" FontSize="14" Margin="0,0,12,0"/>
                             <ComboBox x:Name="ReasoningEffortSelector"
                                       Style="{StaticResource MaterialDesignComboBox}"
-                                      Width="150" FontSize="14" VerticalAlignment="Center" SelectedIndex="2">
-                                <ComboBoxItem Content="low"/>
-                                <ComboBoxItem Content="medium"/>
-                                <ComboBoxItem Content="high"/>
-                                <ComboBoxItem Content="xhigh"/>
-                                <ComboBoxItem Content="max"/>
+                                      IsEnabled="{Binding IsChecked, ElementName=ThinkingEnabledToggle}"
+                                      Width="210" FontSize="14" VerticalAlignment="Center" SelectedIndex="0">
+                                <ComboBoxItem Tag="default" Content="default（服务默认）"/>
+                                <ComboBoxItem Tag="minimal" Content="minimal"/>
+                                <ComboBoxItem Tag="low" Content="low"/>
+                                <ComboBoxItem Tag="medium" Content="medium"/>
+                                <ComboBoxItem Tag="high" Content="high"/>
+                                <ComboBoxItem Tag="xhigh" Content="xhigh"/>
+                                <ComboBoxItem Tag="max" Content="max"/>
                             </ComboBox>
                         </StackPanel>
-                        <TextBlock Style="{StaticResource ModernCaption}" Text="{local:Loc I18n_ThinkingDesc}" Margin="0,0,0,20" TextWrapping="Wrap"/>
+                        <TextBlock Style="{StaticResource ModernCaption}" Text="开启后可指定思考强度。关闭或选择服务默认时，不发送思考参数，由服务端决定是否思考。" Margin="0,0,0,20" TextWrapping="Wrap"/>
 
                         <!-- Model Management -->
                         <Separator Margin="0,0,0,20"/>
@@ -515,10 +518,6 @@
                                             <TextBlock Text="{x:Static properties:Resources.获取模型列表}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="TestModelConnectionButton"
-                                            Content="{local:Loc I18n_TestConnection}"
-                                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                                            Click="TestModelConnectionButton_Click" Margin="0,0,12,0" Padding="8,4"/>
                                     <ComboBox x:Name="ModelSelector" Grid.Column="1"
                                               materialDesign:HintAssist.Hint="{local:Loc I18n_SelectModelHint}"
                                               Style="{StaticResource MaterialDesignComboBox}" FontSize="14"
@@ -530,8 +529,18 @@
                                 <TextBlock Text="{x:Static properties:Resources.模型名称}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                 <TextBox x:Name="ModelNameTextBox"
                                          materialDesign:HintAssist.Hint="{x:Static properties:Resources.模型名称}"
-                                         Margin="0,0,0,20"/>
-                                <TextBlock x:Name="ModelConnectionStatus" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,-12,0,16"/>
+                                         Margin="0,0,0,12"/>
+                                <Button x:Name="TestModelConnectionButton"
+                                        Content="{local:Loc I18n_TestConnection}"
+                                        HorizontalAlignment="Left"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Click="TestModelConnectionButton_Click" Padding="12,4" Margin="0,0,0,8"/>
+                                <WrapPanel Margin="0,0,0,8">
+                                    <Button x:Name="RetryDefaultButton" Content="使用服务默认值重测" Click="RetryDefaultButton_Click" Margin="0,0,8,0"/>
+                                    <Button x:Name="AdoptDefaultButton" Content="采用默认值" Click="AdoptDefaultButton_Click" Visibility="Collapsed"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="ReasoningEvidenceText" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="ModelConnectionStatus" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,0,0,16"/>
 
                                 <TextBlock Text="{local:Loc I18n_ToolCallingMode}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                  <ComboBox x:Name="PopupToolCallingMode" Style="{StaticResource MaterialDesignComboBox}" Margin="0,0,0,20">
@@ -541,13 +550,17 @@
                                  </ComboBox>
                                  <TextBlock Text="{local:Loc I18n_ModelReasoningEffort}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                  <ComboBox x:Name="PopupReasoningEffort" Style="{StaticResource MaterialDesignComboBox}" Margin="0,0,0,20">
-                                     <ComboBoxItem Tag="none" Content="none"/>
+                                     <ComboBoxItem Tag="default" Content="default（服务默认）"/>
+                                     <ComboBoxItem Tag="minimal" Content="minimal"/>
                                      <ComboBoxItem Tag="low" Content="low"/>
                                      <ComboBoxItem Tag="medium" Content="medium"/>
                                      <ComboBoxItem Tag="high" Content="high"/>
+                                     <ComboBoxItem Tag="xhigh" Content="xhigh"/>
+                                     <ComboBoxItem Tag="max" Content="max"/>
                                  </ComboBox>
 
-                                 <TextBlock Text="{local:Loc I18n_ModelCapabilities}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                 <TextBlock Text="此处强度仅在全局思考开关开启时生效。default 使用服务默认行为；支持的强度以测试结果为准。" TextWrapping="Wrap" Margin="0,0,0,12"/>
+<TextBlock Text="输出 Token 参数（OpenAI 兼容）" Margin="0,0,0,4"/><ComboBox x:Name="PopupOutputTokenParameter" SelectedValuePath="Tag" SelectedIndex="0" Margin="0,0,0,12"><ComboBoxItem Tag="auto" Content="自动（按模型名选择）"/><ComboBoxItem Tag="max_tokens" Content="max_tokens"/><ComboBoxItem Tag="max_completion_tokens" Content="max_completion_tokens"/></ComboBox>                                 <TextBlock Text="{local:Loc I18n_ModelCapabilities}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                  <TextBlock Text="{local:Loc I18n_ModelCapabilitiesDesc}" Style="{StaticResource ModernCaption}" TextWrapping="Wrap" Margin="0,0,0,8"/>
                                  <WrapPanel Margin="0,0,0,8">
                                      <CheckBox x:Name="PopupSupportsStreaming" Content="{local:Loc I18n_CapabilityStreaming}" Margin="0,0,18,8"/>
@@ -556,7 +569,7 @@
                                  </WrapPanel>
                                  <TextBlock Text="{local:Loc I18n_CapabilityContextWindow}" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                  <TextBox x:Name="PopupContextWindow" Style="{StaticResource MaterialDesignTextBox}"
-                                          materialDesign:HintAssist.Hint="{local:Loc I18n_CapabilityContextWindowHint}" Margin="0,0,0,20"/>
+                                          materialDesign:HintAssist.Hint="{local:Loc I18n_CapabilityContextWindowHint}" Margin="0,0,0,20"/><WrapPanel Margin="0,0,0,8"><Button Content="4k" Tag="PopupContextWindow|4096" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="8k" Tag="PopupContextWindow|8192" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="16k" Tag="PopupContextWindow|16384" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="32k" Tag="PopupContextWindow|32768" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="64k" Tag="PopupContextWindow|65536" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="128k" Tag="PopupContextWindow|131072" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/><Button Content="256k" Tag="PopupContextWindow|262144" Click="ContextPreset_Click" Padding="8,3" Margin="0,0,5,5"/></WrapPanel><TextBlock Text="支持整数或 K，例如 240000、128k；1k = 1024。请按服务实际容量填写。" TextWrapping="Wrap" Margin="0,0,0,12"/>
 
                                 <!-- Buttons -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

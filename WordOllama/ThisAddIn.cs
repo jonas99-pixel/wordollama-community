@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -835,7 +835,7 @@ namespace WordOllama
 
             try
             {
-                chatHistory = ProviderRequestPolicy.TrimChatHistoryToContextWindow(chatHistory);
+                if (!DocumentAgent.IsAgentRunning) chatHistory = ProviderRequestPolicy.TrimChatHistoryToContextWindow(chatHistory);
                 if (AppConfig.Instance.AIMode == "Ollama")
                 {
                     string response = await ExecuteProviderChatWithRetryAsync(
@@ -882,7 +882,7 @@ namespace WordOllama
 
             try
             {
-                chatHistory = ProviderRequestPolicy.TrimChatHistoryToContextWindow(chatHistory);
+                if (!DocumentAgent.IsAgentRunning) chatHistory = ProviderRequestPolicy.TrimChatHistoryToContextWindow(chatHistory);
                 if (AppConfig.Instance.AIMode == "Ollama")
                 {
                     if (ProviderCompatibility.ParseToolCallingMode(AppConfig.Instance.ProviderToolCallingMode) == ToolCallingMode.ReAct)

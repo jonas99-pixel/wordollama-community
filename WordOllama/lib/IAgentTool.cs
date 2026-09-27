@@ -96,6 +96,7 @@ namespace WordOllama.lib
 
         public IAgentTool GetTool(string name)
         {
+            if (string.IsNullOrWhiteSpace(name)) return null;
             _tools.TryGetValue(name, out var tool);
             return tool;
         }
@@ -144,6 +145,9 @@ namespace WordOllama.lib
                     }
                 });
             }
+            schemas.Add(new JObject { ["type"] = "function", ["function"] = new JObject {
+                ["name"] = "finish", ["description"] = "Finish only after verifying the requested work. Report results and remaining limitations.",
+                ["parameters"] = new JObject { ["type"] = "object", ["properties"] = new JObject { ["message"] = new JObject { ["type"] = "string" } }, ["required"] = new JArray("message") } } });
             return schemas;
         }
     }

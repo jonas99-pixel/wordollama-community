@@ -1,3 +1,23 @@
+﻿Version V2.3 2026/09/27
+
+Changes
+1. Improved connection checks with separate chat, streaming, and tool results, clearer errors, and a retry option using service defaults.
+2. Added automatic chat-path completion for OpenAI-compatible endpoints. Fixed empty responses being reported as successful and tests using outdated settings.
+3. Aligned reasoning effort options, added xhigh, max, and service defaults, and removed none. Added recent reasoning verification records for each model.
+4. Added custom context sizes, K notation, and quick choices from 4k to 256k. Added output/context limit validation and improved consistency when saving settings or switching models.
+5. Added per-model selection of max_tokens or max_completion_tokens. Aligned streaming and regular output limits and applied the configured output limit to Gemini.
+6. Improved native Agent tool calls by preserving call data, executing multiple calls in sequence, and correlating results. Added required-argument and basic type checks before execution.
+7. Improved repeated-action detection, consecutive-failure handling, and context compression. Added a completion check using the latest document snapshot after edits.
+8. Improved cancellation while waiting, checkpoint recovery, and document identity checks. Fixed unfinished tasks being displayed or recorded as successful.
+__________________________________________________
+
+Version V2.2.1 2026/08/21
+
+Changes
+1. Fixed Zhipu Endpoint connection issues.
+2. Fixed known UI issues.
+__________________________________________________
+
 Version V2.2.0 2026/08/06
 
 Changes

@@ -50,6 +50,7 @@ namespace WordOllama.lib
         }
         public string ChatGPTModel { get; set; } = "";
         public int ChatGPTMaxToken { get; set; } = 1000;
+        public string OutputTokenParameter { get; set; } = "auto";
         public int OnlineContextWindow { get; set; } = 256000;
         public double ChatGPTTemperature { get; set; } = 0.5;
         public string ProviderToolCallingMode { get; set; } = "Auto";

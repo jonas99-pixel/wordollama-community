@@ -20,8 +20,8 @@ namespace WordOllama.lib
         public long LatencyMs { get; set; }
         public int Passed => Steps.Count(step => step.Passed);
         public int Total => Steps.Count;
-        public bool Success => Total > 0 && Passed == Total;
-        public string Summary => string.Join("; ", Steps.Select(step => step.Name + ": " + (step.Passed ? "OK" : step.Detail)));
+        public bool Success => Steps.Any(step => step.Name == "普通聊天" && step.Passed);
+        public string Summary => string.Join(Environment.NewLine, Steps.Select(step => step.Name + ": " + (step.Passed ? "OK" : step.Detail)));
     }
 
     public static class ProviderCapabilityProbe
@@ -31,25 +31,26 @@ namespace WordOllama.lib
             if (provider == null) throw new ArgumentNullException(nameof(provider));
             var result = new CapabilityProbeResult();
             var watch = Stopwatch.StartNew();
-            await RunStep(result, "model-list", async () =>
+            await RunStep(result, "模型列表", async () =>
             {
                 List<string> models = await provider.FetchModelsAsync();
                 return models != null ? "models=" + models.Count : "no response";
             });
-            await RunStep(result, "chat", async () =>
+            await RunStep(result, "普通聊天", async () =>
             {
-                string text = await provider.GenerateAsync("Reply with exactly: OK", null, 0.0);
+                string text = await provider.GenerateAsync("Reply with exactly: OK", null, null);
+                ThrowIfProviderError(text);
                 if (string.IsNullOrWhiteSpace(text)) throw new InvalidOperationException("empty response");
                 return text.Trim();
             });
-            await RunStep(result, "streaming", async () =>
+            await RunStep(result, "流式输出", async () =>
             {
                 int chunks = 0;
                 await provider.StreamAsync("Reply with exactly: OK", chunk => { if (!string.IsNullOrEmpty(chunk)) chunks++; });
                 if (chunks == 0) throw new InvalidOperationException("no stream chunks");
                 return "chunks=" + chunks;
             });
-            await RunStep(result, "tool-calling", async () =>
+            await RunStep(result, "工具调用", async () =>
             {
                 var tools = new JArray(new JObject
                 {
@@ -61,22 +62,52 @@ namespace WordOllama.lib
                         ["parameters"] = new JObject
                         {
                             ["type"] = "object",
-                            ["properties"] = new JObject { ["value"] = new JObject { ["type"] = "string" } },
-                            ["required"] = new JArray("value")
+                            ["properties"] = new JObject
+                            {
+                                ["value"] = new JObject
+                                {
+                                    ["type"] = "string",
+                                    ["description"] = "The exact capability probe value."
+                                }
+                            },
+                            ["required"] = new JArray("value"),
+                            ["additionalProperties"] = false
                         }
                     }
                 });
                 string response = await provider.ChatAsync(new List<Dictionary<string, string>>
                 {
-                    new Dictionary<string, string> { ["role"] = "user", ["content"] = "Use probe_echo now with value OK." }
+                    new Dictionary<string, string>
+                    {
+                        ["role"] = "system",
+                        ["content"] = "This is a native function-calling capability test. You must call probe_echo. Do not answer with text."
+                    },
+                    new Dictionary<string, string>
+                    {
+                        ["role"] = "user",
+                        ["content"] = "Call probe_echo now with value exactly OK."
+                    }
                 }, tools);
+                ThrowIfProviderError(response);
                 if (string.IsNullOrWhiteSpace(response) || response.IndexOf("probe_echo", StringComparison.OrdinalIgnoreCase) < 0)
-                    throw new InvalidOperationException("native tool call was not observed");
+                    throw new InvalidOperationException("未收到原生工具调用；可尝试自动检测或 ReAct 模式。");
                 return "native tool call observed";
             });
             watch.Stop();
             result.LatencyMs = watch.ElapsedMilliseconds;
             return result;
+        }
+
+        private static void ThrowIfProviderError(string response)
+        {
+            if (string.IsNullOrWhiteSpace(response)) return;
+
+            string trimmed = response.TrimStart();
+            if (trimmed.StartsWith("[API 错误]", StringComparison.OrdinalIgnoreCase)
+                || trimmed.StartsWith("[API 拒绝]", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(trimmed);
+            }
         }
 
         private static async Task RunStep(CapabilityProbeResult result, string name, Func<Task<string>> action)

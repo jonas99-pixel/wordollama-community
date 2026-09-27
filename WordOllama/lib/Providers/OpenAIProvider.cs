@@ -23,15 +23,21 @@ namespace WordOllama.lib.Providers
         private readonly string _apiKey;
         private readonly string _modelName;
         private readonly bool _requestJsonOutput;
+        private readonly string _reasoningEffort;
+        private readonly bool _thinkingEnabled;
+        private readonly string _outputTokenParameter;
 
         private static readonly string thinkPattern = @"<think>([\s\S]*?)</think>";
 
-        public OpenAIProvider(string endpoint, string apiKey, string modelName, bool requestJsonOutput = false)
+        public OpenAIProvider(string endpoint, string apiKey, string modelName, bool requestJsonOutput = false, string reasoningEffort = null, bool? thinkingEnabled = null, string outputTokenParameter = null)
         {
-            _endpoint = endpoint;
+            _endpoint = NormalizeEndpoint(endpoint);
             _apiKey = apiKey;
+            _outputTokenParameter = outputTokenParameter ?? AppConfig.Instance?.OutputTokenParameter ?? "auto";
             _modelName = modelName;
             _requestJsonOutput = requestJsonOutput;
+            _reasoningEffort = reasoningEffort;
+            _thinkingEnabled = thinkingEnabled ?? AppConfig.Instance?.ThinkingEnabled ?? false;
         }
 
         public async Task<string> GenerateAsync(string prompt, string imageBase64 = null, double? temperature = null)
@@ -97,6 +103,18 @@ namespace WordOllama.lib.Providers
             return models;
         }
 
+        public static string NormalizeEndpoint(string endpoint)
+        {
+            if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri)) return endpoint;
+            var builder = new UriBuilder(uri);
+            string path = builder.Path.TrimEnd('/');
+            if (path.Length == 0) path = "/v1";
+            if (path.EndsWith("/v1", StringComparison.OrdinalIgnoreCase))
+                path += "/chat/completions";
+            builder.Path = path;
+            return builder.Uri.AbsoluteUri;
+        }
+
         private string GetBaseUrl(string endpoint)
         {
             if (string.IsNullOrEmpty(endpoint)) return "https://api.openai.com/v1";
@@ -109,6 +127,7 @@ namespace WordOllama.lib.Providers
 
         private string GetMaxTokenParamName()
         {
+            if (_outputTokenParameter == "max_tokens" || _outputTokenParameter == "max_completion_tokens") return _outputTokenParameter;
             var reasoningModels = new[] { "o1", "o3", "o4", "gpt-5" };
             string model = _modelName?.Trim() ?? "";
             foreach (var prefix in reasoningModels)
@@ -172,10 +191,10 @@ namespace WordOllama.lib.Providers
                     requestData["response_format"] = new Dictionary<string, string> { { "type", "json_object" } };
                 requestData.Add(GetMaxTokenParamName(), AppConfig.Instance.ChatGPTMaxToken);
 
-                if (AppConfig.Instance.ThinkingEnabled)
+                if (_thinkingEnabled && !string.Equals(_reasoningEffort ?? AppConfig.Instance.ReasoningEffort, "default", StringComparison.OrdinalIgnoreCase))
                 {
                     requestData["thinking"] = new Dictionary<string, object> { { "type", "enabled" } };
-                    requestData["reasoning_effort"] = AppConfig.Instance.ReasoningEffort;
+                    requestData["reasoning_effort"] = _reasoningEffort ?? AppConfig.Instance.ReasoningEffort;
                 }
 
                 if (temperature.HasValue)
@@ -209,7 +228,7 @@ namespace WordOllama.lib.Providers
                             }
                             else
                             {
-                                multiModalMessages.Add(msg.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value));
+                                multiModalMessages.Add(AgentWireProtocol.OpenAiMessages(new List<Dictionary<string, string>> { msg })[0]);
                             }
                         }
                         requestData["messages"] = multiModalMessages;
@@ -217,7 +236,7 @@ namespace WordOllama.lib.Providers
                     }
                     else
                     {
-                        requestData["messages"] = history;
+                        requestData["messages"] = AgentWireProtocol.OpenAiMessages(history);
                     }
                 }
                 else
@@ -257,8 +276,11 @@ namespace WordOllama.lib.Providers
                     HttpResponseMessage response = await httpClient.PostAsync(_endpoint, requestBody, cancellationToken);
                     string responseBody = await response.Content.ReadAsStringAsync();
 
+                    if (!response.IsSuccessStatusCode)
+                        return HandleErrorResponse(response, responseBody);
+
                     if (string.IsNullOrEmpty(responseBody))
-                        return "服务器未响应";
+                        return ProviderRequestPolicy.NormalizeError("OpenAI", response.StatusCode, "服务器返回空响应，请检查接口地址。");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -270,6 +292,14 @@ namespace WordOllama.lib.Providers
                             var toolCalls = responseJson.choices[0].message.tool_calls;
                             if (toolCalls != null && toolCalls.Count > 0)
                             {
+                                if (DocumentAgent.IsAgentRunning)
+                                {
+                                    var message = JObject.Parse(responseBody)["choices"][0]["message"];
+                                    var calls = new JArray();
+                                    foreach (var call in (JArray)message["tool_calls"])
+                                        calls.Add(AgentWireProtocol.Call(call["id"]?.ToString(), call["function"]?["name"]?.ToString(), call["function"]?["arguments"]));
+                                    return AgentWireProtocol.Encode("OpenAI", message, calls);
+                                }
                                 var firstCall = toolCalls[0];
                                 string funcName = firstCall.function.name;
                                 string funcArgs = firstCall.function.arguments;
@@ -348,12 +378,12 @@ namespace WordOllama.lib.Providers
                     { "messages", messagesList },
                     { "stream", true }
                 };
-                requestData.Add(GetMaxTokenParamName(), Math.Max(1, Math.Min(AppConfig.Instance.ChatGPTMaxToken, 8192)));
+                requestData.Add(GetMaxTokenParamName(), AppConfig.Instance.ChatGPTMaxToken);
 
-                if (AppConfig.Instance.ThinkingEnabled)
+                if (_thinkingEnabled && !string.Equals(_reasoningEffort ?? AppConfig.Instance.ReasoningEffort, "default", StringComparison.OrdinalIgnoreCase))
                 {
                     requestData["thinking"] = new Dictionary<string, object> { { "type", "enabled" } };
-                    requestData["reasoning_effort"] = AppConfig.Instance.ReasoningEffort;
+                    requestData["reasoning_effort"] = _reasoningEffort ?? AppConfig.Instance.ReasoningEffort;
                 }
 
                 var requestBody = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
@@ -361,7 +391,8 @@ namespace WordOllama.lib.Providers
                 try
                 {
                     HttpResponseMessage response = await httpClient.PostAsync(_endpoint, requestBody);
-                    response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                        throw new InvalidOperationException(HandleErrorResponse(response, await response.Content.ReadAsStringAsync()));
 
                     bool isThinkingInTag = false;
 
@@ -455,7 +486,7 @@ namespace WordOllama.lib.Providers
             try
             {
                 dynamic errorJson = JsonConvert.DeserializeObject(responseBody);
-                errorMsg = errorJson?.error?.message ?? "";
+                errorMsg = errorJson?.error?.message ?? errorJson?.detail ?? "";
             }
             catch { }
 
@@ -466,11 +497,19 @@ namespace WordOllama.lib.Providers
                     case 400: errorMsg = "请求格式错误，请检查输入"; break;
                     case 401: errorMsg = "API密钥无效"; break;
                     case 403: errorMsg = "没有权限访问"; break;
-                    case 404: errorMsg = "地址错误"; break;
+                    case 404: errorMsg = "接口地址不存在，请检查是否填写完整的 /v1/chat/completions 地址。"; break;
                     case 429: errorMsg = "请求过于频繁"; break;
                     case 500: errorMsg = "服务器内部错误"; break;
                     default: errorMsg = $"未知错误 ({(int)response.StatusCode})"; break;
                 }
+            }
+            if (errorMsg.IndexOf("reasoning", StringComparison.OrdinalIgnoreCase) >= 0
+                && response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var supported = Regex.Match(errorMsg, @"Supported (?:types|values).*", RegexOptions.IgnoreCase);
+                errorMsg = "模型拒绝思考强度 " + (_reasoningEffort ?? AppConfig.Instance.ReasoningEffort)
+                    + "。请选择 default（服务默认），或改为服务支持的强度。"
+                    + (supported.Success ? " 服务提示：" + supported.Value : " 服务提示：" + errorMsg);
             }
             if (errorMsg.Length > 500)
                 errorMsg = errorMsg.Substring(0, 500) + "...";

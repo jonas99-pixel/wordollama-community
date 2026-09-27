@@ -36,6 +36,55 @@ internal static class Program
         Assert(systemNetHttp.GetName().Version == new Version(4, 0, 0, 0),
             "System.Net.Http binding redirects to the framework assembly");
 
+        Assert(OpenAIProvider.NormalizeEndpoint("http://localhost:30001/v1") == "http://localhost:30001/v1/chat/completions", "base endpoint normalized");
+        Assert(OpenAIProvider.NormalizeEndpoint("https://example.com/custom/chat/completions?api-version=1") == "https://example.com/custom/chat/completions?api-version=1", "custom endpoint and query preserved");
+        var probe = new CapabilityProbeResult();
+        probe.Steps.Add(new CapabilityProbeStep { Name = "普通聊天", Passed = true });
+        probe.Steps.Add(new CapabilityProbeStep { Name = "工具调用", Passed = false });
+        Assert(probe.Success, "optional capability failure does not invalidate chat connection");
+        var failedProbe = new CapabilityProbeResult();
+        failedProbe.Steps.Add(new CapabilityProbeStep { Name = "模型列表", Passed = true });
+        Assert(!failedProbe.Success, "model listing alone does not prove chat connection");
+
+        int tokens;
+        Assert(ProviderRequestPolicy.TryTokenCount("128k", out tokens) && tokens == 131072, "K context input");
+        Assert(ProviderRequestPolicy.TryTokenCount("240000", out tokens) && tokens == 240000, "exact context input");
+        Assert(!ProviderRequestPolicy.TryTokenCount("2147483647k", out tokens), "context overflow rejected");
+        Assert(!ProviderRequestPolicy.TryTokenCount("-1", out tokens), "negative context rejected");
+        var tokenMethod = typeof(OpenAIProvider).GetMethod("GetMaxTokenParamName", BindingFlags.Instance | BindingFlags.NonPublic);
+        var explicitTokens = new OpenAIProvider("https://example.com/v1", "", "gpt-5", false, null, false, "max_tokens");
+        Assert((string)tokenMethod.Invoke(explicitTokens, null) == "max_tokens", "explicit token parameter overrides model inference");
+        var automaticTokens = new OpenAIProvider("https://example.com/v1", "", "gpt-5", false, null, false, "auto");
+        Assert((string)tokenMethod.Invoke(automaticTokens, null) == "max_completion_tokens", "automatic reasoning model token parameter");
+        var tokenProfile = ProviderRequestPolicy.ReadCapabilities(JObject.Parse("{\"OutputTokenParameter\":\"max_completion_tokens\",\"ContextWindow\":240000}"), "OpenAI");
+        Assert(tokenProfile.OutputTokenParameter == "max_completion_tokens" && tokenProfile.ContextWindow == 240000, "model token settings round trip");
+
+        string longValue = new string('x', 300);
+        var actionA = new JObject(new JProperty("b", longValue), new JProperty("a", new JObject(new JProperty("y", 2), new JProperty("x", 1))));
+        var actionB = new JObject(new JProperty("a", new JObject(new JProperty("x", 1), new JProperty("y", 2))), new JProperty("b", longValue));
+        Assert(DocumentAgent.CanonicalActionParameters(actionA) == DocumentAgent.CanonicalActionParameters(actionB), "repeat detection handles long parameters and object key order");
+        actionB["b"] = longValue + "changed";
+        Assert(DocumentAgent.CanonicalActionParameters(actionA) != DocumentAgent.CanonicalActionParameters(actionB), "repeat detection preserves differences after 100 characters");
+        Assert(DocumentAgent.CanonicalActionParameters(new JArray(1, 2)) != DocumentAgent.CanonicalActionParameters(new JArray(2, 1)), "repeat detection preserves array order");
+
+        var nativeMessage = JObject.Parse("{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"c1\",\"type\":\"function\",\"function\":{\"name\":\"read\",\"arguments\":\"{}\"}},{\"id\":\"c2\",\"type\":\"function\",\"function\":{\"name\":\"read\",\"arguments\":\"{}\"}}]}");
+        var nativeCalls = new JArray(AgentWireProtocol.Call("c1", "read", new JObject()), AgentWireProtocol.Call("c2", "read", new JObject()));
+        var nativeEnvelope = AgentWireProtocol.Decode(AgentWireProtocol.Encode("OpenAI", nativeMessage, nativeCalls));
+        Assert(((JArray)nativeEnvelope["calls"]).Count == 2, "all native calls preserved");
+        var wireHistory = new List<Dictionary<string, string>>();
+        wireHistory.Add(new Dictionary<string, string> { { "role", "assistant" }, { "content", "" }, { "native", nativeEnvelope.ToString() } });
+        wireHistory.Add(AgentWireProtocol.Result("c1", "read", "first", false));
+        wireHistory.Add(AgentWireProtocol.Result("c2", "read", "denied", true));
+        var wire = AgentWireProtocol.OpenAiMessages(wireHistory);
+        Assert(JToken.DeepEquals(wire[0], nativeMessage), "native assistant payload round trip");
+        Assert(wire[1]["tool_call_id"].ToString() == "c1" && wire[2]["tool_call_id"].ToString() == "c2", "tool results correlate with call IDs");
+        Assert(!(bool)JObject.Parse(wire[2]["content"].ToString())["ok"], "failed tool result remains structured");
+        var schema = JObject.Parse("{\"required\":[\"index\"],\"properties\":{\"index\":{\"type\":\"integer\"}}}");
+        Assert(AgentWireProtocol.ValidateArguments(schema, new JObject()) != null, "missing tool parameter rejected");
+        Assert(AgentWireProtocol.ValidateArguments(schema, JObject.Parse("{\"index\":\"1\"}")) != null, "wrong tool parameter type rejected");
+        Assert(AgentWireProtocol.ValidateArguments(schema, JObject.Parse("{\"index\":1}")) == null, "valid tool parameter accepted");
+        Assert(AgentWireProtocol.OllamaMessages(wireHistory)[1]["tool_name"].ToString() == "read", "Ollama tool result name mapped");
+
         var registry = new ToolRegistry();
         registry.DiscoverAndRegister();
         string catalog = AgentToolCatalogService.BuildMarkdown(registry, true);

@@ -151,6 +151,16 @@ namespace WordOllama.NewUI
         public NewSetting()
         {
             InitializeComponent();
+            EndPointTextBox.TextChanged += ProbeSettingsChanged;
+            ModelNameTextBox.TextChanged += ProbeSettingsChanged;
+            ApiKeyPasswordBox.PasswordChanged += ProbeSettingsChanged;
+            PopupReasoningEffort.SelectionChanged += ProbeSettingsChanged;
+            PopupOutputTokenParameter.SelectionChanged += ProbeSettingsChanged;
+            PopupContextWindow.TextChanged += ProbeSettingsChanged;
+            PopupProviderTypeCombo.SelectionChanged += ProbeSettingsChanged;
+            ThinkingEnabledToggle.Checked += ProbeSettingsChanged;
+            ThinkingEnabledToggle.Unchecked += ProbeSettingsChanged;
+
             RegisterSettingsChangeTracking();
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
             _settingsDraft = AppConfig.BeginDraft();
@@ -360,6 +370,7 @@ namespace WordOllama.NewUI
             string currentProvider = SharedSettings.OnlineProviderType;
             LoadActiveProviderSettings(currentProvider);
 
+            OutputTokenParameterSelector.SelectedValue = AppConfig.Instance.OutputTokenParameter;
             ChatGPTMaxToken.Text = SharedSettings.ChatGPTMaxToken.ToString();
             ChatGPTTemperatureSettingSlider.Value = SharedSettings.ChatGPTTemperature;
             OnlineContextWindow.Text = SharedSettings.OnlineContextWindow.ToString();
@@ -428,8 +439,8 @@ namespace WordOllama.NewUI
             ThinkingEnabledToggle.IsChecked = SharedSettings.ThinkingEnabled;
             string effort = SharedSettings.ReasoningEffort;
             var effortItems = ReasoningEffortSelector.Items.Cast<ComboBoxItem>().ToList();
-            int effortIndex = effortItems.FindIndex(item => (item.Content?.ToString() ?? "") == effort);
-            ReasoningEffortSelector.SelectedIndex = effortIndex >= 0 ? effortIndex : 2; // 默认 high
+            int effortIndex = effortItems.FindIndex(item => (item.Tag?.ToString() ?? "") == effort);
+            ReasoningEffortSelector.SelectedIndex = effortIndex >= 0 ? effortIndex : 0; // 旧 none 或未知值显示服务默认，保存后更新
 
             // Markdown 转换设置
             LoadMdStyles();
@@ -879,7 +890,42 @@ namespace WordOllama.NewUI
             }
         }
 
-        private async void TestModelConnectionButton_Click(object sender, RoutedEventArgs e)
+        private int _probeRevision;
+        private JObject _reasoningEvidence;
+        private string ProbeScope => ((PopupProviderTypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "OpenAI")
+            + "|" + OpenAIProvider.NormalizeEndpoint(EndPointTextBox.Text?.Trim()) + "|" + ModelNameTextBox.Text?.Trim();
+
+        private void ProbeSettingsChanged(object sender, RoutedEventArgs e)
+        {
+            _probeRevision++;
+            _lastCapabilityTestStatus = null;
+            _lastCapabilityTestAt = null;
+            _lastCapabilityTestError = null;
+            if (ModelConnectionStatus == null) return;
+            ModelConnectionStatus.Text = "设置已修改，请重新测试。";
+            AdoptDefaultButton.Visibility = Visibility.Collapsed;
+            if (_reasoningEvidence?["Scope"]?.ToString() != ProbeScope) _reasoningEvidence = null;
+            PopupOutputTokenParameter.IsEnabled = ((PopupProviderTypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "OpenAI") == "OpenAI";
+            ShowReasoningEvidence();
+        }
+
+        private void ShowReasoningEvidence()
+        {
+            ReasoningEvidenceText.Text = _reasoningEvidence == null ? "强度尚未验证；可使用服务默认值测试。"
+                : "最近检测（" + _reasoningEvidence["CheckedAt"] + "）：" + _reasoningEvidence["Detail"] + "。可重新测试刷新。";
+            foreach (ComboBoxItem item in PopupReasoningEffort.Items)
+                item.ToolTip = ReasoningEvidenceText.Text;
+        }
+
+        private async void RetryDefaultButton_Click(object sender, RoutedEventArgs e) => await RunModelProbeAsync(true);
+        private void AdoptDefaultButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetReasoningEffortSelection("default");
+            ModelConnectionStatus.Text = "已选择服务默认值，请保存模型设置。";
+        }
+        private async void TestModelConnectionButton_Click(object sender, RoutedEventArgs e) => await RunModelProbeAsync(false);
+
+        private async Task RunModelProbeAsync(bool useDefault)
         {
             string provider = (PopupProviderTypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "OpenAI";
             string endpoint = EndPointTextBox.Text?.Trim();
@@ -898,23 +944,38 @@ namespace WordOllama.NewUI
                 return;
             }
 
+            int revision = _probeRevision;
+            string effort = useDefault ? "default" : GetSelectedReasoningEffort();
             TestModelConnectionButton.IsEnabled = false;
+            RetryDefaultButton.IsEnabled = false;
+            AdoptDefaultButton.Visibility = Visibility.Collapsed;
             ModelConnectionStatus.Text = Loc.T("I18n_TestingConnection");
 
             try
             {
-                var providerInst = ProviderFactory.Create(provider, endpoint, apiKey, model);
+                var providerInst = ProviderFactory.Create(provider, endpoint, apiKey, model, reasoningEffort: effort, thinkingEnabled: ThinkingEnabledToggle.IsChecked == true, outputTokenParameter: PopupOutputTokenParameter.SelectedValue?.ToString() ?? "auto");
                 CapabilityProbeResult probe = await ProviderCapabilityProbe.RunAsync(providerInst);
-                SetCapabilityTestResult(probe.Success, probe.Success ? null : probe.Summary);
-                ModelConnectionStatus.Text = Loc.F("I18n_CapabilityProbeResult", probe.Passed, probe.Total, probe.LatencyMs, probe.Summary);
+                if (revision != _probeRevision) return;
+                if (!useDefault) SetCapabilityTestResult(probe.Success, probe.Success ? null : probe.Summary);
+                string actualEndpoint = provider == "OpenAI" ? OpenAIProvider.NormalizeEndpoint(endpoint) : endpoint;
+                ModelConnectionStatus.Text = (probe.Success ? "连接正常" : "聊天连接未通过")
+                    + "；测试强度：" + effort + (ThinkingEnabledToggle.IsChecked == true ? "" : "（思考开关已关闭）")
+                    + (provider == "OpenAI" ? "\n请求地址：" : "\n配置地址：") + actualEndpoint + "\n" + probe.Summary;
+                AdoptDefaultButton.Visibility = useDefault && probe.Success ? Visibility.Visible : Visibility.Collapsed;
+                string detail = probe.Success ? "普通聊天已验证：" + (ThinkingEnabledToggle.IsChecked == true ? effort : "服务默认（思考开关关闭）") : "本次测试未通过，尚不能确认强度是否支持：" + effort;
+                var supported = System.Text.RegularExpressions.Regex.Match(probe.Summary, @"Supported (?:types|values)[^\r\n]*", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (supported.Success) detail = "服务声明：" + supported.Value;
+                _reasoningEvidence = new JObject { ["Scope"] = ProbeScope, ["CheckedAt"] = DateTime.Now.ToString("s"), ["Detail"] = detail };
+                ShowReasoningEvidence();
             }
             catch (Exception ex)
             {
-                SetCapabilityTestResult(false, ProviderRequestPolicy.NormalizeError(provider, null, null, ex));
+                if (revision == _probeRevision) SetCapabilityTestResult(false, ProviderRequestPolicy.NormalizeError(provider, null, null, ex));
             }
             finally
             {
                 TestModelConnectionButton.IsEnabled = true;
+                RetryDefaultButton.IsEnabled = true;
             }
         }
 
@@ -988,7 +1049,7 @@ namespace WordOllama.NewUI
             ServiceProviderComboBox.SelectedIndex = 0;
             PopupProviderTypeCombo.SelectedIndex = 0; // OpenAI
             PopupToolCallingMode.SelectedIndex = 0;
-            PopupReasoningEffort.SelectedIndex = 3;
+            PopupReasoningEffort.SelectedIndex = 0;
             SetCapabilitySelection(ProviderRequestPolicy.GetDefaultCapabilities("OpenAI"));
             ModelConnectionStatus.Text = "";
             _lastCapabilityTestStatus = null;
@@ -998,6 +1059,7 @@ namespace WordOllama.NewUI
             EndPointTextBox.Text = string.Empty;
             ApiKeyPasswordBox.Password = string.Empty;
             OAuth2LoginButton.Visibility = Visibility.Collapsed;
+            ShowReasoningEvidence();
             AddModelPopup.IsOpen = true;
         }
 
@@ -1030,12 +1092,15 @@ namespace WordOllama.NewUI
             SetToolCallingModeSelection(selectedModel.ToolCallingMode);
             SetReasoningEffortSelection(selectedModel.ReasoningEffort);
             var storedModel = ChatGPTModelsJson?.OfType<JObject>().FirstOrDefault(model => model["ModelName"]?.ToString() == selectedModel.ModelName);
+            _reasoningEvidence = storedModel?["ReasoningEvidence"] as JObject;
+            if (_reasoningEvidence?["Scope"]?.ToString() != ProbeScope) _reasoningEvidence = null;
             SetCapabilitySelection(ProviderRequestPolicy.ReadCapabilities(storedModel?["Capabilities"], pt));
             ModelConnectionStatus.Text = FormatCapabilityTestStatus(selectedModel.LastCapabilityTestStatus, selectedModel.LastCapabilityTestAt, selectedModel.LastCapabilityTestError);
             _lastCapabilityTestStatus = selectedModel.LastCapabilityTestStatus;
             _lastCapabilityTestAt = selectedModel.LastCapabilityTestAt;
             _lastCapabilityTestError = selectedModel.LastCapabilityTestError;
             OAuth2LoginButton.Visibility = pt == "Gemini" ? Visibility.Visible : Visibility.Collapsed;
+            ShowReasoningEvidence();
             AddModelPopup.IsOpen = true;
         }
 
@@ -1259,6 +1324,12 @@ namespace WordOllama.NewUI
             try
             {
                 string providerType = (PopupProviderTypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "OpenAI";
+                if (!IsHttpEndpoint(EndPointTextBox.Text) || string.IsNullOrWhiteSpace(ModelNameTextBox.Text))
+                { ModelConnectionStatus.Text = "请填写有效的 HTTP/HTTPS 地址和模型名称。"; return; }
+                if (!ProviderRequestPolicy.TryTokenCount(PopupContextWindow.Text, out int popupContext) || popupContext > 2000000)
+                { ModelConnectionStatus.Text = "上下文容量请输入 1 至 2000000 的整数或 K 值。"; return; }
+                if (SharedSettings.ChatGPTMaxToken >= popupContext)
+                { ModelConnectionStatus.Text = "上下文容量必须大于当前输出上限（" + SharedSettings.ChatGPTMaxToken + "）。请先调整输出上限。"; return; }
                 ProviderCapabilityProfile capabilities = GetSelectedCapabilities(providerType);
 
                 var modelObj = new JObject
@@ -1271,6 +1342,7 @@ namespace WordOllama.NewUI
                     { "ReasoningEffort", GetSelectedReasoningEffort() },
                     { "Capabilities", JObject.FromObject(capabilities) }
                 };
+                modelObj["ReasoningEvidence"] = _reasoningEvidence?.DeepClone();
                 modelObj["LastCapabilityTestStatus"] = _lastCapabilityTestStatus;
                 modelObj["LastCapabilityTestAt"] = _lastCapabilityTestAt;
                 modelObj["LastCapabilityTestError"] = _lastCapabilityTestError;
@@ -1290,6 +1362,7 @@ namespace WordOllama.NewUI
                         existing["ToolCallingMode"] = GetSelectedToolCallingMode();
                         existing["ReasoningEffort"] = GetSelectedReasoningEffort();
                         existing["Capabilities"] = JObject.FromObject(capabilities);
+                        existing["ReasoningEvidence"] = _reasoningEvidence?.DeepClone();
                         existing["LastCapabilityTestStatus"] = _lastCapabilityTestStatus;
                         existing["LastCapabilityTestAt"] = _lastCapabilityTestAt;
                         existing["LastCapabilityTestError"] = _lastCapabilityTestError;
@@ -1411,10 +1484,12 @@ namespace WordOllama.NewUI
         }
 
         private string GetSelectedReasoningEffort() =>
-            (PopupReasoningEffort.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "high";
+            (PopupReasoningEffort.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "default";
 
         private void SetReasoningEffortSelection(string effort)
         {
+            if (string.Equals(effort, "none", StringComparison.OrdinalIgnoreCase))
+                effort = "default";
             foreach (ComboBoxItem item in PopupReasoningEffort.Items)
             {
                 if (string.Equals(item.Tag?.ToString(), effort, StringComparison.OrdinalIgnoreCase))
@@ -1423,7 +1498,7 @@ namespace WordOllama.NewUI
                     return;
                 }
             }
-            PopupReasoningEffort.SelectedIndex = 3;
+            PopupReasoningEffort.SelectedIndex = 0;
         }
 
         private void ApplyModelAsActive(JObject model)
@@ -1456,6 +1531,8 @@ namespace WordOllama.NewUI
             ProviderCapabilityProfile capabilities = ProviderRequestPolicy.ReadCapabilities(model?["Capabilities"], providerType);
             capabilities.ToolCallingMode = model?["ToolCallingMode"]?.ToString() ?? capabilities.ToolCallingMode;
             ProviderRequestPolicy.ApplyActiveCapabilities(capabilities);
+            OutputTokenParameterSelector.SelectedValue = capabilities.OutputTokenParameter ?? "auto";
+            OnlineContextWindow.Text = capabilities.ContextWindow.ToString();
             SharedSettings.ReasoningEffort = model?["ReasoningEffort"]?.ToString() ?? "high";
             LoadActiveProviderSettings(providerType);
             ChatGPTModel.Text = modelName;
@@ -1471,7 +1548,8 @@ namespace WordOllama.NewUI
                 SupportsStreaming = PopupSupportsStreaming.IsChecked == true,
                 SupportsVision = PopupSupportsVision.IsChecked == true,
                 SupportsJsonOutput = PopupSupportsJsonOutput.IsChecked == true,
-                ContextWindow = int.TryParse(PopupContextWindow.Text, out int contextWindow) && contextWindow > 0
+                OutputTokenParameter = PopupOutputTokenParameter.SelectedValue?.ToString() ?? "auto",
+                ContextWindow = ProviderRequestPolicy.TryTokenCount(PopupContextWindow.Text, out int contextWindow) && contextWindow > 0
                     ? contextWindow
                     : defaults.ContextWindow
             };
@@ -1484,6 +1562,7 @@ namespace WordOllama.NewUI
             PopupSupportsVision.IsChecked = capabilities.SupportsVision;
             PopupSupportsJsonOutput.IsChecked = capabilities.SupportsJsonOutput;
             PopupContextWindow.Text = capabilities.ContextWindow.ToString();
+            PopupOutputTokenParameter.SelectedValue = capabilities.OutputTokenParameter ?? "auto";
         }
 
 
@@ -1673,9 +1752,10 @@ namespace WordOllama.NewUI
             SharedSettings.OnlineProviderType = currentProvider;
             SaveActiveProviderSettings(currentProvider);
 
+            AppConfig.Instance.OutputTokenParameter = OutputTokenParameterSelector.SelectedValue?.ToString() ?? "auto";
             SharedSettings.ChatGPTMaxToken = int.Parse(ChatGPTMaxToken.Text.Trim());
             SharedSettings.ChatGPTTemperature = ChatGPTTemperatureSettingSlider.Value;
-            if (int.TryParse(OnlineContextWindow.Text, out int ctxWindow) && ctxWindow > 0)
+            if (ProviderRequestPolicy.TryTokenCount(OnlineContextWindow.Text, out int ctxWindow) && ctxWindow > 0)
                 SharedSettings.OnlineContextWindow = ctxWindow;
 
             UserMemoryStore.Save(new UserMemorySettings
@@ -1689,7 +1769,7 @@ namespace WordOllama.NewUI
             // 思维链
             SharedSettings.ThinkingEnabled = ThinkingEnabledToggle.IsChecked == true;
             if (ReasoningEffortSelector.SelectedItem is ComboBoxItem effortItem)
-                SharedSettings.ReasoningEffort = effortItem.Content?.ToString() ?? "high";
+                SharedSettings.ReasoningEffort = effortItem.Tag?.ToString() ?? "default";
 
             // Agent
             if (AgentUnlimitedCheck.IsChecked == true)
@@ -1721,6 +1801,21 @@ namespace WordOllama.NewUI
                 Newtonsoft.Json.JsonConvert.SerializeObject(mdMappings, Newtonsoft.Json.Formatting.Indented);
 
             // 在设置窗口草稿期间也立即落盘，但继续保留草稿状态，便于用户继续修改后再次保存或取消。
+            string provider = SharedSettings.OnlineProviderType;
+            string activeModel = provider == "Claude" ? SharedSettings.ClaudeModel : provider == "Gemini" ? SharedSettings.GeminiModel : SharedSettings.ChatGPTModel;
+            string activeEndpoint = provider == "Claude" ? SharedSettings.ClaudeEndPoint : provider == "Gemini" ? SharedSettings.GeminiEndPoint : SharedSettings.ChatGPTEndPoint;
+            var stored = ChatGPTModelsJson?.OfType<JObject>().FirstOrDefault(m =>
+                (m["ProviderType"]?.ToString() ?? "OpenAI") == provider && m["ModelName"]?.ToString() == activeModel
+                && OpenAIProvider.NormalizeEndpoint(m["EndPoint"]?.ToString()) == OpenAIProvider.NormalizeEndpoint(activeEndpoint));
+            if (stored != null)
+            {
+                stored["Capabilities"] = JObject.FromObject(ProviderRequestPolicy.GetActiveCapabilities());
+                stored["ReasoningEffort"] = SharedSettings.ReasoningEffort;
+                stored["LastCapabilityTestStatus"] = null;
+                stored["LastCapabilityTestAt"] = null;
+                stored["LastCapabilityTestError"] = null;
+                SaveChatGPTModelsToFile();
+            }
             AppConfig.SaveNow();
             _lastSavedSettingsSnapshot = JsonConvert.SerializeObject(AppConfig.Instance, Formatting.None);
             SetSettingsDirty(false);
@@ -1759,10 +1854,19 @@ namespace WordOllama.NewUI
                 !TryReadRange(AgentMaxIterationsBox, "Agent iteration limit", 1, 1000, errors))
                 errors.Add(Loc.F("I18n_SettingsInvalidNumber", "Agent iteration limit", 1, 1000));
 
+            if (ProviderRequestPolicy.TryTokenCount(OnlineContextWindow.Text, out int context) && int.TryParse(ChatGPTMaxToken.Text, out int output) && output >= context)
+                errors.Add("输出上限必须小于上下文容量，为输入留出空间。");
             message = errors.Count == 0
                 ? ""
                 : Loc.F("I18n_SettingsValidationFailed", string.Join(" ", errors.Distinct()));
             return errors.Count == 0;
+        }
+
+        private void ContextPreset_Click(object sender, RoutedEventArgs e)
+        {
+            string[] parts = ((Button)sender).Tag.ToString().Split('|');
+            ((TextBox)FindName(parts[0])).Text = parts[1];
+            SetSettingsDirty(true);
         }
 
         private static bool IsHttpEndpoint(string value)
@@ -1773,7 +1877,7 @@ namespace WordOllama.NewUI
 
         private static bool TryReadRange(TextBox box, string _, int min, int max, List<string> errors)
         {
-            return int.TryParse(box?.Text?.Trim(), out int value) && value >= min && value <= max;
+            return (box?.Name == "OnlineContextWindow" ? ProviderRequestPolicy.TryTokenCount(box.Text, out int value) : int.TryParse(box?.Text?.Trim(), out value)) && value >= min && value <= max;
         }
 
         // Agent 设置

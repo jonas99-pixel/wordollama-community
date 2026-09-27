@@ -840,7 +840,7 @@ namespace WordOllama.NewUI
                         SetFinalAnswer(summary);
                         AddReviewIssues(ParseIssuesFromText(summary, "Agent"));
                         UpdateStatusIcon(false);
-                        lblStatus.Text = Properties.Resources.Agent_StatusDone;
+                        lblStatus.Text = _agent.WorkflowStatus.Current.Detail;
                         btnMakeSkill.Visibility = Visibility.Visible;
                         ScrollToEnd();
 

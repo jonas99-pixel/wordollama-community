@@ -13,11 +13,23 @@ namespace WordOllama.lib
         public bool SupportsStreaming { get; set; }
         public bool SupportsVision { get; set; }
         public bool SupportsJsonOutput { get; set; }
+        public string OutputTokenParameter { get; set; } = "auto";
         public int ContextWindow { get; set; }
     }
 
     public static class ProviderRequestPolicy
     {
+        public static bool TryTokenCount(string text, out int value)
+        {
+            value = 0;
+            string input = text?.Trim() ?? "";
+            int scale = input.EndsWith("k", StringComparison.OrdinalIgnoreCase) ? 1024 : 1;
+            if (scale > 1) input = input.Substring(0, input.Length - 1).Trim();
+            if (!int.TryParse(input, out int number) || number <= 0 || number > int.MaxValue / scale) return false;
+            value = number * scale;
+            return true;
+        }
+
         private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
 
         public static TimeSpan ChatTimeout => TimeSpan.FromSeconds(Math.Max(30, AppConfig.Instance?.ProviderTimeoutSeconds ?? 120));
@@ -93,6 +105,7 @@ namespace WordOllama.lib
                 if (saved == null) return defaults;
                 return new ProviderCapabilityProfile
                 {
+                    OutputTokenParameter = saved.OutputTokenParameter ?? "auto",
                     ToolCallingMode = string.IsNullOrWhiteSpace(saved.ToolCallingMode) ? defaults.ToolCallingMode : saved.ToolCallingMode,
                     SupportsStreaming = saved.SupportsStreaming,
                     SupportsVision = saved.SupportsVision,
@@ -113,6 +126,7 @@ namespace WordOllama.lib
             if (config == null) return defaults;
             return new ProviderCapabilityProfile
             {
+                OutputTokenParameter = config.OutputTokenParameter,
                 ToolCallingMode = string.IsNullOrWhiteSpace(config.ProviderToolCallingMode) ? defaults.ToolCallingMode : config.ProviderToolCallingMode,
                 SupportsStreaming = config.ProviderSupportsStreaming,
                 SupportsVision = config.ProviderSupportsVision,
@@ -124,6 +138,7 @@ namespace WordOllama.lib
         public static void ApplyActiveCapabilities(ProviderCapabilityProfile profile)
         {
             if (AppConfig.Instance == null || profile == null) return;
+            AppConfig.Instance.OutputTokenParameter = profile.OutputTokenParameter ?? "auto";
             AppConfig.Instance.ProviderToolCallingMode = ProviderCompatibility.ParseToolCallingMode(profile.ToolCallingMode).ToString();
             AppConfig.Instance.ProviderSupportsStreaming = profile.SupportsStreaming;
             AppConfig.Instance.ProviderSupportsVision = profile.SupportsVision;
