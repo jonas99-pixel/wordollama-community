@@ -19,6 +19,16 @@ namespace WordOllama.lib
 
     public static class ProviderRequestPolicy
     {
+        public static bool IsOutputTruncated(JObject response)
+        {
+            string reason = response?["done_reason"]?.ToString()
+                ?? response?["stop_reason"]?.ToString()
+                ?? (response?["choices"] as JArray)?.FirstOrDefault()?["finish_reason"]?.ToString()
+                ?? (response?["candidates"] as JArray)?.FirstOrDefault()?["finishReason"]?.ToString();
+            return string.Equals(reason, "length", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(reason, "max_tokens", StringComparison.OrdinalIgnoreCase);
+        }
+
         public static bool TryTokenCount(string text, out int value)
         {
             value = 0;

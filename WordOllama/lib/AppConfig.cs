@@ -29,6 +29,7 @@ namespace WordOllama.lib
         public string OllamaEndPoint { get; set; } = "http://localhost:11434";
         public string OllamaModel { get; set; } = "";
         public int OllamaMaxToken { get; set; } = 4096;
+        public int OllamaTimeoutSeconds { get; set; } = 600;
         public double OllamaTemperature { get; set; } = 0.5;
         public bool IsOllamaModelRefresh { get; set; } = false;
         public bool OllamaNetMode { get; set; } = false;
@@ -137,6 +138,7 @@ namespace WordOllama.lib
         #region Agent
 
         public int AgentMaxIterations { get; set; } = 20;
+        public int AgentTaskTimeoutMinutes { get; set; } = 30;
         public int AgentMaxResultSize { get; set; } = 0;
         /// <summary>Agent 侧边栏宽度，范围由宿主侧统一限制。</summary>
         public int AgentPaneWidth { get; set; } = 900;
@@ -166,12 +168,28 @@ namespace WordOllama.lib
 
         #endregion
 
+        #region 长文档审校（每批上限，不限制整篇文档）
+
+        public int ReviewIssueBatchMaxParagraphs { get; set; } = 80;
+        public string ReviewReviewerName { get; set; } = "AI审批";
+        public string ReviewReviewerIdentityMode { get; set; } = "Date";
+        public int ReviewIssueBatchMaxCharacters { get; set; } = 12000;
+        public int ReviewSelectionBatchMaxCharacters { get; set; } = 6000;
+        public int ReviewSuggestionBatchMaxItems { get; set; } = 8;
+        public int ReviewSuggestionBatchMaxCharacters { get; set; } = 6000;
+        public int ReviewMaxConcurrentRequests { get; set; } = 3;
+        public int ReviewOllamaOutputTokens { get; set; } = 2048;
+
+        #endregion
+
         #region 静默审查 (SilentLinter)
 
         public bool LinterEnabled { get; set; } = false;
         public string LinterModel { get; set; } = "";
         public string LinterEndPoint { get; set; } = "";
         public int LinterDebounceSeconds { get; set; } = 30;
+        public int LinterContextTokens { get; set; } = 4096;
+        public int LinterTimeoutSeconds { get; set; } = 300;
 
         #endregion
 

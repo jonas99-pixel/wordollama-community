@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using WordOllama.lib;
 
@@ -14,13 +14,20 @@ namespace WordOllama.NewUI
         public string Category { get; set; } = Loc.T("I18n_UiCategoryText");
         public string Severity { get; set; } = Loc.T("I18n_UiSeverityMedium");
         public int ParagraphIndex { get; set; }
+        public string DocumentIdentity { get; set; }
+        public string SourceParagraphHash { get; set; }
+        public ReviewParagraphLocation Location { get; set; }
+        public string ReviewSessionId { get; set; }
+        public string ReviewItemId { get; set; }
+        public string UserAction { get; set; }
+        public DateTime? ActionUtc { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Suggestion { get; set; }
         public string Excerpt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public string LocationLabel => ParagraphIndex > 0
+        public string LocationLabel => Location != null ? Location.Story.Label + " / " + Loc.F("I18n_UiParagraph", Location.Paragraph) : ParagraphIndex > 0
             ? Loc.F("I18n_UiParagraph", ParagraphIndex)
             : Loc.T("I18n_UiUnlocated");
         public string SeverityLabel => string.IsNullOrWhiteSpace(Severity) ? Loc.T("I18n_UiSeverityMedium") : Severity;

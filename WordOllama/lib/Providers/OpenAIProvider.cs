@@ -284,6 +284,8 @@ namespace WordOllama.lib.Providers
 
                     if (response.IsSuccessStatusCode)
                     {
+                        if (ProviderRequestPolicy.IsOutputTruncated(JObject.Parse(responseBody)))
+                            return ProviderRequestPolicy.NormalizeError("OpenAI", null, Loc.T("I18n_ReviewOutputTruncated"));
                         dynamic responseJson = JsonConvert.DeserializeObject(responseBody);
                         string content = responseJson.choices[0].message.content ?? "";
 

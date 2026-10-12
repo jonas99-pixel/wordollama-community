@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Navigation;
@@ -11,7 +11,7 @@ namespace WordOllama.NewUI
         {
             InitializeComponent();
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
-            VersionText.Text = ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}" : "v2.3";
+            VersionText.Text = ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}" : "v2.5";
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)

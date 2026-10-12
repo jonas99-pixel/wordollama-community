@@ -115,7 +115,7 @@ namespace WordOllama.lib
                    paragraphCount >= ReviewPaneParagraphThreshold;
         }
 
-        public static string BuildIssueReviewPrompt(string context, bool concise = false)
+        public static string BuildIssueReviewPrompt(string context, bool concise = false, string customInstruction = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine("You are a Microsoft Word document review assistant.");
@@ -125,6 +125,11 @@ namespace WordOllama.lib
             sb.AppendLine("Use stable English enum values for category and severity. Write title, description, suggestion, and excerpt in the same language as the source text when possible.");
             if (concise)
                 sb.AppendLine("Be conservative and concise. Report only obvious, actionable issues.");
+            if (!string.IsNullOrWhiteSpace(customInstruction))
+            {
+                sb.AppendLine("User review instruction (keep the JSON schema and original paragraph identifiers):");
+                sb.AppendLine(customInstruction.Trim());
+            }
             sb.AppendLine();
             sb.AppendLine("Schema:");
             sb.AppendLine("[");
@@ -140,6 +145,7 @@ namespace WordOllama.lib
             sb.AppendLine("]");
             sb.AppendLine();
             sb.AppendLine("If no issue is found, return [].");
+            sb.AppendLine("This is one consecutive chunk of a larger review. Paragraph numbers are original document indexes: copy them exactly, never renumber from 1. Review only the supplied text; do not invent missing context.");
             sb.AppendLine();
             sb.AppendLine("Text to review:");
             sb.AppendLine(context ?? "");
@@ -515,7 +521,17 @@ namespace WordOllama.lib
             }
             if (!string.IsNullOrWhiteSpace(memoryContext)) skillCatalog += memoryContext;
             skillCatalog += "\n\nWhen web, MCP, or retrieval tools return external URLs, ground factual claims in that evidence and cite the returned URLs. Never invent a source." +
-                "\nFor long tasks, keep the plan current and finish within 200 iterations and 30 minutes.";
+                "\nFor long tasks, keep the plan current and finish within 200 iterations and "
+                + Math.Max(1, Math.Min(1440, AppConfig.Instance?.AgentTaskTimeoutMinutes ?? 30)) + " minutes.";
+            if (toolDescriptions != null && toolDescriptions.Contains("review_document"))
+                readingStrategy = @"## Whole-document review workflow / 全文审校流程
+- For a whole-document proofreading request, use review_document. It processes every supported text area in context-sized batches, checkpoints progress, and creates a native review copy by default. Supply the user's review instruction.
+- Use kind=suggestions for precise corrections, or kind=issues for an issue list. Review generation alone does not apply changes.
+- If the user requested tracked edits, call apply_review_revisions after generation completes, then save_review_document. The configured Agent execution mode controls whether changes may be applied.
+- To continue an interrupted run, list_review_sessions, then resume_review with the saved session_id. Open the saved working copy if the result says requires_open_document.
+- Inspect completed/total, failed/pending, suggestions_require_apply, and error. Never claim the whole document is complete when batches failed, remain pending, or requested revisions have not been applied. Report the session and copy paths so the user can resume.
+- The review tools handle body/tables, section headers and footers, footnotes/endnotes, and text boxes. Do not attempt to prove full coverage from the truncated Agent snapshot or by manually looping read_large_chunk.
+- Existing comments and revisions are retained. Do not accept or reject earlier revisions as part of proofreading.";
 
             return useEnglish
                 ? $@"You are WordOllama, an independent AI assistant integrated into Microsoft Word. You can read, edit, format, and review the currently open Word document by calling tools.
@@ -838,6 +854,7 @@ If the task is completed, set action to ""finish"" and done to true."
             sb.AppendLine("You are a careful writing editor working inside Microsoft Word.");
             sb.AppendLine("Return only the revised text. Do not add explanations, markdown fences, alternatives, comments, or headings.");
             sb.AppendLine("Preserve the author's meaning, paragraph structure, proper nouns, character voice, and unusual spellings unless the instruction says otherwise.");
+            sb.AppendLine("The text may be a fragment of a longer paragraph. Do not complete its boundaries or add transitions. Make only edits required by the editing instruction.");
             if (!string.IsNullOrWhiteSpace(writingProfile))
             {
                 sb.AppendLine();

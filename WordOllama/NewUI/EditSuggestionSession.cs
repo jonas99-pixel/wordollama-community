@@ -14,6 +14,16 @@ namespace WordOllama.NewUI
         public int RangeStart { get; set; }
         public int RangeEnd { get; set; }
         public string OriginalHash { get; set; }
+        public string DocumentIdentity { get; set; }
+        public WordOllama.lib.ReviewStoryAddress Story { get; set; }
+        public bool GenerationSucceeded { get; set; }
+
+        private string _failureReason;
+        public string FailureReason
+        {
+            get => _failureReason;
+            set { _failureReason = value; OnPropertyChanged(nameof(FailureReason)); }
+        }
 
         private string _originalText;
         public string OriginalText
@@ -49,7 +59,7 @@ namespace WordOllama.NewUI
         }
 
         public bool HasSuggestion => !string.IsNullOrWhiteSpace(SuggestedText);
-        public string LocationLabel => ParagraphIndex > 0 ? $"P{ParagraphIndex}" : $"#{Index}";
+        public string LocationLabel => (Story == null ? "" : Story.Label + " / ") + (ParagraphIndex > 0 ? $"P{ParagraphIndex}" : $"#{Index}");
 
         public static string NormalizeWordText(string text)
         {

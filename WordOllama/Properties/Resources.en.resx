@@ -2308,6 +2308,21 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_DefaultOutputMode" xml:space="preserve">
     <value>Default output mode</value>
   </data>
+  <data name="I18n_InterfaceLanguage" xml:space="preserve">
+    <value>Interface language</value>
+  </data>
+  <data name="I18n_InterfaceLanguageSystem" xml:space="preserve">
+    <value>Follow system</value>
+  </data>
+  <data name="I18n_InterfaceLanguageChinese" xml:space="preserve">
+    <value>Chinese</value>
+  </data>
+  <data name="I18n_InterfaceLanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="I18n_InterfaceLanguageRestart" xml:space="preserve">
+    <value>Changes take effect the next time Word starts.</value>
+  </data>
   <data name="I18n_OutputModeAuto" xml:space="preserve">
     <value>Auto (insert short text, use Review Workspace for long text)</value>
   </data>
@@ -2385,6 +2400,7 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_TestConnection" xml:space="preserve"><value>Test connection</value></data>
   <data name="I18n_TestingConnection" xml:space="preserve"><value>Testing connection...</value></data>
   <data name="I18n_ConnectionTestMissingSettings" xml:space="preserve"><value>Enter the endpoint and model name first.</value></data>
+  <data name="I18n_EndpointRequired" xml:space="preserve"><value>Enter the endpoint first.</value></data>
   <data name="I18n_ConnectionTestSuccess" xml:space="preserve"><value>Connection succeeded at {0}</value></data>
   <data name="I18n_ConnectionTestFailed" xml:space="preserve"><value>Connection failed: {0}</value></data>
   <data name="I18n_ConnectionTestUnknownError" xml:space="preserve"><value>Unknown error</value></data>
@@ -2494,6 +2510,7 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_ServiceProviderQwen" xml:space="preserve"><value>Tongyi Qianwen</value></data>
   <data name="I18n_ServiceProviderDoubao" xml:space="preserve"><value>Doubao</value></data>
   <data name="I18n_ServiceProviderZhipuGlm" xml:space="preserve"><value>Zhipu GLM</value></data>
+  <data name="I18n_ServiceProviderZhipuGlmCoding" xml:space="preserve"><value>Zhipu GLM (Coding Plan)</value></data>
   <data name="I18n_CustomPromptInsert" xml:space="preserve"><value>Insert</value></data>
   <data name="I18n_CustomPromptInsertWithDiff" xml:space="preserve"><value>Insert &amp; Compare</value></data>
   <data name="I18n_CustomPromptComment" xml:space="preserve"><value>Comment</value></data>
@@ -2979,4 +2996,301 @@ Check your network connection or try again later. Error: {0}</value>
   <data name="I18n_TranslationBusinessInstruction" xml:space="preserve"><value>Use clear, professional, and natural business language. Preserve brand names, titles, dates, amounts, and requested actions accurately.</value></data>
   <data name="I18n_TranslationTechnicalScheme" xml:space="preserve"><value>Technical documentation</value></data>
   <data name="I18n_TranslationTechnicalInstruction" xml:space="preserve"><value>Keep APIs, code, variables, commands, paths, and product names unchanged. Use consistent terminology and established industry translations.</value></data>
+  <data name="I18n_ReviewLimitsTitle" xml:space="preserve">
+    <value>Long-document review and processing budgets</value>
+  </data>
+  <data name="I18n_ReviewLimitsDescription" xml:space="preserve">
+    <value>Limits below apply to each batch. The whole body or selection is processed in consecutive batches. Batches may shrink to reserve context for the complete prompt and output. Token counts are conservative estimates. Whole-document review covers the body, including body tables; headers, footers, footnotes, endnotes and text boxes are excluded.</value>
+  </data>
+  <data name="I18n_ReviewIssueBatchMaxParagraphs" xml:space="preserve">
+    <value>Issue review: paragraphs per batch</value>
+  </data>
+  <data name="I18n_ReviewIssueBatchMaxCharacters" xml:space="preserve">
+    <value>Issue review: body characters per batch</value>
+  </data>
+  <data name="I18n_ReviewSelectionBatchMaxCharacters" xml:space="preserve">
+    <value>Issue review: selection characters per batch</value>
+  </data>
+  <data name="I18n_ReviewSuggestionBatchMaxItems" xml:space="preserve">
+    <value>Suggestions: items per batch</value>
+  </data>
+  <data name="I18n_ReviewSuggestionBatchMaxCharacters" xml:space="preserve">
+    <value>Suggestions: characters per batch</value>
+  </data>
+  <data name="I18n_ReviewMaxConcurrentRequests" xml:space="preserve">
+    <value>Suggestions: concurrent requests</value>
+  </data>
+  <data name="I18n_ReviewOllamaOutputTokens" xml:space="preserve">
+    <value>Ollama review: output tokens per request</value>
+  </data>
+  <data name="I18n_OllamaTimeoutSeconds" xml:space="preserve">
+    <value>Ollama generation: request timeout (seconds)</value>
+  </data>
+  <data name="I18n_LinterContextTokens" xml:space="preserve">
+    <value>Silent review: Ollama context tokens</value>
+  </data>
+  <data name="I18n_LinterTimeoutSeconds" xml:space="preserve">
+    <value>Silent review: Ollama timeout (seconds)</value>
+  </data>
+  <data name="I18n_AgentTaskTimeoutMinutes" xml:space="preserve">
+    <value>Agent: task time limit (minutes)</value>
+  </data>
+  <data name="I18n_AgentTimeBudgetReached" xml:space="preserve">
+    <value>The {0}-minute task budget was reached. Work completed so far has been preserved.</value>
+  </data>
+  <data name="I18n_ReviewContextTooSmall" xml:space="preserve">
+    <value>The context or output budget cannot fit the review prompt. Increase the model context/output allowance or shorten the instruction and writing profile.</value>
+  </data>
+  <data name="I18n_ReviewOutputTruncated" xml:space="preserve">
+    <value>Model output reached its length limit; this batch is incomplete. Increase review output tokens or reduce batch characters and retry.</value>
+  </data>
+  <data name="I18n_ReviewMainStoryOnly" xml:space="preserve">
+    <value>Review currently covers the document body, including body tables. Headers, footers, footnotes, endnotes and text boxes are excluded. Copy text requiring review into the body to process it.</value>
+  </data>
+  <data name="I18n_ReviewSourceChanged" xml:space="preserve">
+    <value>The source or active document changed during review. Results refer to the original snapshot. Reload and review again before navigating or applying them.</value>
+  </data>
+  <data name="I18n_ReviewConfigurationChanged" xml:space="preserve">
+    <value>The model or context settings changed during review. Restart the review.</value>
+  </data>
+  <data name="I18n_ReviewPlan" xml:space="preserve">
+    <value>Body/selection review: {0} nonempty paragraphs, {1} characters, {2} batches; context {3} tokens, output allowance {4} tokens per request (estimated chunking). Headers, footers, footnotes, endnotes and text boxes are excluded.</value>
+  </data>
+  <data name="I18n_ReviewBatchProgress" xml:space="preserve">
+    <value>Batch {0}/{1} (paragraphs {2}–{3}); reviewed {4}/{5} characters.</value>
+  </data>
+  <data name="I18n_ReviewCoverage" xml:space="preserve">
+    <value>Completed {0} batches, failed {1}, unprocessed {2}; reviewed {3}/{4} characters, failed coverage {5}, unreviewed {6} characters.</value>
+  </data>
+  <data name="I18n_ReviewBatchFailed" xml:space="preserve">
+    <value>Review failed for paragraphs {0}–{1}: {2}</value>
+  </data>
+  <data name="I18n_ReviewMoreFailures" xml:space="preserve">
+    <value>There are {0} additional failed batches.</value>
+  </data>
+  <data name="I18n_ReviewInvalidOutput" xml:space="preserve">
+    <value>The model did not return a complete, valid, locatable review result. This batch is not counted as reviewed.</value>
+  </data>
+  <data name="I18n_ReviewReadingProgress" xml:space="preserve">
+    <value>Reading body/selection: {0}/{1} paragraphs.</value>
+  </data>
+  <data name="I18n_ReviewLoadedScope" xml:space="preserve">
+    <value>Loaded {0} review items, {1} characters. Long items will be split automatically. Body/selection only; headers, footers, footnotes, endnotes and text boxes are excluded.</value>
+  </data>
+  <data name="I18n_ReviewSuggestionProgress" xml:space="preserve">
+    <value>Generated {0}/{1} items.</value>
+  </data>
+  <data name="I18n_ReviewSuggestionSummary" xml:space="preserve">
+    <value>Generated {0} items; failed {1}; unfinished {2}.</value>
+  </data>
+  <data name="I18n_ReviewPartProgress" xml:space="preserve">
+    <value>Generating part {0}/{1}.</value>
+  </data>
+  <data name="I18n_ReviewNoValidIssues" xml:space="preserve">
+    <value>A complete review has not been confirmed. Check coverage and failure details.</value>
+  </data>
+  <data name="I18n_ReviewSessionHistory" xml:space="preserve">
+    <value>Review history</value>
+  </data>
+  <data name="I18n_ReviewSessionHistoryHint" xml:space="preserve">
+    <value>Choose a review saved on this computer. Restoring requires the same document with matching body text and paragraph structure. You can also export an older session.</value>
+  </data>
+  <data name="I18n_ReviewSessionCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="I18n_ReviewSessionUpdated" xml:space="preserve">
+    <value>Last saved</value>
+  </data>
+  <data name="I18n_ReviewSessionDocument" xml:space="preserve">
+    <value>Document</value>
+  </data>
+  <data name="I18n_ReviewSessionModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="I18n_ReviewSessionState" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="I18n_ReviewSessionProgress" xml:space="preserve">
+    <value>Done/total · failed</value>
+  </data>
+  <data name="I18n_ReviewSessionKind" xml:space="preserve">
+    <value>Kind and scope</value>
+  </data>
+  <data name="I18n_ReviewSessionId" xml:space="preserve">
+    <value>Session ID</value>
+  </data>
+  <data name="I18n_ReviewSessionError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="I18n_ReviewRestoreSession" xml:space="preserve">
+    <value>History / restore</value>
+  </data>
+  <data name="I18n_ReviewExportReport" xml:space="preserve">
+    <value>Export review report</value>
+  </data>
+  <data name="I18n_ReviewCreateCopy" xml:space="preserve">
+    <value>Review a copy</value>
+  </data>
+  <data name="I18n_ReviewCopyFileType" xml:space="preserve">
+    <value>Word document copy</value>
+  </data>
+  <data name="I18n_ReviewCopyCreated" xml:space="preserve">
+    <value>Saved and opened the review copy: {0}. Further edits apply to this copy.</value>
+  </data>
+  <data name="I18n_ReviewCopyUnsupported" xml:space="preserve">
+    <value>This format cannot be used for a review copy. Save it as a Word document first.</value>
+  </data>
+  <data name="I18n_ReviewCopyExtension" xml:space="preserve">
+    <value>Use the file extension matching the copy format.</value>
+  </data>
+  <data name="I18n_ReviewCopySamePath" xml:space="preserve">
+    <value>Choose a copy path different from the original document.</value>
+  </data>
+  <data name="I18n_ReviewCopyExists" xml:space="preserve">
+    <value>A file already exists at this path. Choose a new name for the review copy.</value>
+  </data>
+  <data name="I18n_ReviewCopySaveFailed" xml:space="preserve">
+    <value>Edits were applied to the copy, but saving failed. Please save it manually: {0}</value>
+  </data>
+  <data name="I18n_ReviewCopyOriginal" xml:space="preserve">
+    <value>Original document</value>
+  </data>
+  <data name="I18n_ReviewCopyWorking" xml:space="preserve">
+    <value>Review copy</value>
+  </data>
+  <data name="I18n_ReviewRetryPending" xml:space="preserve">
+    <value>Continue / retry failed</value>
+  </data>
+  <data name="I18n_ReviewSessionAutosaveHint" xml:space="preserve">
+    <value>Results are saved locally. Restore or export by date and model. Continuing skips completed work.</value>
+  </data>
+  <data name="I18n_ReviewSessionSaved" xml:space="preserve">
+    <value>Review saved locally: {0}, model {1}.</value>
+  </data>
+  <data name="I18n_ReviewSessionSaveDocumentFirst" xml:space="preserve">
+    <value>This document has not been saved. To restore after closing Word, save the document and reload the review scope first.</value>
+  </data>
+  <data name="I18n_ReviewSessionSaveFailed" xml:space="preserve">
+    <value>The review queue stopped because saving the session failed: {0}</value>
+  </data>
+  <data name="I18n_ReviewSessionSourceMismatch" xml:space="preserve">
+    <value>Cannot restore: open the saved document or copy for this session with unchanged body text and paragraph structure.</value>
+  </data>
+  <data name="I18n_ReviewSessionConfigurationMismatch" xml:space="preserve">
+    <value>The model, instructions or processing settings differ from this session. Restore its settings to continue, or start a new review.</value>
+  </data>
+  <data name="I18n_ReviewSessionNotLoaded" xml:space="preserve">
+    <value>Load a review scope or restore a saved session first.</value>
+  </data>
+  <data name="I18n_ReviewSessionNone" xml:space="preserve">
+    <value>No saved sessions of this kind were found for the current document.</value>
+  </data>
+  <data name="I18n_ReviewSessionRestored" xml:space="preserve">
+    <value>Restored the review from {0}, model {1}. View the results or continue unfinished work.</value>
+  </data>
+  <data name="I18n_ReviewSessionStateReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="I18n_ReviewSessionStateRunning" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="I18n_ReviewSessionStateCompleted" xml:space="preserve">
+    <value>Generated</value>
+  </data>
+  <data name="I18n_ReviewSessionStatePartial" xml:space="preserve">
+    <value>Partial</value>
+  </data>
+  <data name="I18n_ReviewSessionStateCancelled" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="I18n_ReviewSessionStateFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="I18n_ReviewReportFilter" xml:space="preserve">
+    <value>Markdown report (*.md)|*.md|JSON report (*.json)|*.json</value>
+  </data>
+  <data name="I18n_ReviewReportExported" xml:space="preserve">
+    <value>Saved the review report: {0}</value>
+  </data>
+  <data name="I18n_ReviewReportTitle" xml:space="preserve">
+    <value>WordOllama review report</value>
+  </data>
+  <data name="I18n_ReviewReportField" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="I18n_ReviewReportValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="I18n_ReviewReportCoverage" xml:space="preserve">
+    <value>Coverage</value>
+  </data>
+  <data name="I18n_ReviewReportSettings" xml:space="preserve">
+    <value>Model and processing settings</value>
+  </data>
+  <data name="I18n_ReviewReportInstruction" xml:space="preserve">
+    <value>Review instructions</value>
+  </data>
+  <data name="I18n_ReviewReportProfile" xml:space="preserve">
+    <value>Writing profile</value>
+  </data>
+  <data name="I18n_ReviewReportItems" xml:space="preserve">
+    <value>All work items and results</value>
+  </data>
+  <data name="I18n_ReviewReportAttempts" xml:space="preserve">
+    <value>Attempts</value>
+  </data>
+  <data name="I18n_ReviewReportCharacters" xml:space="preserve">
+    <value>Source characters</value>
+  </data>
+  <data name="I18n_ReviewReportAction" xml:space="preserve">
+    <value>User action</value>
+  </data>
+  <data name="I18n_ReviewReportActionTime" xml:space="preserve">
+    <value>Action time</value>
+  </data>
+  <data name="I18n_ReviewReportOriginal" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="I18n_ReviewReportSuggestion" xml:space="preserve">
+    <value>Suggestion</value>
+  </data>
+  <data name="I18n_ReviewReportFragment" xml:space="preserve">
+    <value>Fragment start / characters</value>
+  </data>
+  <data name="I18n_ReviewReportGeneratedSuggestion" xml:space="preserve">
+    <value>Original model suggestion</value>
+  </data>
+  <data name="I18n_ReviewSessionRunTime" xml:space="preserve">
+    <value>Review time</value>
+  </data>
+  <data name="I18n_ReviewSessionStarted" xml:space="preserve">
+    <value>Processing started</value>
+  </data>
+  <data name="I18n_ReviewSessionFinished" xml:space="preserve">
+    <value>Processing ended</value>
+  </data>
+  <data name="I18n_ReviewStoryBody" xml:space="preserve"><value>Body</value></data>
+  <data name="I18n_ReviewStoryHeader" xml:space="preserve"><value>Header</value></data>
+  <data name="I18n_ReviewStoryFooter" xml:space="preserve"><value>Footer</value></data>
+  <data name="I18n_ReviewStoryFootnote" xml:space="preserve"><value>Footnote</value></data>
+  <data name="I18n_ReviewStoryEndnote" xml:space="preserve"><value>Endnote</value></data>
+  <data name="I18n_ReviewAllStories" xml:space="preserve"><value>Coverage: body and tables, independent section headers and footers, footnotes and endnotes, text boxes and text in grouped shapes. Linked headers or text boxes are reviewed once. Existing comments and revisions are retained. Non-Word text in images and charts is excluded.</value></data>
+  <data name="I18n_ReviewAgentDefaultInstruction" xml:space="preserve"><value>Correct clear typos, spelling, grammar, and punctuation. Preserve meaning, voice, citations, numbers, paragraph structure, Word fields and reference markers. Make only necessary edits.</value></data>
+  <data name="I18n_ReviewAgentIncomplete" xml:space="preserve"><value>Failed or unfinished batches remain. Resume the review before applying all revisions.</value></data>
+  <data name="I18n_ReviewReviewerName" xml:space="preserve"><value>AI reviewer name</value></data>
+  <data name="I18n_ReviewReviewerIdentityMode" xml:space="preserve"><value>Reviewer identity mode</value></data>
+  <data name="I18n_ReviewReviewerFixed" xml:space="preserve"><value>Fixed name</value></data>
+  <data name="I18n_ReviewReviewerDate" xml:space="preserve"><value>Processing date</value></data>
+  <data name="I18n_ReviewReviewerSession" xml:space="preserve"><value>Review session</value></data>
+  <data name="I18n_ReviewReviewerDescription" xml:space="preserve"><value>The default base name is AI审批, with a date suffix. Session mode adds a date and session ID. Used only while AI writes; the previous Word user name and initials are restored afterward.</value></data>
+  <data name="I18n_ReviewReviewerInvalid" xml:space="preserve"><value>Reviewer names must not contain control characters or exceed 128 characters.</value></data>
+  <data name="I18n_ReviewReviewerIdentity" xml:space="preserve"><value>Revision author</value></data>
+  <data name="I18n_ReviewReportArea" xml:space="preserve"><value>Document area</value></data>
+  <data name="I18n_ReviewProtectedField" xml:space="preserve"><value>This suggestion changes a Word field, note reference or structural marker. Writing was stopped; inspect this suggestion manually.</value></data>
+  <data name="I18n_AgentToolDesc_review_document" xml:space="preserve"><value>Review the entire document in context-sized batches, including body, tables, headers/footers, notes and text boxes; checkpoint progress. Create a native review copy by default. kind=suggestions generates precise corrections; kind=issues generates findings. Generation does not apply revisions.</value></data>
+  <data name="I18n_AgentToolDesc_resume_review" xml:space="preserve"><value>Resume a session_id, retrying only unfinished or failed work and retaining completed results. Its document or working copy must be open.</value></data>
+  <data name="I18n_AgentToolDesc_list_review_sessions" xml:space="preserve"><value>List local review sessions for the current document and its review copies, with IDs, progress, failure counts and document/copy paths.</value></data>
+  <data name="I18n_AgentToolDesc_apply_review_revisions" xml:space="preserve"><value>Apply completed corrections as precise tracked Word revisions in their original text areas, using the configured AI reviewer. Requires Agent Tracked Changes mode. Resume unfinished batches first.</value></data>
+  <data name="I18n_AgentToolDesc_save_review_document" xml:space="preserve"><value>Save the reviewed document and session; export full Markdown and JSON review reports beside the document by default.</value></data>
+  <data name="I18n_ReviewSelectedArea" xml:space="preserve"><value>Coverage: the selected document area; only text inside the selection is reviewed.</value></data>
 </root>

@@ -2317,6 +2317,21 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_DefaultOutputMode" xml:space="preserve">
     <value>默认输出方式</value>
   </data>
+  <data name="I18n_InterfaceLanguage" xml:space="preserve">
+    <value>界面语言</value>
+  </data>
+  <data name="I18n_InterfaceLanguageSystem" xml:space="preserve">
+    <value>跟随系统</value>
+  </data>
+  <data name="I18n_InterfaceLanguageChinese" xml:space="preserve">
+    <value>中文</value>
+  </data>
+  <data name="I18n_InterfaceLanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="I18n_InterfaceLanguageRestart" xml:space="preserve">
+    <value>更改后将在下次启动 Word 时生效。</value>
+  </data>
   <data name="I18n_OutputModeAuto" xml:space="preserve">
     <value>自动（短文本插入，长文本进入审阅工作台）</value>
   </data>
@@ -2394,6 +2409,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_TestConnection" xml:space="preserve"><value>测试连接</value></data>
   <data name="I18n_TestingConnection" xml:space="preserve"><value>正在测试连接...</value></data>
   <data name="I18n_ConnectionTestMissingSettings" xml:space="preserve"><value>请先填写服务地址和模型名称。</value></data>
+  <data name="I18n_EndpointRequired" xml:space="preserve"><value>请先填写服务地址。</value></data>
   <data name="I18n_ConnectionTestSuccess" xml:space="preserve"><value>连接成功，测试时间：{0}</value></data>
   <data name="I18n_ConnectionTestFailed" xml:space="preserve"><value>连接失败：{0}</value></data>
   <data name="I18n_ConnectionTestUnknownError" xml:space="preserve"><value>未知错误</value></data>
@@ -2503,6 +2519,7 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_ServiceProviderQwen" xml:space="preserve"><value>通义千问</value></data>
   <data name="I18n_ServiceProviderDoubao" xml:space="preserve"><value>豆包</value></data>
   <data name="I18n_ServiceProviderZhipuGlm" xml:space="preserve"><value>智谱 GLM</value></data>
+  <data name="I18n_ServiceProviderZhipuGlmCoding" xml:space="preserve"><value>智谱 GLM（Coding Plan）</value></data>
   <data name="I18n_CustomPromptInsert" xml:space="preserve"><value>插入</value></data>
   <data name="I18n_CustomPromptInsertWithDiff" xml:space="preserve"><value>插入并对比</value></data>
   <data name="I18n_CustomPromptComment" xml:space="preserve"><value>批注</value></data>
@@ -2988,4 +3005,301 @@ ReAct 自主 Agent 模式</value>
   <data name="I18n_TranslationBusinessInstruction" xml:space="preserve"><value>使用清晰、专业而自然的商务语气；保持品牌名、职位、日期、金额和行动要求准确。</value></data>
   <data name="I18n_TranslationTechnicalScheme" xml:space="preserve"><value>技术文档</value></data>
   <data name="I18n_TranslationTechnicalInstruction" xml:space="preserve"><value>保持 API、代码、变量、命令、路径和产品名称不变；统一技术术语，优先采用行业通行译法。</value></data>
+  <data name="I18n_ReviewLimitsTitle" xml:space="preserve">
+    <value>长文档审校与处理预算</value>
+  </data>
+  <data name="I18n_ReviewLimitsDescription" xml:space="preserve">
+    <value>以下数量均为每批上限，全文和选区会连续处理到末尾。实际批次还会按上下文容量、完整提示词和输出空间缩小；token 数为保守估算。全文范围为正文（含正文表格），页眉页脚、脚注、尾注和文本框不包含在内。</value>
+  </data>
+  <data name="I18n_ReviewIssueBatchMaxParagraphs" xml:space="preserve">
+    <value>问题审查：每批最多段落</value>
+  </data>
+  <data name="I18n_ReviewIssueBatchMaxCharacters" xml:space="preserve">
+    <value>问题审查：正文每批字符上限</value>
+  </data>
+  <data name="I18n_ReviewSelectionBatchMaxCharacters" xml:space="preserve">
+    <value>问题审查：选区每批字符上限</value>
+  </data>
+  <data name="I18n_ReviewSuggestionBatchMaxItems" xml:space="preserve">
+    <value>审阅建议：每批最多项目</value>
+  </data>
+  <data name="I18n_ReviewSuggestionBatchMaxCharacters" xml:space="preserve">
+    <value>审阅建议：每批字符上限</value>
+  </data>
+  <data name="I18n_ReviewMaxConcurrentRequests" xml:space="preserve">
+    <value>审阅建议：并发请求数</value>
+  </data>
+  <data name="I18n_ReviewOllamaOutputTokens" xml:space="preserve">
+    <value>Ollama 审校：每次输出 token 上限</value>
+  </data>
+  <data name="I18n_OllamaTimeoutSeconds" xml:space="preserve">
+    <value>Ollama 生成：每次超时（秒）</value>
+  </data>
+  <data name="I18n_LinterContextTokens" xml:space="preserve">
+    <value>静默审查：Ollama 上下文 token</value>
+  </data>
+  <data name="I18n_LinterTimeoutSeconds" xml:space="preserve">
+    <value>静默审查：Ollama 超时（秒）</value>
+  </data>
+  <data name="I18n_AgentTaskTimeoutMinutes" xml:space="preserve">
+    <value>Agent：任务时间上限（分钟）</value>
+  </data>
+  <data name="I18n_AgentTimeBudgetReached" xml:space="preserve">
+    <value>已达到 {0} 分钟任务预算，当前完成结果已保留。</value>
+  </data>
+  <data name="I18n_ReviewContextTooSmall" xml:space="preserve">
+    <value>上下文或输出预算不足以容纳审校提示词。请增大模型上下文/输出上限，或缩短审阅指令和写作资料。</value>
+  </data>
+  <data name="I18n_ReviewOutputTruncated" xml:space="preserve">
+    <value>模型输出达到长度上限，本批次未完成。请调高审校输出上限或缩小每批字符数后重试。</value>
+  </data>
+  <data name="I18n_ReviewMainStoryOnly" xml:space="preserve">
+    <value>当前审校范围为文档正文（含正文表格）。页眉页脚、脚注、尾注和文本框未纳入；请将需要审校的内容复制到正文后处理。</value>
+  </data>
+  <data name="I18n_ReviewSourceChanged" xml:space="preserve">
+    <value>审校期间文档或活动文档已变化。结果按原快照生成，请重新载入后审校；不继续定位或应用到变化后的内容。</value>
+  </data>
+  <data name="I18n_ReviewConfigurationChanged" xml:space="preserve">
+    <value>审校期间模型或上下文配置已变化，请重新开始审校。</value>
+  </data>
+  <data name="I18n_ReviewPlan" xml:space="preserve">
+    <value>正文/选区审查：{0} 个非空段落，{1} 字符，共 {2} 批；上下文 {3} token，每次输出预留 {4} token（估算分块）。页眉页脚、脚注、尾注和文本框未纳入。</value>
+  </data>
+  <data name="I18n_ReviewBatchProgress" xml:space="preserve">
+    <value>第 {0}/{1} 批（段落 {2}–{3}）；已审 {4}/{5} 字符。</value>
+  </data>
+  <data name="I18n_ReviewCoverage" xml:space="preserve">
+    <value>完成 {0} 批，失败 {1} 批，未处理 {2} 批；已审 {3}/{4} 字符，失败范围 {5} 字符，未审 {6} 字符。</value>
+  </data>
+  <data name="I18n_ReviewBatchFailed" xml:space="preserve">
+    <value>段落 {0}–{1} 审查失败：{2}</value>
+  </data>
+  <data name="I18n_ReviewMoreFailures" xml:space="preserve">
+    <value>另有 {0} 个失败批次。</value>
+  </data>
+  <data name="I18n_ReviewInvalidOutput" xml:space="preserve">
+    <value>模型未返回完整、有效且可定位的审校结果，本批次不计为已审。</value>
+  </data>
+  <data name="I18n_ReviewNoValidIssues" xml:space="preserve">
+    <value>尚未获得可确认的完整审校结果，请查看处理覆盖和失败提示。</value>
+  </data>
+  <data name="I18n_ReviewReadingProgress" xml:space="preserve">
+    <value>正在读取正文/选区：{0}/{1} 段。</value>
+  </data>
+  <data name="I18n_ReviewLoadedScope" xml:space="preserve">
+    <value>已载入 {0} 个审阅项目，共 {1} 字符；长项目会自动分块。仅包含正文/选区，页眉页脚、脚注、尾注和文本框未纳入。</value>
+  </data>
+  <data name="I18n_ReviewSuggestionProgress" xml:space="preserve">
+    <value>已生成 {0}/{1} 个项目。</value>
+  </data>
+  <data name="I18n_ReviewSuggestionSummary" xml:space="preserve">
+    <value>生成完成 {0} 个项目，失败 {1} 个，未完成 {2} 个。</value>
+  </data>
+  <data name="I18n_ReviewPartProgress" xml:space="preserve">
+    <value>生成第 {0}/{1} 个分块。</value>
+  </data>
+  <data name="I18n_ReviewSessionHistory" xml:space="preserve">
+    <value>审校历史</value>
+  </data>
+  <data name="I18n_ReviewSessionHistoryHint" xml:space="preserve">
+    <value>选择本机保存的审校会话。恢复需要打开同一文档，且正文及段落结构与会话一致；旧会话也可直接导出报告。</value>
+  </data>
+  <data name="I18n_ReviewSessionCreated" xml:space="preserve">
+    <value>创建时间</value>
+  </data>
+  <data name="I18n_ReviewSessionUpdated" xml:space="preserve">
+    <value>最后保存时间</value>
+  </data>
+  <data name="I18n_ReviewSessionDocument" xml:space="preserve">
+    <value>文档</value>
+  </data>
+  <data name="I18n_ReviewSessionModel" xml:space="preserve">
+    <value>模型</value>
+  </data>
+  <data name="I18n_ReviewSessionState" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="I18n_ReviewSessionProgress" xml:space="preserve">
+    <value>完成/总数 · 失败</value>
+  </data>
+  <data name="I18n_ReviewSessionKind" xml:space="preserve">
+    <value>类型与范围</value>
+  </data>
+  <data name="I18n_ReviewSessionId" xml:space="preserve">
+    <value>会话编号</value>
+  </data>
+  <data name="I18n_ReviewSessionError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="I18n_ReviewRestoreSession" xml:space="preserve">
+    <value>审校历史 / 恢复</value>
+  </data>
+  <data name="I18n_ReviewExportReport" xml:space="preserve">
+    <value>导出审校报告</value>
+  </data>
+  <data name="I18n_ReviewCreateCopy" xml:space="preserve">
+    <value>在副本上审校</value>
+  </data>
+  <data name="I18n_ReviewCopyFileType" xml:space="preserve">
+    <value>Word 文档副本</value>
+  </data>
+  <data name="I18n_ReviewCopyCreated" xml:space="preserve">
+    <value>审校副本已保存并打开：{0}。后续修改写入此副本。</value>
+  </data>
+  <data name="I18n_ReviewCopyUnsupported" xml:space="preserve">
+    <value>当前文档格式不支持直接创建审校副本，请先另存为 Word 文档。</value>
+  </data>
+  <data name="I18n_ReviewCopyExtension" xml:space="preserve">
+    <value>请使用与副本格式匹配的文件扩展名。</value>
+  </data>
+  <data name="I18n_ReviewCopySamePath" xml:space="preserve">
+    <value>请选择与原文档不同的副本路径。</value>
+  </data>
+  <data name="I18n_ReviewCopyExists" xml:space="preserve">
+    <value>此路径已有文件，请为审校副本选择一个新文件名。</value>
+  </data>
+  <data name="I18n_ReviewCopySaveFailed" xml:space="preserve">
+    <value>修改已写入当前副本，但自动保存失败，请手动保存：{0}</value>
+  </data>
+  <data name="I18n_ReviewCopyOriginal" xml:space="preserve">
+    <value>原文档路径</value>
+  </data>
+  <data name="I18n_ReviewCopyWorking" xml:space="preserve">
+    <value>审校副本路径</value>
+  </data>
+  <data name="I18n_ReviewRetryPending" xml:space="preserve">
+    <value>继续未完成 / 重试失败</value>
+  </data>
+  <data name="I18n_ReviewSessionAutosaveHint" xml:space="preserve">
+    <value>结果自动保存于本机，可按日期和模型恢复或导出。继续时跳过已完成部分。</value>
+  </data>
+  <data name="I18n_ReviewSessionSaved" xml:space="preserve">
+    <value>审校会话已保存于本机：{0}，模型 {1}。</value>
+  </data>
+  <data name="I18n_ReviewSessionSaveDocumentFirst" xml:space="preserve">
+    <value>当前文档尚未保存。若要关闭 Word 后恢复，请先保存文档，再重新载入审校范围。</value>
+  </data>
+  <data name="I18n_ReviewSessionSaveFailed" xml:space="preserve">
+    <value>保存审校会话失败，队列已停止：{0}</value>
+  </data>
+  <data name="I18n_ReviewSessionSourceMismatch" xml:space="preserve">
+    <value>无法恢复：请打开会话对应的已保存文档或副本，并确认正文及段落结构未发生变化。</value>
+  </data>
+  <data name="I18n_ReviewSessionConfigurationMismatch" xml:space="preserve">
+    <value>模型、审校指令或处理配置与会话不一致。请恢复原配置后继续，或启动一次新的审校。</value>
+  </data>
+  <data name="I18n_ReviewSessionNotLoaded" xml:space="preserve">
+    <value>请先载入审校范围或恢复一个审校会话。</value>
+  </data>
+  <data name="I18n_ReviewSessionNone" xml:space="preserve">
+    <value>本机没有当前文档的此类审校会话。</value>
+  </data>
+  <data name="I18n_ReviewSessionRestored" xml:space="preserve">
+    <value>已恢复 {0} 的审校会话，模型 {1}。可查看结果或继续未完成部分。</value>
+  </data>
+  <data name="I18n_ReviewSessionStateReady" xml:space="preserve">
+    <value>待开始</value>
+  </data>
+  <data name="I18n_ReviewSessionStateRunning" xml:space="preserve">
+    <value>处理中</value>
+  </data>
+  <data name="I18n_ReviewSessionStateCompleted" xml:space="preserve">
+    <value>生成完成</value>
+  </data>
+  <data name="I18n_ReviewSessionStatePartial" xml:space="preserve">
+    <value>部分完成</value>
+  </data>
+  <data name="I18n_ReviewSessionStateCancelled" xml:space="preserve">
+    <value>已停止</value>
+  </data>
+  <data name="I18n_ReviewSessionStateFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="I18n_ReviewReportFilter" xml:space="preserve">
+    <value>Markdown 报告 (*.md)|*.md|JSON 报告 (*.json)|*.json</value>
+  </data>
+  <data name="I18n_ReviewReportExported" xml:space="preserve">
+    <value>审校报告已保存：{0}</value>
+  </data>
+  <data name="I18n_ReviewReportTitle" xml:space="preserve">
+    <value>WordOllama 审校报告</value>
+  </data>
+  <data name="I18n_ReviewReportField" xml:space="preserve">
+    <value>项目</value>
+  </data>
+  <data name="I18n_ReviewReportValue" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="I18n_ReviewReportCoverage" xml:space="preserve">
+    <value>处理范围</value>
+  </data>
+  <data name="I18n_ReviewReportSettings" xml:space="preserve">
+    <value>模型与处理配置</value>
+  </data>
+  <data name="I18n_ReviewReportInstruction" xml:space="preserve">
+    <value>审校指令</value>
+  </data>
+  <data name="I18n_ReviewReportProfile" xml:space="preserve">
+    <value>写作要求</value>
+  </data>
+  <data name="I18n_ReviewReportItems" xml:space="preserve">
+    <value>全部批次及结果</value>
+  </data>
+  <data name="I18n_ReviewReportAttempts" xml:space="preserve">
+    <value>处理次数</value>
+  </data>
+  <data name="I18n_ReviewReportCharacters" xml:space="preserve">
+    <value>原文字符数</value>
+  </data>
+  <data name="I18n_ReviewReportAction" xml:space="preserve">
+    <value>用户操作</value>
+  </data>
+  <data name="I18n_ReviewReportActionTime" xml:space="preserve">
+    <value>操作时间</value>
+  </data>
+  <data name="I18n_ReviewReportOriginal" xml:space="preserve">
+    <value>原文</value>
+  </data>
+  <data name="I18n_ReviewReportSuggestion" xml:space="preserve">
+    <value>审阅建议</value>
+  </data>
+  <data name="I18n_ReviewReportFragment" xml:space="preserve">
+    <value>分片起点 / 字符数</value>
+  </data>
+  <data name="I18n_ReviewReportGeneratedSuggestion" xml:space="preserve">
+    <value>模型生成的原始建议</value>
+  </data>
+  <data name="I18n_ReviewSessionRunTime" xml:space="preserve">
+    <value>审校时间</value>
+  </data>
+  <data name="I18n_ReviewSessionStarted" xml:space="preserve">
+    <value>开始处理时间</value>
+  </data>
+  <data name="I18n_ReviewSessionFinished" xml:space="preserve">
+    <value>本次处理结束时间</value>
+  </data>
+  <data name="I18n_ReviewStoryBody" xml:space="preserve"><value>正文</value></data>
+  <data name="I18n_ReviewStoryHeader" xml:space="preserve"><value>页眉</value></data>
+  <data name="I18n_ReviewStoryFooter" xml:space="preserve"><value>页脚</value></data>
+  <data name="I18n_ReviewStoryFootnote" xml:space="preserve"><value>脚注</value></data>
+  <data name="I18n_ReviewStoryEndnote" xml:space="preserve"><value>尾注</value></data>
+  <data name="I18n_ReviewAllStories" xml:space="preserve"><value>范围：正文及表格、各节独立页眉页脚、脚注尾注、文本框及组合图形中的文字；链接的页眉或文本框仅审查一次。保留既有批注与修订。图像及图表中的非 Word 文本不参与审校。</value></data>
+  <data name="I18n_ReviewAgentDefaultInstruction" xml:space="preserve"><value>修正明确的错字、拼写、语法和标点问题，保持原意、措辞风格、引用、数字和段落结构；只修改必要的文字，保留 Word 域及引用标记。</value></data>
+  <data name="I18n_ReviewAgentIncomplete" xml:space="preserve"><value>仍有失败或未完成的批次，请先恢复审校再应用全部修订。</value></data>
+  <data name="I18n_ReviewReviewerName" xml:space="preserve"><value>AI 修订者名称</value></data>
+  <data name="I18n_ReviewReviewerIdentityMode" xml:space="preserve"><value>修订者区分方式</value></data>
+  <data name="I18n_ReviewReviewerFixed" xml:space="preserve"><value>固定名称</value></data>
+  <data name="I18n_ReviewReviewerDate" xml:space="preserve"><value>按处理日期</value></data>
+  <data name="I18n_ReviewReviewerSession" xml:space="preserve"><value>按审校会话</value></data>
+  <data name="I18n_ReviewReviewerDescription" xml:space="preserve"><value>默认名称为“AI审批”，按日期添加后缀。按会话添加日期及会话标识。仅在 AI 写入期间使用，写入后恢复原有 Word 用户名称和缩写。</value></data>
+  <data name="I18n_ReviewReviewerInvalid" xml:space="preserve"><value>修订者名称不能包含控制字符，长度不能超过 128 个字符。</value></data>
+  <data name="I18n_ReviewReviewerIdentity" xml:space="preserve"><value>实际修订者</value></data>
+  <data name="I18n_ReviewReportArea" xml:space="preserve"><value>文档区域</value></data>
+  <data name="I18n_ReviewProtectedField" xml:space="preserve"><value>建议会改动 Word 域、脚注引用或结构标记，已停止写入；请人工检查该条建议。</value></data>
+  <data name="I18n_AgentToolDesc_review_document" xml:space="preserve"><value>分批审校整个文档，覆盖正文、表格、页眉页脚、脚注尾注及文本框，自动保存进度。默认创建保留格式及既有修订的审校副本。kind=suggestions 生成精确修改建议，kind=issues 生成问题列表；生成后尚未写入修订。</value></data>
+  <data name="I18n_AgentToolDesc_resume_review" xml:space="preserve"><value>按 session_id 恢复审校，只重试未完成或失败的部分，保留已经成功的结果。需要打开该会话记录的文档或审校副本。</value></data>
+  <data name="I18n_AgentToolDesc_list_review_sessions" xml:space="preserve"><value>列出当前文档及其审校副本的本地会话，返回会话 ID、进度、失败数、文档和副本路径。</value></data>
+  <data name="I18n_AgentToolDesc_apply_review_revisions" xml:space="preserve"><value>把已完成的审校建议以精确 Word 修订写回各自区域，使用设置中的 AI 修订者。仅在 Agent 修订模式下允许；仍有未完成批次时先恢复审校。</value></data>
+  <data name="I18n_AgentToolDesc_save_review_document" xml:space="preserve"><value>保存当前审校文档及会话；默认在文档旁导出完整 Markdown 和 JSON 审校报告。</value></data>
+  <data name="I18n_ReviewSelectedArea" xml:space="preserve"><value>范围：本次选定的文档区域，仅处理选区内的文字。</value></data>
 </root>

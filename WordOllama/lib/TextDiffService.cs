@@ -11,11 +11,26 @@ namespace WordOllama.lib
         public string InsertText { get; set; }
     }
 
+    public sealed class ProtectedTextSpan
+    {
+        public int Start { get; set; }
+        public int End { get; set; }
+    }
+
     /// <summary>
     /// Produces minimal character edits that can be applied from the end of a Word range.
     /// </summary>
     public static class TextDiffService
     {
+        public static void ValidateProtectedSpans(IEnumerable<TextEdit> edits, IEnumerable<ProtectedTextSpan> spans)
+        {
+            foreach (var edit in edits)
+                foreach (var span in spans)
+                    if (edit.DeleteLength > 0 && edit.OriginalStart < span.End && edit.OriginalStart + edit.DeleteLength > span.Start
+                        || edit.DeleteLength == 0 && edit.OriginalStart > span.Start && edit.OriginalStart < span.End)
+                        throw new InvalidOperationException(Loc.T("I18n_ReviewProtectedField"));
+        }
+
         public static IReadOnlyList<TextEdit> CreateEdits(string originalText, string revisedText)
         {
             originalText = originalText ?? "";

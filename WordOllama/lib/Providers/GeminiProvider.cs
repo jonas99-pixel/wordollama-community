@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -215,7 +215,7 @@ namespace WordOllama.lib.Providers
         private async Task<string> SendGenerateContentAsync(JArray parts, JArray contents, double? temperature, JArray tools, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(_apiKey))
-                return "API Key 为空，请输入有效的 API Key";
+                return ProviderRequestPolicy.NormalizeError("Gemini", null, "API Key 为空，请输入有效的 API Key");
 
             string url = GetGenerateUrl();
 
@@ -285,6 +285,8 @@ namespace WordOllama.lib.Providers
                         return HandleError(response, responseBody);
 
                     var result = JObject.Parse(responseBody);
+                    if (ProviderRequestPolicy.IsOutputTruncated(result))
+                        return ProviderRequestPolicy.NormalizeError("Gemini", null, Loc.T("I18n_ReviewOutputTruncated"));
 
                     // Extract thinking from candidates
                     var candidates = result["candidates"] as JArray;

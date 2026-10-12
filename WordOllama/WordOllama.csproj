@@ -18,7 +18,7 @@
       wrapped in this namespace at runtime.
   -->
   <PropertyGroup>
-    <ApplicationVersion>2.3.0.0</ApplicationVersion>
+    <ApplicationVersion>2.5.0.0</ApplicationVersion>
     <ProjectTypeGuids>{BAA0C2D2-18E2-41B9-852F-F413020CAA33};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -251,6 +251,17 @@
     <Compile Include="lib\MarkdownToWord.cs" />
     <Compile Include="lib\PromptTemplateService.cs" />
     <Compile Include="lib\TextDiffService.cs" />
+    <Compile Include="lib\ReviewChunkPlanner.cs" />
+    <Compile Include="lib\ReviewSessionStore.cs" />
+    <Compile Include="lib\ReviewReportExporter.cs" />
+    <Compile Include="lib\ReviewCopyService.cs" />
+    <Compile Include="lib\ReviewDocumentScope.cs" />
+    <Compile Include="lib\ReviewRevisionIdentity.cs" />
+    <Compile Include="lib\Tools\ReviewWorkflowTool.cs" />
+    <Compile Include="NewUI\AgentTaskPaneUI.AgentReview.cs" />
+    <Compile Include="NewUI\AgentTaskPaneUI.ReviewSessions.cs" />
+    <Compile Include="NewUI\ReviewSessionWindow.xaml.cs"><DependentUpon>ReviewSessionWindow.xaml</DependentUpon></Compile>
+    <Page Include="NewUI\ReviewSessionWindow.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
     <Compile Include="lib\SilentLinter.cs" />
     <Compile Include="lib\Tools\DocumentTools.cs" />
     <Compile Include="lib\Tools\FormattingTools.cs" />

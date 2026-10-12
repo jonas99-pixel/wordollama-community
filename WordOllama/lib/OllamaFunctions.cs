@@ -1,4 +1,4 @@
-using WordOllama.lib;
+﻿using WordOllama.lib;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System;
@@ -19,7 +19,7 @@ namespace WordOllama.lib
 {
     public static class OllamaFunctions
     {
-        private static readonly int _spanMinutes = 10;
+        private static TimeSpan GenerateTimeout => TimeSpan.FromSeconds(Math.Max(30, Math.Min(86400, AppConfig.Instance.OllamaTimeoutSeconds)));
         private static readonly string thinkPattern = @"<think>([\s\S]*?)</think>";
 
         /// <summary>格式化 API 错误响应，统一返回 [API 错误] 前缀供 Agent 识别。</summary>
@@ -47,11 +47,12 @@ namespace WordOllama.lib
         public static async Task<string> OllamaGenerateAsync(
             string systemPrompt,
             string image,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            int? maxOutputTokens = null)
         {
             string ollamaEndPoint = AppConfig.Instance.OllamaEndPoint + "/api/generate";
 
-            using (HttpClient client = ProviderRequestPolicy.CreateClient(TimeSpan.FromMinutes(_spanMinutes)))
+            using (HttpClient client = ProviderRequestPolicy.CreateClient(GenerateTimeout))
             {
                 var requestData = new Dictionary<string, object>
         {
@@ -65,6 +66,9 @@ namespace WordOllama.lib
                 }
             }
         };
+
+                if (maxOutputTokens.HasValue)
+                    ((Dictionary<string, object>)requestData["options"])["num_predict"] = maxOutputTokens.Value;
 
                 // 图片支持：优先用 OpenAI 兼容格式（Ollama 0.3+），否则用旧版 images 字段
                 if (!string.IsNullOrEmpty(image))
@@ -92,6 +96,8 @@ namespace WordOllama.lib
                     {
                         string jsonResponse = await response.Content.ReadAsStringAsync();
                         JObject responseObject = JObject.Parse(jsonResponse);
+                        if (maxOutputTokens.HasValue && ProviderRequestPolicy.IsOutputTruncated(responseObject))
+                            throw new InvalidOperationException(Loc.T("I18n_ReviewOutputTruncated"));
                         string responseText = (string)responseObject["response"];
 
 
@@ -166,7 +172,7 @@ namespace WordOllama.lib
         {
             string ollamaEndPoint = AppConfig.Instance.OllamaEndPoint + "/api/generate";
 
-            using (HttpClient client = ProviderRequestPolicy.CreateClient(TimeSpan.FromMinutes(_spanMinutes)))
+            using (HttpClient client = ProviderRequestPolicy.CreateClient(GenerateTimeout))
             {
                 var postData = new StringContent(
                     JsonConvert.SerializeObject(new

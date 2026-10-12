@@ -25,6 +25,20 @@ WordOllama 是面向 Microsoft Word 以及兼容 WPS Word 宿主的开源 AI 加
 
 项目适合希望继续在 Word 中工作，同时使用本地模型或兼容 API 的用户。
 
+## 2.5.0 — 长文档审校
+
+全文审查改为连续分批处理，支持可配置上限、进度和覆盖范围报告。内置 Agent 可以创建原格式审校副本、生成建议或问题清单、恢复本机未完成的会话、以精确修订应用修改，并保存副本与报告。审查范围包括正文和表格、各节页眉页脚、脚注尾注及文本框。AI 修订者名称支持固定名称、日期或会话后缀。详见[长文档审校说明](docs/long-document-review.md)和原有[中文 TXT 更新说明](WordOllama/Resources/updateLog.txt)。
+
+本次发布为源码版本。已有仓库可在 Windows 下更新并构建：
+
+```powershell
+git pull --ff-only origin main
+powershell -ExecutionPolicy Bypass -File .\tools\build-open-source.ps1 -Configuration Release
+powershell -ExecutionPolicy Bypass -File .\tools\verify-release.ps1 -SkipBuild
+```
+
+将本地构建加载到 Word 时，请参照下方“构建”中的测试证书和部署说明。编译及自动检查覆盖审校工作流和会话处理；真实长文档的速度、宿主稳定性及审校质量仍需实际测试。本地 Ollama 审查不需要在线文档服务；首次构建恢复 NuGet 依赖时可能需要联网。
+
 ## ✨ 主要功能
 
 - Agent 可以通过受控的 Word COM 工具层读取、编辑、格式化、审阅和定位文档。

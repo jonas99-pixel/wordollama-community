@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -159,7 +159,7 @@ namespace WordOllama.lib.Providers
             string endpoint = NormalizeEndpoint();
 
             if (string.IsNullOrWhiteSpace(_apiKey))
-                return "API Key 为空，请输入有效的 API Key";
+                return ProviderRequestPolicy.NormalizeError("Claude", null, "API Key 为空，请输入有效的 API Key");
 
             using (var httpClient = ProviderRequestPolicy.CreateChatClient())
             {
@@ -201,6 +201,8 @@ namespace WordOllama.lib.Providers
                         return HandleError(response, responseBody);
 
                     var result = JObject.Parse(responseBody);
+                    if (ProviderRequestPolicy.IsOutputTruncated(result))
+                        return ProviderRequestPolicy.NormalizeError("Claude", null, Loc.T("I18n_ReviewOutputTruncated"));
 
                     // Extract thinking content
                     var contentArray = result["content"] as JArray;

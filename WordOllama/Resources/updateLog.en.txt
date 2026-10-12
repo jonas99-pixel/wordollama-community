@@ -1,4 +1,30 @@
-﻿Version V2.3 2026/09/27
+﻿Version V2.5.0 2026/10/12
+
+Changes
+1. The built-in Agent now connects whole-document batch review, native review copies, local session history, resume/retry, precise tracked writeback, and saved reports through natural-language workflows.
+2. Whole-document review includes section headers/footers, first/even/primary variants, footnotes, endnotes, text boxes, grouped shapes, and drawing-canvas text. Linked headers and text boxes are reviewed once.
+3. Each document area uses separate location and content checks. Recovery and writeback retain the correct story instead of reusing body coordinates; reports include areas, full coverage, and revision authors.
+4. Added configurable AI reviewer names with fixed, date, and session modes. The default base name is AI审批, distinguished by date. Word's previous user name, initials, and local-identity option are restored after AI writes; existing revision history is retained.
+5. Native review copies retain revision authors. Character-level writeback protects Word fields, note references, and structural markers. Fixed comment conversion that could modify body text.
+6. Recovery remains compatible with V2.4 sessions. The original document can discover its review-copy sessions. Completed batches and fragments are retained; Agent results identify failed, unfinished, and unapplied work and support cancellation.
+7. Updated the original Chinese and English TXT release notes. Macro entry points and folder-wide batch jobs are not included in this version.
+8. Published these improvements in the Community source edition. Update the GitHub checkout, build with tools/build-open-source.ps1, and run tools/verify-release.ps1 -SkipBuild. Community build and validation retain the public, unsigned assembly workflow.
+__________________________________________________
+
+Version V2.4 2026/10/12
+
+Changes
+1. Whole-document and selection review now process consecutive batches instead of stopping after a fixed initial set of paragraphs. Added body-table support, oversized-paragraph splitting, progress, and cancellation.
+2. Added configurable paragraph, character, suggestion-batch, and concurrency limits. Reports show processed, failed, and unreviewed coverage while retaining existing batch defaults.
+3. Review suggestions reserve model context for prompts and output. Ollama context and output budgets are separate, and truncated or incomplete suggestions are rejected.
+4. Added settings for Ollama timeout, Silent Linter context and timeout, and the Agent task time allowance.
+5. Added native review copies that preserve document format, order, and VBA macros. Applied suggestions save the reviewed copy; bulk operations save once at completion.
+6. Added encrypted local review sessions, history, recovery, and retries for unfinished or failed work. Recovery checks document content, identity, and model settings.
+7. Added Markdown and JSON reports with dates, models, complete coverage, original model output, human edits, failure history, and user actions.
+8. Improved precise paragraph targeting, range updates after edits, session backup recovery, and error messages. Coverage notices identify excluded headers, footers, footnotes, and other stories.
+__________________________________________________
+
+Version V2.3 2026/09/27
 
 Changes
 1. Improved connection checks with separate chat, streaming, and tool results, clearer errors, and a retry option using service defaults.

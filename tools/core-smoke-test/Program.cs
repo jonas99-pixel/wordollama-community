@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using WordOllama.lib;
 using WordOllama.lib.Providers;
@@ -257,7 +258,341 @@ internal static class Program
         Assert(PromptTemplateService.BuildPlanDecisionSystemPrompt(false).Contains("你是 WordOllama"),
             "planning prompt keeps the WordOllama identity");
 
+        RunLongDocumentReviewChecks();
+        RunReviewSessionChecks();
+        RunAgentReviewChecks();
         Console.WriteLine("Core smoke test passed.");
+    }
+
+    private static void RunLongDocumentReviewChecks()
+    {
+        var defaults = AppConfig.Deserialize("{}");
+        Assert(defaults.ReviewIssueBatchMaxParagraphs == 80 && defaults.ReviewIssueBatchMaxCharacters == 12000
+            && defaults.ReviewSelectionBatchMaxCharacters == 6000 && defaults.ReviewSuggestionBatchMaxItems == 8
+            && defaults.ReviewSuggestionBatchMaxCharacters == 6000 && defaults.ReviewMaxConcurrentRequests == 3,
+            "old configuration keeps existing limits as per-batch defaults");
+        Assert(defaults.OllamaTimeoutSeconds == 600 && defaults.LinterContextTokens == 4096
+            && defaults.LinterTimeoutSeconds == 300 && defaults.AgentTaskTimeoutMinutes == 30,
+            "old configuration retains timeout defaults");
+        var configured = AppConfig.Deserialize("{\"ReviewIssueBatchMaxParagraphs\":25,\"ReviewSelectionBatchMaxCharacters\":1200,\"ReviewOllamaOutputTokens\":4096}");
+        Assert(configured.ReviewIssueBatchMaxParagraphs == 25 && configured.ReviewSelectionBatchMaxCharacters == 1200
+            && configured.ReviewOllamaOutputTokens == 4096, "review limits are configurable in appconfig.json");
+
+        var issueBudget = new ReviewRequestBudget(32768, 4096, PromptTemplateService.BuildIssueReviewPrompt(""), false);
+        var paragraphs = Enumerable.Range(1, 12000).Select(i => new ReviewParagraph
+            { Index = i, Text = "Paragraph " + i + ": Check this sentence carefully." }).ToList();
+        var batches = ReviewChunkPlanner.CreateIssueBatches(paragraphs, issueBudget, 80, 12000);
+        Assert(batches.Count > 1 && batches.Last().LastParagraph == 12000
+            && batches.SelectMany(b => b.Paragraphs).Distinct().Count() == 12000,
+            "whole-document review reaches the final paragraph beyond the old 80-paragraph cutoff");
+        Assert(batches.Sum(b => b.Characters) == paragraphs.Sum(p => p.Text.Length),
+            "whole-document batches cover every source character");
+        Assert(batches.All(b => b.Paragraphs.Count <= 80 && b.Context.Length <= 12000
+            && issueBudget.Fits(PromptTemplateService.BuildIssueReviewPrompt(b.Context), b.Context)),
+            "each issue batch respects paragraph, character and prompt budgets");
+
+        string longSelection = string.Concat(Enumerable.Repeat("A sentence in a very long selection. ", 3000));
+        var selectionBatches = ReviewChunkPlanner.CreateIssueBatches(
+            new[] { new ReviewParagraph { Index = 91, Text = longSelection } }, issueBudget, 80, 6000);
+        Assert(selectionBatches.Count > 1 && selectionBatches.Sum(b => b.Characters) == longSelection.Length
+            && selectionBatches.All(b => b.Paragraphs.SetEquals(new[] { 91 }) && b.Context.Length <= 6000),
+            "selection over 6000 characters and an oversized single paragraph are split without truncation");
+
+        string unicodeText = string.Concat(Enumerable.Repeat("First sentence.\r\n中文😀  Next sentence. ", 900)) + "End.";
+        var parts = ReviewChunkPlanner.SplitText(unicodeText, 6000, 512);
+        Assert(string.Concat(parts.Select(p => p.Text)) == unicodeText
+            && parts.All(p => p.Text.Length <= 6000 && ReviewChunkPlanner.EstimateTokens(p.Text) <= 512),
+            "mixed-language long paragraphs are split losslessly within token allowances");
+        Assert(parts.All(p => !char.IsHighSurrogate(p.Text[p.Text.Length - 1])
+            && !char.IsLowSurrogate(p.Text[0])), "splitting preserves Unicode surrogate pairs");
+        Assert(parts.Take(parts.Count - 1).All(p => !p.Text.EndsWith("\r")), "splitting keeps CRLF pairs together");
+        string unchangedReview = string.Concat(parts.Select(p => ReviewChunkPlanner.PreserveFragmentWhitespace(p.Text, p.Text.Trim())));
+        Assert(unchangedReview == unicodeText, "joining model fragments preserves inter-word spaces and paragraph breaks");
+        Assert(ReviewChunkPlanner.PreserveFragmentWhitespace("   ", "") == "   "
+            && ReviewChunkPlanner.PreserveFragmentWhitespace("\t Indented text.  ", "Indented text.") == "\t Indented text.  ",
+            "whitespace-only fragments are preserved");
+
+        var rewriteBudget = new ReviewRequestBudget(4096, 2048,
+            PromptTemplateService.BuildReviewSuggestionPrompt("", "Proofread conservatively.", ""), true);
+        foreach (var part in ReviewChunkPlanner.SplitText(unicodeText, 6000, rewriteBudget.TextTokens))
+            Assert(rewriteBudget.Fits(PromptTemplateService.BuildReviewSuggestionPrompt(part.Text, "Proofread conservatively.", ""), part.Text),
+                "rewriting reserves capacity for prompt, source and returned text");
+        bool rejected = false;
+        try { new ReviewRequestBudget(256, 2048, "Review prompt", true); }
+        catch (InvalidOperationException) { rejected = true; }
+        Assert(rejected, "insufficient context fails explicitly instead of sending an oversized request");
+
+        JArray parsed;
+        var indexes = new HashSet<int> { 91, 92 };
+        Assert(ReviewChunkPlanner.TryReadIssues("[]", indexes, out parsed) && parsed.Count == 0,
+            "a valid empty array means review completed with no issues");
+        Assert(ReviewChunkPlanner.TryReadIssues("[{\"paragraph\":91,\"title\":\"Typo\"}]", indexes, out parsed),
+            "review results retain original document indexes");
+        Assert(!ReviewChunkPlanner.TryReadIssues("[{\"paragraph\":1,\"title\":\"Typo\"}]", indexes, out parsed),
+            "renumbered or invented paragraph locations fail validation");
+        Assert(!ReviewChunkPlanner.TryReadIssues("", indexes, out parsed)
+            && !ReviewChunkPlanner.TryReadIssues("[API error] timeout", indexes, out parsed)
+            && !ReviewChunkPlanner.TryReadIssues("[{\"paragraph\":91", indexes, out parsed)
+            && !ReviewChunkPlanner.TryReadIssues("Unable to review. []", indexes, out parsed)
+            && !ReviewChunkPlanner.TryReadIssues("[{}]", indexes, out parsed),
+            "empty, API-error, truncated and invalid output are not reported as a clean review");
+        var allowedIds = new[] { "1", "2" };
+        Assert(ReviewChunkPlanner.ReadSuggestions("[{\"id\":\"1\",\"text\":\"Corrected sentence.\"}]", allowedIds).Count == 1,
+            "valid batch suggestions keep their original card identity");
+        Assert(ReviewChunkPlanner.ReadSuggestions("Unable to review. []", allowedIds).Count == 0
+            && ReviewChunkPlanner.ReadSuggestions("[{\"id\":\"3\",\"text\":\"Wrong card.\"}]", allowedIds).Count == 0
+            && ReviewChunkPlanner.ReadSuggestions("[{\"id\":\"1\",\"text\":\"One\"},{\"id\":\"1\",\"text\":\"Two\"}]", allowedIds).Count == 0
+            && ReviewChunkPlanner.ReadSuggestions("[{\"id\":\"1\",\"text\":\"[API error] timeout\"}]", allowedIds).Count == 0,
+            "unstructured, mismatched, duplicate and error suggestions never become applicable text");
+        Assert(ProviderRequestPolicy.IsOutputTruncated(JObject.Parse("{\"done_reason\":\"length\"}"))
+            && ProviderRequestPolicy.IsOutputTruncated(JObject.Parse("{\"choices\":[{\"finish_reason\":\"length\"}]}"))
+            && ProviderRequestPolicy.IsOutputTruncated(JObject.Parse("{\"stop_reason\":\"max_tokens\"}"))
+            && ProviderRequestPolicy.IsOutputTruncated(JObject.Parse("{\"candidates\":[{\"finishReason\":\"MAX_TOKENS\"}]}")),
+            "native and online providers reject explicitly truncated output");
+        Assert(!ProviderRequestPolicy.IsOutputTruncated(JObject.Parse("{\"choices\":[{\"finish_reason\":\"stop\"}]}"))
+            && !ProviderRequestPolicy.IsOutputTruncated(new JObject()), "normal or legacy responses are not marked truncated");
+        Console.WriteLine("Long-document review checks passed: 12000 paragraphs, long selection, Unicode, budgets and failure validation.");
+    }
+
+    private static void RunAgentReviewChecks()
+    {
+        var defaults = AppConfig.Deserialize("{}");
+        Assert(defaults.ReviewReviewerName == "AI审批" && defaults.ReviewReviewerIdentityMode == "Date", "existing settings receive the default dated AI reviewer");
+        var day = new DateTime(2026, 10, 12);
+        Assert(ReviewRevisionIdentity.Build(null, "Fixed", day, null) == "AI审批"
+            && ReviewRevisionIdentity.Build(" AI审批 ", "Date", day, "abc") == "AI审批-2026-10-12"
+            && ReviewRevisionIdentity.Build("AI审批", "Session", day, "0123456789abcdef") == "AI审批-2026-10-12-01234567"
+            && ReviewRevisionIdentity.Build("AI", "Session", day, "abc") == "AI-2026-10-12-abc", "reviewer names distinguish fixed, dated and session runs");
+        var body = new ReviewStoryAddress();
+        var header = new ReviewStoryAddress { Kind = "Header", Section = 2, Variant = 1 };
+        var box = new ReviewStoryAddress { Shapes = new List<string> { "group/name", "box:1" } };
+        var otherBox = new ReviewStoryAddress { Shapes = new List<string> { "group", "name/box:1" } };
+        Assert(body.Key != header.Key && box.Key != otherBox.Key, "story addresses distinguish text areas and escape shape paths");
+        var record = new ReviewSessionRecord();
+        var edited = new ReviewSessionItem { Index = 1, RangeStart = 10, RangeEnd = 20, Story = header };
+        var following = new ReviewSessionItem { Index = 2, RangeStart = 25, RangeEnd = 35, Story = header };
+        var main = new ReviewSessionItem { Index = 3, RangeStart = 25, RangeEnd = 35, Story = body };
+        var textBox = new ReviewSessionItem { Index = 4, RangeStart = 25, RangeEnd = 35, Story = box };
+        record.Items.AddRange(new[] { edited, following, main, textBox });
+        record.ShiftRangesAfterEdit(edited.Id, 20, 8, header.Key);
+        record.ReplayRangeShifts();
+        Assert(following.RangeStart == 33 && main.RangeStart == 25 && textBox.RangeStart == 25
+            && edited.RangeStart == 10, "editing a header rebases only that story, exactly once");
+        var reloaded = Newtonsoft.Json.JsonConvert.DeserializeObject<ReviewSessionRecord>(Newtonsoft.Json.JsonConvert.SerializeObject(record));
+        reloaded.ReplayRangeShifts();
+        Assert(reloaded.Items[1].RangeStart == 33 && reloaded.Items[2].RangeStart == 25, "cross-story recovery preserves rebased offsets");
+        var spans = new[] { new ProtectedTextSpan { Start = 8, End = 12 } };
+        TextDiffService.ValidateProtectedSpans(new[] { new TextEdit { OriginalStart = 2, DeleteLength = 1, InsertText = "a" },
+            new TextEdit { OriginalStart = 12, DeleteLength = 0, InsertText = "x" } }, spans);
+        ExpectReviewFailure<InvalidOperationException>(delegate { TextDiffService.ValidateProtectedSpans(
+            new[] { new TextEdit { OriginalStart = 9, DeleteLength = 1, InsertText = "x" } }, spans); }, "field replacements are rejected before writing");
+        ExpectReviewFailure<InvalidOperationException>(delegate { TextDiffService.ValidateProtectedSpans(
+            new[] { new TextEdit { OriginalStart = 9, DeleteLength = 0, InsertText = "x" } }, spans); }, "insertions inside fields are rejected");
+        _reviewWorkflowCalls.Clear();
+        var tools = new List<ReviewWorkflowTool>();
+        foreach (string name in new[] { "review_document", "resume_review", "list_review_sessions", "apply_review_revisions", "save_review_document" })
+        {
+            var constructor = typeof(ReviewWorkflowTool).GetConstructors().Single();
+            var callbackType = constructor.GetParameters()[1].ParameterType;
+            var parameters = callbackType.GetMethod("Invoke").GetParameters()
+                .Select(p => System.Linq.Expressions.Expression.Parameter(p.ParameterType, p.Name)).ToArray();
+            var bodyCall = System.Linq.Expressions.Expression.Call(typeof(Program).GetMethod("ReviewTestWorkflow", BindingFlags.Static | BindingFlags.NonPublic),
+                System.Linq.Expressions.Expression.Constant(name), parameters[3]);
+            var callback = System.Linq.Expressions.Expression.Lambda(callbackType, bodyCall, parameters).Compile();
+            var tool = (ReviewWorkflowTool)constructor.Invoke(new object[] { name, callback });
+            Assert(tool.IsWriteOperation == (name == "apply_review_revisions")
+                && !tool.IsConcurrencySafe && !tool.Description.StartsWith("I18n_", StringComparison.Ordinal), "review tool mode classification and localized description: " + name);
+            tools.Add(tool);
+        }
+        var review = tools[0];
+        Assert(AgentWireProtocol.ValidateArguments(review.ParameterSchema, JObject.Parse("{\"kind\":\"suggestions\",\"create_copy\":true}")) == null
+            && AgentWireProtocol.ValidateArguments(tools[1].ParameterSchema, new JObject()) != null, "review and resume argument schemas validate");
+        var executed = (System.Threading.Tasks.Task<string>)typeof(ReviewWorkflowTool).GetMethod("ExecuteAsync")
+            .Invoke(review, new object[] { new JObject(), null, null, System.Threading.CancellationToken.None });
+        Assert(executed.GetAwaiter().GetResult().Contains("true")
+            && _reviewWorkflowCalls.SequenceEqual(new[] { "review_document" }), "Agent review calls the configured shared workflow");
+        string prompt = PromptTemplateService.BuildAgentSystemPrompt("<document>truncated snapshot</document>", "review_document", 5, "", "English");
+        Assert(prompt.Contains("apply_review_revisions") && prompt.Contains("Never claim the whole document is complete")
+            && prompt.Contains("list_review_sessions"), "Agent prompt routes whole-document review and checks actual completion");
+        string instruction = "Check terminology only";
+        Func<string, string> buildPrompt = delegate(string context) { return PromptTemplateService.BuildIssueReviewPrompt(context, false, instruction); };
+        var budget = new ReviewRequestBudget(8192, 1024, buildPrompt(""), false);
+        var paragraphs = new[] { new ReviewParagraph { Index = 51, Text = "Header text needs review", Location = new ReviewParagraphLocation { Story = header, Paragraph = 1 } },
+            new ReviewParagraph { Index = 52, Text = "Body text needs review", Location = new ReviewParagraphLocation { Story = body, Paragraph = 2 } } };
+        var batches = ReviewChunkPlanner.CreateIssueBatches(paragraphs, budget, 1, 6000, buildPrompt);
+        Assert(batches.Count == 2 && batches.All(b => budget.Fits(buildPrompt(b.Context), b.Context))
+            && batches[0].Context.Contains(header.Label) && buildPrompt(batches[0].Context).Contains(instruction), "issue batches retain area, original IDs and custom instruction within budget");
+        Console.WriteLine("Agent review checks passed: routing, modes, reviewer identities, protected fields and story-local recovery.");
+    }
+
+    private static readonly List<string> _reviewWorkflowCalls = new List<string>();
+    private static System.Threading.Tasks.Task<string> ReviewTestWorkflow(string name, System.Threading.CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        _reviewWorkflowCalls.Add(name);
+        return System.Threading.Tasks.Task.FromResult("{\"ok\":true}");
+    }
+
+    private static void RunReviewSessionChecks()
+    {
+        string temporaryRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "WordOllamaReviewStoreSmoke-" + Guid.NewGuid().ToString("N")));
+        string temporaryParent = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        Assert(temporaryRoot.StartsWith(temporaryParent, StringComparison.OrdinalIgnoreCase)
+            && Path.GetFileName(temporaryRoot).StartsWith("WordOllamaReviewStoreSmoke-", StringComparison.Ordinal), "review test data stays inside its own temporary directory");
+        try
+        {
+            var store = new ReviewSessionStore(temporaryRoot);
+            string document = Path.Combine(temporaryRoot, "original.docx");
+            string hash = ReviewSessionStore.DocumentFingerprint("Sample body\r", 12, 2);
+            var record = new ReviewSessionRecord { Metadata = new ReviewSessionMetadata
+            {
+                Kind = "Suggestions", Scope = "Body", DocumentIdentity = document, DocumentName = "original.docx",
+                IsSavedDocument = true, ExpectedDocumentHash = hash, State = ReviewRunState.Running,
+                ConfigurationFingerprint = "private-configuration-fingerprint",
+                ModelSettings = new ReviewModelSettings { Mode = "Ollama", Provider = "Ollama", Model = "model-A", ContextTokens = 32768, OutputTokens = 2048 },
+                Instruction = "Private review instruction"
+            } };
+            var complete = new ReviewSessionItem { Index = 1, RangeStart = 0, RangeEnd = 20, Characters = 20,
+                OriginalText = new string('a', 20), SuggestedText = "Completed suggestion", State = ReviewItemState.Succeeded };
+            var failed = new ReviewSessionItem { Index = 2, RangeStart = 40, RangeEnd = 50, Characters = 10,
+                OriginalText = new string('b', 10), State = ReviewItemState.Failed, Error = "first failed request" };
+            failed.BeginAttempt(); failed.FinishAttempt(ReviewItemState.Failed, failed.Error);
+            var interrupted = new ReviewSessionItem { Index = 3, RangeStart = 70, RangeEnd = 83, Characters = 13,
+                OriginalText = "alpha beta!!!", State = ReviewItemState.Running };
+            interrupted.Fragments.Add(new ReviewSessionFragment { Start = 0, Source = "alpha ", Suggestion = "Alpha ", State = ReviewItemState.Succeeded });
+            interrupted.Fragments.Add(new ReviewSessionFragment { Start = 6, Source = "beta!!!", State = ReviewItemState.Running });
+            interrupted.BeginAttempt(); interrupted.BeginAttempt(6);
+            record.Items.AddRange(new[] { complete, failed, interrupted });
+            store.Create(record);
+            var restored = store.Load(record.Metadata.Id);
+            Assert(restored.Items[2].State == ReviewItemState.Pending && restored.Items[2].Fragments[1].State == ReviewItemState.Pending
+                && restored.Items[2].Fragments[0].Suggestion == "Alpha " && restored.Items[2].SuggestedText == null,
+                "interrupted review retains successful fragments and publishes no incomplete suggestion");
+            Assert(restored.Metadata.CompletedItems == 1 && restored.Metadata.FailedItems == 1 && restored.Metadata.PendingItems == 1
+                && restored.Metadata.ReviewedCharacters == 26 && restored.Metadata.FailedCharacters == 10 && restored.Metadata.UnreviewedCharacters == 7,
+                "recovery rebuilds complete, failed and unreviewed character coverage from work items");
+            Assert(restored.Items[2].AttemptLog.All(a => a.State == ReviewItemState.Pending), "in-flight attempt records become retryable after interruption");
+            Assert(ReviewSessionStore.CanResume(restored, document.ToUpperInvariant(), hash)
+                && !ReviewSessionStore.CanResume(restored, document, hash + "changed")
+                && !ReviewSessionStore.CanResume(restored, document + ".copy", hash), "resuming binds to matching file identity and document text");
+            restored.Metadata.IsSavedDocument = false;
+            Assert(!ReviewSessionStore.CanResume(restored, document, hash), "unsaved document cannot be restored as a stable saved-file session");
+            restored.Metadata.IsSavedDocument = true;
+            Assert(hash != ReviewSessionStore.DocumentFingerprint("Sample body\r", 12, 3), "document stamp detects changes in paragraph structure");
+
+            var retried = restored.Items[1];
+            retried.State = ReviewItemState.Running; retried.BeginAttempt(); store.SaveItem(restored, retried);
+            retried.State = ReviewItemState.Succeeded; retried.Error = null; retried.SuggestedText = "Retry succeeded";
+            retried.FinishAttempt(ReviewItemState.Succeeded); store.SaveItem(restored, retried);
+            store.SaveItem(restored, retried); // Keep a complete encrypted backup for the corruption check.
+            var afterRetry = store.Load(restored.Metadata.Id);
+            Assert(afterRetry.Metadata.CompletedItems == 2 && afterRetry.Metadata.FailedItems == 0 && afterRetry.Metadata.UnreviewedCharacters == 7
+                && afterRetry.Items[1].AttemptLog.Any(a => a.Error == "first failed request"), "successful retry clears failed coverage and preserves previous failure details");
+            string directory = Path.Combine(temporaryRoot, restored.Metadata.Id);
+            Assert(Directory.GetFiles(directory, "*.dat").All(path => File.ReadAllText(path).StartsWith("dpapi:", StringComparison.Ordinal)
+                && !File.ReadAllText(path).Contains("Private review instruction")), "review text and instructions are encrypted on disk");
+            string itemFile = Path.Combine(directory, "item-" + retried.Id + ".dat");
+            File.WriteAllText(itemFile, "dpapi:invalid-base64");
+            var backupRestored = store.Load(restored.Metadata.Id);
+            Assert(backupRestored.Items[1].SuggestedText == "Retry succeeded", "damaged primary item recovers from its encrypted atomic-write backup");
+            store.SaveItem(backupRestored, backupRestored.Items[1]);
+
+            // The unchanged remaining item is deliberately not rewritten. Its older
+            // position is rebased from the metadata journal when loading it again.
+            backupRestored.Items[0].UserAction = "replace";
+            backupRestored.ShiftRangesAfterEdit(complete.Id, 20, 5);
+            store.SaveItem(backupRestored, backupRestored.Items[0]);
+            var shifted = store.Load(restored.Metadata.Id);
+            Assert(shifted.Items[1].RangeStart == 45 && shifted.Items[2].RangeStart == 75, "pending positions follow edits without rewriting the whole review cache");
+            store.SaveItem(shifted, shifted.Items[1]);
+            shifted.Items[1].UserAction = "replace";
+            shifted.ShiftRangesAfterEdit(retried.Id, 55, -3);
+            store.SaveItem(shifted, shifted.Items[1]);
+            var shiftedAgain = store.Load(restored.Metadata.Id);
+            Assert(shiftedAgain.Items[1].RangeStart == 45 && shiftedAgain.Items[2].RangeStart == 72
+                && shiftedAgain.Items[2].PositionRevision == 2, "position replay handles saved and older items without double shifting");
+            Assert(!shiftedAgain.Items[0].NeedsProcessing && !shiftedAgain.Items[1].NeedsProcessing && shiftedAgain.Items[2].NeedsProcessing,
+                "continuing selects unfinished work while excluding completed and consumed results");
+
+            var another = new ReviewSessionRecord { Metadata = new ReviewSessionMetadata { Kind = "Suggestions", Scope = "Body",
+                DocumentIdentity = document, DocumentName = "original.docx", ModelSettings = new ReviewModelSettings { Model = "model-B" } } };
+            another.Items.Add(new ReviewSessionItem { Index = 1, State = ReviewItemState.Pending });
+            store.Create(another);
+            Assert(store.List(document, "Suggestions").Count == 2 && store.List(document, "Issues").Count == 0
+                && store.Load(restored.Metadata.Id).Metadata.ModelSettings.Model == "model-A", "history retains separate model sessions and filters by operation");
+            ExpectReviewFailure<ArgumentException>(delegate { store.Load("..\\outside"); }, "session identifiers cannot escape the local cache root");
+            File.Delete(Path.Combine(temporaryRoot, another.Metadata.Id, "item-" + another.Items[0].Id + ".dat"));
+            ExpectReviewFailure<IOException>(delegate { store.Load(another.Metadata.Id); }, "a missing work payload is reported instead of treated as completed");
+            var crossStory = new ReviewSessionRecord { Metadata = new ReviewSessionMetadata { SchemaVersion = 2, Kind = "Issues", Scope = "Document",
+                DocumentIdentity = document + ".review.docx", OriginalDocumentPath = document, ReviewerIdentity = "AI审批-2026-10-12", ReviewTaskInstruction = "Check terminology only" } };
+            crossStory.Items.Add(new ReviewSessionItem { Story = new ReviewStoryAddress { Kind = "Header", Section = 2, Variant = 3 },
+                ParagraphLocations = new Dictionary<int, ReviewParagraphLocation> { { 112, new ReviewParagraphLocation { Story = new ReviewStoryAddress { Kind = "Footnote", Note = 5 }, Paragraph = 2 } } } });
+            store.Create(crossStory);
+            var crossStoryRestored = store.Load(crossStory.Metadata.Id);
+            Assert(crossStoryRestored.Metadata.SchemaVersion == 2 && crossStoryRestored.Items[0].Story.Key == crossStory.Items[0].Story.Key
+                && crossStoryRestored.Items[0].ParagraphLocations[112].Story.Note == 5
+                && crossStoryRestored.Metadata.ReviewerIdentity == "AI审批-2026-10-12"
+                && crossStoryRestored.Metadata.ReviewTaskInstruction == "Check terminology only", "encrypted recovery retains stories, reviewer and custom issue instructions");
+            Assert(store.List(document, null).Any(m => m.Id == crossStory.Metadata.Id), "original document can discover saved review-copy sessions");
+            var legacy = new ReviewSessionRecord { Metadata = new ReviewSessionMetadata { SchemaVersion = 1, Kind = "Issues", Scope = "Body", DocumentIdentity = document } };
+            legacy.Items.Add(new ReviewSessionItem { RangeStart = 0, RangeEnd = 20 }); store.Create(legacy);
+            Assert(store.Load(legacy.Metadata.Id).Metadata.SchemaVersion == 1 && store.Load(legacy.Metadata.Id).Items[0].Story == null,
+                "v2.4 body sessions remain readable with their legacy fingerprint schema");
+
+            var report = new ReviewSessionRecord { Metadata = record.Metadata };
+            for (int index = 1; index <= 24; index++)
+            {
+                var item = new ReviewSessionItem { Index = index, FirstParagraph = index, LastParagraph = index, Characters = 15,
+                    OriginalText = "Source with ```` code", State = ReviewItemState.Failed, Error = "Failure number " + index };
+                item.BeginAttempt(); item.FinishAttempt(ReviewItemState.Failed, item.Error); report.Items.Add(item);
+            }
+            report.Items[0].AttemptLog.Add(new ReviewSessionAttempt { State = ReviewItemState.Failed, Error = "Earlier failed attempt\nwith detail" });
+            report.Items[0].GeneratedText = "Original model output";
+            report.Items[0].SuggestedText = "Human edited suggestion";
+            report.Metadata.RunLog.Add(new ReviewRunLogEntry { State = ReviewRunState.Failed, Error = "Previous queue failure" });
+            DateTime lastSaved = report.Metadata.UpdatedUtc;
+            string markdown = ReviewReportExporter.BuildMarkdown(report);
+            string json = ReviewReportExporter.BuildJson(report);
+            Assert(Enumerable.Range(1, 24).All(i => markdown.Contains("Failure number " + i)) && markdown.Contains("Earlier failed attempt\nwith detail")
+                && markdown.Contains("Source with ```` code") && markdown.Contains("`````"), "report includes every failure, prior attempts and safely fenced source text");
+            Assert(markdown.Contains("Original model output") && markdown.Contains("Human edited suggestion") && markdown.Contains("Previous queue failure"),
+                "report retains original model output, human edits and earlier queue errors");
+            var jsonReport = JObject.Parse(json);
+            Assert(jsonReport["Items"].Count() == 24 && (string)jsonReport["Metadata"]["ModelSettings"]["Model"] == "model-A"
+                && !json.Contains("ConfigurationFingerprint") && !json.Contains("ApiKey") && report.Metadata.UpdatedUtc == lastSaved,
+                "JSON report retains full results and safe settings without changing the session save date");
+            ReviewReportExporter.Write(report, Path.Combine(temporaryRoot, "report.md"));
+            ReviewReportExporter.Write(report, Path.Combine(temporaryRoot, "report.json"));
+            Assert(File.ReadAllText(Path.Combine(temporaryRoot, "report.md")).Contains("Failure number 24"), "local report export writes the complete report");
+            Assert(ReviewCopyService.ExtensionFor(13) == ".docm" && ReviewCopyService.ExtensionFor(0) == ".doc"
+                && ReviewCopyService.ExtensionFor(24) == ".docx", "copy planning retains native Word file formats");
+            File.WriteAllText(document, "Original document sentinel");
+            ExpectReviewFailure<InvalidOperationException>(delegate { ReviewCopyService.ValidateTarget(document, document, ".docx"); }, "review copy cannot replace its source file");
+            string copyPath = Path.Combine(temporaryRoot, "copy.docx");
+            ReviewCopyService.ValidateTarget(document, copyPath, ".docx");
+            File.WriteAllText(copyPath, "Existing copy sentinel");
+            ExpectReviewFailure<IOException>(delegate { ReviewCopyService.ValidateTarget(document, copyPath, ".docx"); }, "review copy refuses an existing destination");
+            ExpectReviewFailure<InvalidOperationException>(delegate { ReviewCopyService.ValidateTarget(document, Path.Combine(temporaryRoot, "copy.docm"), ".docx"); }, "copy rejects a mismatched extension");
+            Assert(File.ReadAllText(document) == "Original document sentinel" && File.ReadAllText(copyPath) == "Existing copy sentinel", "copy validation leaves source and existing files intact");
+            Console.WriteLine("Review session checks passed: encrypted recovery, fragment retry, positions, complete reports and copy protection.");
+        }
+        finally
+        {
+            if (Directory.Exists(temporaryRoot))
+            {
+                if (!Path.GetFullPath(temporaryRoot).StartsWith(temporaryParent, StringComparison.OrdinalIgnoreCase)
+                    || !Path.GetFileName(temporaryRoot).StartsWith("WordOllamaReviewStoreSmoke-", StringComparison.Ordinal))
+                    throw new InvalidOperationException("Unsafe review test cleanup path.");
+                Directory.Delete(temporaryRoot, true);
+            }
+        }
+    }
+
+    private static void ExpectReviewFailure<T>(Action action, string name) where T : Exception
+    {
+        bool failed = false;
+        try { action(); } catch (T) { failed = true; }
+        Assert(failed, name);
     }
 
     private static string ApplyEdits(string original, IReadOnlyList<TextEdit> edits)

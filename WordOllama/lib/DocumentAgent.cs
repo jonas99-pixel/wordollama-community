@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -86,6 +86,7 @@ namespace WordOllama.lib
         private bool _revisionBaselineCaptured;
         private readonly Dictionary<string, AgentSource> _sources = new Dictionary<string, AgentSource>(StringComparer.OrdinalIgnoreCase);
         private DateTime _startedAt;
+        private string _revisionSessionId;
         private int _toolCallCount;
         private int _toolFailureCount;
         private string _goal = "";
@@ -180,6 +181,22 @@ namespace WordOllama.lib
         /// 获取已注册的工具注册表（可用于外部检查或添加自定义工具）。
         /// </summary>
         public ToolRegistry ToolRegistry => _toolRegistry;
+        public void SetReviewWorkflow(Func<string, JObject, Word.Document, CancellationToken, Task<string>> workflow)
+        {
+            foreach (string name in new[] { "review_document", "resume_review", "list_review_sessions", "apply_review_revisions", "save_review_document" })
+                _toolRegistry.Register(new Tools.ReviewWorkflowTool(name, async (action, args, document, token) =>
+                {
+                    try { return await workflow(action, args, document, token); }
+                    finally
+                    {
+                        UiThread.RunOfficeSync(() =>
+                        {
+                            _taskDocumentIdentity = GetDocumentIdentity(_doc);
+                            _documentSnapshot = BuildDocumentSnapshot(_doc);
+                        });
+                    }
+                }));
+        }
 
         /// <summary>
         /// 生成 OpenAI / Ollama 兼容的 tools JSON Schema（为未来原生 Tool Calling 预备）。
@@ -191,6 +208,7 @@ namespace WordOllama.lib
             _ct = ct;
             _goal = (goal ?? (resumeFromCheckpoint ? _goal : "") ?? "").Trim();
             _startedAt = DateTime.UtcNow;
+            _revisionSessionId = Guid.NewGuid().ToString("N");
             _toolCallCount = 0;
             _toolFailureCount = 0;
             _sources.Clear();
@@ -321,7 +339,8 @@ namespace WordOllama.lib
             int consecutiveFailures = 0;
             const int maxConsecutiveFailures = 3;
 
-            while ((_maxIterations == 0 || currentIteration < _maxIterations) && DateTime.UtcNow - _startedAt < TimeSpan.FromMinutes(30))
+            int taskTimeoutMinutes = Math.Max(1, Math.Min(1440, AppConfig.Instance.AgentTaskTimeoutMinutes));
+            while ((_maxIterations == 0 || currentIteration < _maxIterations) && DateTime.UtcNow - _startedAt < TimeSpan.FromMinutes(taskTimeoutMinutes))
             {
                 _ct.ThrowIfCancellationRequested();
                 if (GetToolCallingProfileKey() != runProfile)
@@ -679,8 +698,8 @@ namespace WordOllama.lib
             }
             if (taskCompleteMsg == null)
             {
-                taskCompleteMsg = DateTime.UtcNow - _startedAt >= TimeSpan.FromMinutes(30)
-                    ? (UseEnglish ? "The 30-minute task budget was reached. Work completed so far has been preserved." : "已达到 30 分钟任务预算，当前完成结果已保留。")
+                taskCompleteMsg = DateTime.UtcNow - _startedAt >= TimeSpan.FromMinutes(taskTimeoutMinutes)
+                    ? Loc.F("I18n_AgentTimeBudgetReached", taskTimeoutMinutes)
                     : Properties.Resources.Agent_MaxIterReached;
             }
 
@@ -799,7 +818,11 @@ namespace WordOllama.lib
                     if (writesWordDocument)
                         EnsureTrackedChangesForTask();
 
-                    string result = tool.Execute(parameters, _doc, _app);
+                    string result;
+                    using (ReviewRevisionIdentity.Enter(writesWordDocument ? _app : null,
+                        ReviewRevisionIdentity.Build(AppConfig.Instance.ReviewReviewerName, AppConfig.Instance.ReviewReviewerIdentityMode,
+                            AppConfig.Instance.ReviewReviewerIdentityMode == "Session" ? _startedAt.ToLocalTime() : DateTime.Now, _revisionSessionId)))
+                        result = tool.Execute(parameters, _doc, _app);
                     if (writesWordDocument)
                     {
                         result += AgentToolText.T("I18n_AgentResultTrackedChanges");
@@ -1711,10 +1734,11 @@ namespace WordOllama.lib
             var counts = new Dictionary<string, int>(StringComparer.Ordinal);
             try
             {
-                for (int i = 1; i <= _doc.Revisions.Count; i++)
+                foreach (var candidate in CaptureAllRevisionCandidates())
                 {
-                    string fingerprint = RevisionFingerprint(_doc.Revisions[i]);
+                    string fingerprint = candidate.Fingerprint;
                     counts[fingerprint] = counts.TryGetValue(fingerprint, out int value) ? value + 1 : 1;
+                    Word.Revision revision = candidate.Revision; ComHelper.ReleaseCom(ref revision);
                 }
                 _revisionBaselineCaptured = true;
             }
@@ -1732,21 +1756,24 @@ namespace WordOllama.lib
             var remaining = new Dictionary<string, int>(_preRevisionFingerprints, StringComparer.Ordinal);
             try
             {
-                for (int i = 1; i <= _doc.Revisions.Count; i++)
+                foreach (var candidate in CaptureAllRevisionCandidates())
                 {
-                    Word.Revision revision = _doc.Revisions[i];
-                    string fingerprint = RevisionFingerprint(revision);
-                    if (remaining.TryGetValue(fingerprint, out int count) && count > 0)
+                    Word.Revision revision = candidate.Revision;
+                    try
                     {
-                        remaining[fingerprint] = count - 1;
-                        continue;
+                        string fingerprint = candidate.Fingerprint;
+                        if (remaining.TryGetValue(fingerprint, out int count) && count > 0)
+                        {
+                            remaining[fingerprint] = count - 1;
+                            continue;
+                        }
+                        _taskRevisionLocators.Add(new RevisionLocator
+                        {
+                            StoryKey = candidate.StoryKey, Fingerprint = fingerprint,
+                            Start = candidate.Start, End = revision.Range.End
+                        });
                     }
-                    _taskRevisionLocators.Add(new RevisionLocator
-                    {
-                        Fingerprint = fingerprint,
-                        Start = revision.Range.Start,
-                        End = revision.Range.End
-                    });
+                    finally { ComHelper.ReleaseCom(ref revision); }
                 }
                 _taskRevisionIsolationSafe = _revisionBaselineCaptured && !remaining.Values.Any(value => value > 0);
             }
@@ -1774,23 +1801,13 @@ namespace WordOllama.lib
 
         private List<RevisionCandidate> ResolveTaskRevisions()
         {
-            var candidates = new List<RevisionCandidate>();
-            for (int i = 1; i <= _doc.Revisions.Count; i++)
-            {
-                Word.Revision revision = _doc.Revisions[i];
-                candidates.Add(new RevisionCandidate
-                {
-                    Revision = revision,
-                    Fingerprint = RevisionFingerprint(revision),
-                    Start = revision.Range.Start
-                });
-            }
+            var candidates = CaptureAllRevisionCandidates();
 
             var resolved = new List<RevisionCandidate>();
             foreach (RevisionLocator locator in _taskRevisionLocators)
             {
                 RevisionCandidate match = candidates
-                    .Where(item => !item.Used && string.Equals(item.Fingerprint, locator.Fingerprint, StringComparison.Ordinal))
+                    .Where(item => !item.Used && item.StoryKey == locator.StoryKey && string.Equals(item.Fingerprint, locator.Fingerprint, StringComparison.Ordinal))
                     .OrderBy(item => Math.Abs(item.Start - locator.Start))
                     .FirstOrDefault();
                 if (match == null) continue;
@@ -1799,6 +1816,37 @@ namespace WordOllama.lib
                 resolved.Add(match);
             }
             return resolved;
+        }
+
+        private List<RevisionCandidate> CaptureAllRevisionCandidates()
+        {
+            var candidates = new List<RevisionCandidate>();
+            var stories = ReviewDocumentScope.Capture(_doc);
+            try
+            {
+                foreach (var story in stories)
+                {
+                    Word.Revisions revisions = story.Range.Revisions;
+                    try
+                    {
+                        for (int i = 1; i <= revisions.Count; i++)
+                        {
+                            Word.Revision revision = revisions[i];
+                            Word.Range range = null;
+                            try
+                            {
+                                range = revision.Range;
+                                candidates.Add(new RevisionCandidate { Revision = revision, StoryKey = story.Address.Key,
+                                    Fingerprint = story.Address.Key + ":" + RevisionFingerprint(revision), Start = range.Start });
+                            }
+                            finally { ComHelper.ReleaseCom(ref range); }
+                        }
+                    }
+                    finally { ComHelper.ReleaseCom(ref revisions); }
+                }
+                return candidates;
+            }
+            finally { foreach (var story in stories) story.Dispose(); }
         }
 
         private void EnsureTaskSnapshotCurrent()
@@ -1813,6 +1861,7 @@ namespace WordOllama.lib
 
         private sealed class RevisionLocator
         {
+            public string StoryKey { get; set; }
             public string Fingerprint { get; set; }
             public int Start { get; set; }
             public int End { get; set; }
@@ -1820,6 +1869,7 @@ namespace WordOllama.lib
 
         private sealed class RevisionCandidate
         {
+            public string StoryKey { get; set; }
             public Word.Revision Revision { get; set; }
             public RevisionLocator Locator { get; set; }
             public string Fingerprint { get; set; }
@@ -2052,6 +2102,7 @@ namespace WordOllama.lib
             int end = Math.Max(start, range.End);
             return ResolveTaskRevisions().Where(item =>
             {
+                if (!item.Revision.Range.InStory(range)) return false;
                 int revisionEnd;
                 try { revisionEnd = item.Revision.Range.End; }
                 catch { revisionEnd = item.Start; }

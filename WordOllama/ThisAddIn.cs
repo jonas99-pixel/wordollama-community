@@ -465,6 +465,30 @@ namespace WordOllama
             string targetText = TextDiffService.PreserveStructuralSuffix(originalText, revisedText);
             var edits = TextDiffService.CreateEdits(originalText, targetText);
             if (edits.Count == 0) return;
+            if (sourceRange.End - sourceRange.Start != originalText.Length)
+                throw new InvalidOperationException(Loc.T("I18n_ReviewProtectedField"));
+
+            var protectedSpans = new List<ProtectedTextSpan>();
+            Word.Fields fields = sourceRange.Fields;
+            try
+            {
+                for (int i = 1; i <= fields.Count; i++)
+                {
+                    Word.Field field = fields[i]; Word.Range code = null, result = null;
+                    try
+                    {
+                        code = field.Code; result = field.Result;
+                        protectedSpans.Add(new ProtectedTextSpan { Start = code.Start - 1 - sourceRange.Start,
+                            End = result.End + 1 - sourceRange.Start });
+                    }
+                    finally { ComHelper.ReleaseCom(ref code); ComHelper.ReleaseCom(ref result); ComHelper.ReleaseCom(ref field); }
+                }
+            }
+            finally { ComHelper.ReleaseCom(ref fields); }
+            for (int i = 0; i < originalText.Length; i++)
+                if ("\u0001\u0002\u0003\u0013\u0014\u0015\a".IndexOf(originalText[i]) >= 0)
+                    protectedSpans.Add(new ProtectedTextSpan { Start = i, End = i + 1 });
+            TextDiffService.ValidateProtectedSpans(edits, protectedSpans);
 
             bool enabledTrackRevisions = manageTrackRevisions && !document.TrackRevisions;
             int rangeStart = sourceRange.Start;
@@ -480,7 +504,8 @@ namespace WordOllama
                     try
                     {
                         int editStart = rangeStart + edit.OriginalStart;
-                        editRange = document.Range(editStart, editStart + edit.DeleteLength);
+                        editRange = sourceRange.Duplicate;
+                        editRange.SetRange(editStart, editStart + edit.DeleteLength);
                         editRange.Text = edit.InsertText ?? "";
                     }
                     finally
@@ -654,8 +679,8 @@ namespace WordOllama
                 return;
             }
 
-            string formattedText = ConvertMarkdownToWordFormat(text, selectedRange.Document);
-            Word.Comment comment = selectedRange.Comments.Add(selectedRange, formattedText);
+            Word.Comment comment = selectedRange.Comments.Add(selectedRange, text ?? "");
+            ComHelper.ReleaseCom(ref comment);
 
             // 添加批注
            // Word.Comment comment = selectedRange.Comments.Add(selectedRange, text);
@@ -738,7 +763,9 @@ namespace WordOllama
             string imageBase64 = null,
             string SPMode = null,
             bool requireJsonOutput = false,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default(CancellationToken),
+            int? ollamaOutputTokens = null,
+            bool propagateErrors = false)
         {
             cancellationToken.ThrowIfCancellationRequested();
             SetRibbonAiStatus(WordOllama.Properties.Resources.AI工作中);
@@ -776,7 +803,8 @@ namespace WordOllama
                         string response = await OllamaFunctions.OllamaGenerateAsync(
                             inputPrompt,
                             imageBase64,
-                            cancellationToken);
+                            cancellationToken,
+                            ollamaOutputTokens);
                         return response;
                     }
                     else
@@ -812,6 +840,7 @@ namespace WordOllama
             }
             catch (Exception ex)
             {
+                if (propagateErrors) throw;
                 ShowRibbonNotification(WordOllama.Properties.Resources.发生错误 + ex.Message, 3000, ToolTipIcon.Error);
                 string message = ex.Message;
                 return message;
@@ -1341,7 +1370,7 @@ namespace WordOllama
 
                 using (var client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromMinutes(5);
+                    client.Timeout = TimeSpan.FromSeconds(Math.Max(30, Math.Min(86400, AppConfig.Instance.LinterTimeoutSeconds)));
                     var requestData = new Dictionary<string, object>
                     {
                         ["model"] = linterModel,
@@ -1350,7 +1379,7 @@ namespace WordOllama
                         ["options"] = new Dictionary<string, object>
                         {
                             ["temperature"] = 0.1,
-                            ["num_ctx"] = 4096
+                            ["num_ctx"] = Math.Max(512, Math.Min(1000000, AppConfig.Instance.LinterContextTokens))
                         }
                     };
 

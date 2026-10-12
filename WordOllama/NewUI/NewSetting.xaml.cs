@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -427,6 +427,22 @@ namespace WordOllama.NewUI
             LinterModelBox.Text = AppConfig.Instance.LinterModel ?? "";
             LinterEndPointBox.Text = AppConfig.Instance.LinterEndPoint ?? "";
             LinterDebounceBox.Text = AppConfig.Instance.LinterDebounceSeconds.ToString();
+            ReviewIssueBatchMaxParagraphsBox.Text = AppConfig.Instance.ReviewIssueBatchMaxParagraphs.ToString();
+            ReviewIssueBatchMaxCharactersBox.Text = AppConfig.Instance.ReviewIssueBatchMaxCharacters.ToString();
+            ReviewSelectionBatchMaxCharactersBox.Text = AppConfig.Instance.ReviewSelectionBatchMaxCharacters.ToString();
+            ReviewSuggestionBatchMaxItemsBox.Text = AppConfig.Instance.ReviewSuggestionBatchMaxItems.ToString();
+            ReviewSuggestionBatchMaxCharactersBox.Text = AppConfig.Instance.ReviewSuggestionBatchMaxCharacters.ToString();
+            ReviewMaxConcurrentRequestsBox.Text = AppConfig.Instance.ReviewMaxConcurrentRequests.ToString();
+            ReviewOllamaOutputTokensBox.Text = AppConfig.Instance.ReviewOllamaOutputTokens.ToString();
+            ReviewReviewerNameBox.Text = AppConfig.Instance.ReviewReviewerName ?? "AI审批";
+            ReviewReviewerIdentityModeSelector.SelectedItem = ReviewReviewerIdentityModeSelector.Items.Cast<ComboBoxItem>()
+                .FirstOrDefault(i => (string)i.Tag == AppConfig.Instance.ReviewReviewerIdentityMode)
+                ?? ReviewReviewerIdentityModeSelector.Items[1];
+            OllamaTimeoutSecondsBox.Text = AppConfig.Instance.OllamaTimeoutSeconds.ToString();
+            LinterContextTokensBox.Text = AppConfig.Instance.LinterContextTokens.ToString();
+            LinterTimeoutSecondsBox.Text = AppConfig.Instance.LinterTimeoutSeconds.ToString();
+            AgentTaskTimeoutMinutesBox.Text = AppConfig.Instance.AgentTaskTimeoutMinutes.ToString();
+
 
             // 任务提醒开关
             SuppressAgentNotifToggle.IsChecked = SharedSettings.SuppressAgentNotifications;
@@ -1785,6 +1801,20 @@ namespace WordOllama.NewUI
                     SharedSettings.AgentMaxIterations = 20;
             }
 
+            AppConfig.Instance.ReviewIssueBatchMaxParagraphs = int.Parse(ReviewIssueBatchMaxParagraphsBox.Text.Trim());
+            AppConfig.Instance.ReviewIssueBatchMaxCharacters = int.Parse(ReviewIssueBatchMaxCharactersBox.Text.Trim());
+            AppConfig.Instance.ReviewSelectionBatchMaxCharacters = int.Parse(ReviewSelectionBatchMaxCharactersBox.Text.Trim());
+            AppConfig.Instance.ReviewSuggestionBatchMaxItems = int.Parse(ReviewSuggestionBatchMaxItemsBox.Text.Trim());
+            AppConfig.Instance.ReviewSuggestionBatchMaxCharacters = int.Parse(ReviewSuggestionBatchMaxCharactersBox.Text.Trim());
+            AppConfig.Instance.ReviewMaxConcurrentRequests = int.Parse(ReviewMaxConcurrentRequestsBox.Text.Trim());
+            AppConfig.Instance.ReviewOllamaOutputTokens = int.Parse(ReviewOllamaOutputTokensBox.Text.Trim());
+            AppConfig.Instance.ReviewReviewerName = string.IsNullOrWhiteSpace(ReviewReviewerNameBox.Text) ? "AI审批" : ReviewReviewerNameBox.Text.Trim();
+            AppConfig.Instance.ReviewReviewerIdentityMode = ((ComboBoxItem)ReviewReviewerIdentityModeSelector.SelectedItem)?.Tag as string ?? "Date";
+            AppConfig.Instance.OllamaTimeoutSeconds = int.Parse(OllamaTimeoutSecondsBox.Text.Trim());
+            AppConfig.Instance.LinterContextTokens = int.Parse(LinterContextTokensBox.Text.Trim());
+            AppConfig.Instance.LinterTimeoutSeconds = int.Parse(LinterTimeoutSecondsBox.Text.Trim());
+            AppConfig.Instance.AgentTaskTimeoutMinutes = int.Parse(AgentTaskTimeoutMinutesBox.Text.Trim());
+
             // Markdown 转换样式
             var mdMappings = new List<MarkdownStyleMapping>
             {
@@ -1856,6 +1886,30 @@ namespace WordOllama.NewUI
 
             if (ProviderRequestPolicy.TryTokenCount(OnlineContextWindow.Text, out int context) && int.TryParse(ChatGPTMaxToken.Text, out int output) && output >= context)
                 errors.Add("输出上限必须小于上下文容量，为输入留出空间。");
+            if (!TryReadRange(ReviewIssueBatchMaxParagraphsBox, "ReviewIssueBatchMaxParagraphs", 1, 1000, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewIssueBatchMaxParagraphs"), 1, 1000));
+            if (!TryReadRange(ReviewIssueBatchMaxCharactersBox, "ReviewIssueBatchMaxCharacters", 128, 1000000, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewIssueBatchMaxCharacters"), 128, 1000000));
+            if (!TryReadRange(ReviewSelectionBatchMaxCharactersBox, "ReviewSelectionBatchMaxCharacters", 128, 1000000, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewSelectionBatchMaxCharacters"), 128, 1000000));
+            if (!TryReadRange(ReviewSuggestionBatchMaxItemsBox, "ReviewSuggestionBatchMaxItems", 1, 100, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewSuggestionBatchMaxItems"), 1, 100));
+            if (!TryReadRange(ReviewSuggestionBatchMaxCharactersBox, "ReviewSuggestionBatchMaxCharacters", 128, 1000000, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewSuggestionBatchMaxCharacters"), 128, 1000000));
+            if (!TryReadRange(ReviewMaxConcurrentRequestsBox, "ReviewMaxConcurrentRequests", 1, 8, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewMaxConcurrentRequests"), 1, 8));
+            if (!TryReadRange(ReviewOllamaOutputTokensBox, "ReviewOllamaOutputTokens", 256, 1000000, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_ReviewOllamaOutputTokens"), 256, 1000000));
+            if (ReviewReviewerNameBox.Text.Length > 128 || ReviewReviewerNameBox.Text.Any(char.IsControl))
+                errors.Add(Loc.T("I18n_ReviewReviewerInvalid"));
+            if (!TryReadRange(OllamaTimeoutSecondsBox, "OllamaTimeoutSeconds", 30, 86400, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_OllamaTimeoutSeconds"), 30, 86400));
+            if (!TryReadRange(LinterContextTokensBox, "LinterContextTokens", 512, 1000000, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_LinterContextTokens"), 512, 1000000));
+            if (!TryReadRange(LinterTimeoutSecondsBox, "LinterTimeoutSeconds", 30, 86400, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_LinterTimeoutSeconds"), 30, 86400));
+            if (!TryReadRange(AgentTaskTimeoutMinutesBox, "AgentTaskTimeoutMinutes", 1, 1440, errors))
+                errors.Add(Loc.F("I18n_SettingsInvalidNumber", Loc.T("I18n_AgentTaskTimeoutMinutes"), 1, 1440));
             message = errors.Count == 0
                 ? ""
                 : Loc.F("I18n_SettingsValidationFailed", string.Join(" ", errors.Distinct()));

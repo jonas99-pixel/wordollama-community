@@ -25,6 +25,20 @@ WordOllama is an open-source AI add-in for Microsoft Word and compatible WPS Wor
 
 The project is designed for people who want to use a local model or connect an API-compatible provider without moving their normal Word workflow into a separate application.
 
+## Version 2.5.0 — long-document review
+
+Whole-document review now uses consecutive batches with configurable limits, progress and coverage reporting. The built-in Agent can create a native review copy, generate suggestions or findings, resume unfinished local sessions, apply precise tracked edits, and save the copy and reports. Review includes body text and tables, section headers and footers, footnotes, endnotes, and text boxes. AI reviewer names can use a fixed name, a date, or a session suffix. See [the long-document review guide](docs/long-document-review.md) and the original [English update log](WordOllama/Resources/updateLog.en.txt).
+
+This is a source release. To update an existing checkout and build on Windows:
+
+```powershell
+git pull --ff-only origin main
+powershell -ExecutionPolicy Bypass -File .\tools\build-open-source.ps1 -Configuration Release
+powershell -ExecutionPolicy Bypass -File .\tools\verify-release.ps1 -SkipBuild
+```
+
+For loading your local build into Word, follow the certificate and deployment guidance in **Build** below. Compilation and automated checks cover the review workflow and session handling; performance and proofreading quality on real, very long Word documents still require testing. Local Ollama review does not require an online document service; restoring NuGet dependencies during a first build may require network access.
+
 ## ✨ Highlights
 
 - Agent workflows that can inspect, edit, format, review, and navigate a Word document through a controlled COM tool layer.
