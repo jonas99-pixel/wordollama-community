@@ -189,7 +189,7 @@ namespace WordOllama.lib
 
         public static string NormalizeError(string provider, HttpStatusCode? statusCode, string detail, Exception exception = null)
         {
-            string message = exception?.Message ?? detail ?? "Unknown provider error";
+            string message = exception == null ? (detail ?? "Unknown provider error") : DescribeTransportException(exception);
             if (exception is TimeoutException || message.IndexOf("timeout", StringComparison.OrdinalIgnoreCase) >= 0)
                 return $"[API 错误] [{provider}:timeout] {message}";
             if (statusCode == HttpStatusCode.Unauthorized || statusCode == HttpStatusCode.Forbidden)
@@ -201,6 +201,22 @@ namespace WordOllama.lib
             if (statusCode.HasValue && (int)statusCode.Value >= 500)
                 return $"[API 错误] [{provider}:server] {message}";
             return $"[API 错误] [{provider}:transport] {message}";
+        }
+
+        // Redacted diagnostics: never display exception messages, URLs, headers, or credentials.
+        private static string DescribeTransportException(Exception exception)
+        {
+            var parts = new List<string>();
+            for (Exception current = exception; current != null && parts.Count < 6; current = current.InnerException)
+            {
+                string part = current.GetType().Name + " (HRESULT=0x" + current.HResult.ToString("X8") + ")";
+                if (current is System.Net.Sockets.SocketException socket)
+                    part += " (SocketError=" + socket.SocketErrorCode + ")";
+                if (current is WebException web)
+                    part += " (WebStatus=" + web.Status + ")";
+                parts.Add(part);
+            }
+            return string.Join(" -> ", parts);
         }
 
         public static bool IsTransientError(string response)
