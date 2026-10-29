@@ -40,7 +40,21 @@ namespace WordOllama.lib
             return true;
         }
 
-        private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+        // Another add-in in WINWORD.EXE may have forced an obsolete TLS protocol set.
+        // Preserve OS-managed defaults (including TLS 1.3 where supported); only restore
+        // TLS 1.2 when an explicit, non-default process-wide protocol set is present.
+        private static readonly HttpClientHandler SharedHandler = CreateSharedHandler();
+
+        private static HttpClientHandler CreateSharedHandler()
+        {
+            SecurityProtocolType protocols = ServicePointManager.SecurityProtocol;
+            if (protocols != SecurityProtocolType.SystemDefault &&
+                (protocols & SecurityProtocolType.Tls12) == 0)
+            {
+                ServicePointManager.SecurityProtocol = protocols | SecurityProtocolType.Tls12;
+            }
+            return new HttpClientHandler();
+        }
 
         public static TimeSpan ChatTimeout => TimeSpan.FromSeconds(Math.Max(30, AppConfig.Instance?.ProviderTimeoutSeconds ?? 120));
         public static TimeSpan ConnectTimeout => TimeSpan.FromSeconds(Math.Max(5, AppConfig.Instance?.ProviderConnectTimeoutSeconds ?? 15));
